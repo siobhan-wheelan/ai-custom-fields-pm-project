@@ -357,15 +357,22 @@ body {
 }
 .proto-sub {
   font-family: var(--font-mono);
-  font-size: 10.5px;                  /* v13: 12 → 10.5 (match L2) */
+  font-size: 10.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--proto-muted);
-  margin-bottom: 140px;               /* v13: 180 → 140 (match L2 — too much space before Act 1) */
+  margin-top: 28px;
+  margin-bottom: 140px;
+  padding-top: 20px;
+  border-top: 1px solid var(--proto-rule);
   display: flex;
-  gap: 8px;
-  align-items: center;
+  gap: 12px 24px;
   flex-wrap: wrap;
+}
+.proto-sub span strong {
+  color: var(--proto-ink-soft);
+  font-weight: 600;
+  margin-right: 4px;
 }
 .proto-sub .sep { color: var(--proto-muted); opacity: 0.7; }
 
@@ -2445,13 +2452,10 @@ body {
     <p>Level 1 isn't a redesign. It's a unification. Treat every variant as an instance of one component, keep the narrow exceptions where they're genuinely appropriate, and the 30+ findings collapse into a handful of code-level changes and a copy pass.</p>
   </div>
   <div class="proto-sub">
-    <span>Siobhan Wheelan</span>
-    <span class="sep">·</span>
-    <span>PM Interview Project</span>
-    <span class="sep">·</span>
-    <span>Companion to L2</span>
-    <span class="sep">·</span>
-    <span>Phase 1</span>
+    <span><strong>Author</strong> Siobhan Wheelan</span>
+    <span><strong>Audience</strong> Product + Design leadership</span>
+    <span><strong>Companion</strong> ClickUp Doc · Level 2 prototype · Figma file</span>
+    <span><strong>Phase</strong> 1 of the six-phase roadmap</span>
   </div>
 
   <!-- ================================================================
