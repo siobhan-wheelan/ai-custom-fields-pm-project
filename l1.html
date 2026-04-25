@@ -2330,7 +2330,7 @@ body {
 <body>
 
 <!-- ============================================================
-     Sticky top nav — overview + L1/L2 switcher
+     Sticky top nav — three-tab page switcher
 ============================================================ -->
 <style>
   .proto-nav {
@@ -2344,53 +2344,30 @@ body {
     padding: 11px 32px;
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 24px;
     font-family: 'Sometype Mono', ui-monospace, SFMono-Regular, monospace;
     font-size: 11.5px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
   .proto-nav a { text-decoration: none; }
-  .proto-nav-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: #475569;
-    transition: color 0.15s;
-  }
-  .proto-nav-back:hover { color: #6647F0; }
-  .proto-nav-back svg { transition: transform 0.15s; }
-  .proto-nav-back:hover svg { transform: translateX(-2px); }
-  .proto-nav-divider {
-    width: 1px;
-    height: 12px;
-    background: rgba(15, 23, 42, 0.12);
-  }
-  .proto-nav-tabs { display: flex; gap: 18px; }
   .proto-nav-tab {
     color: #94a3b8;
     transition: color 0.15s;
   }
-  .proto-nav-tab:hover { color: #475569; }
+  .proto-nav-tab:hover { color: #6647F0; }
   .proto-nav-tab.is-current {
     color: #0f172a;
     font-weight: 600;
   }
   @media (max-width: 600px) {
-    .proto-nav { padding: 10px 16px; gap: 12px; font-size: 10.5px; }
-    .proto-nav-tabs { gap: 12px; }
+    .proto-nav { padding: 10px 16px; gap: 16px; font-size: 10.5px; }
   }
 </style>
 <nav class="proto-nav">
-  <a class="proto-nav-back" href="index.html">
-    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-    Overview
-  </a>
-  <span class="proto-nav-divider"></span>
-  <div class="proto-nav-tabs">
-    <a class="proto-nav-tab is-current" href="l1.html">Level 1 · Present</a>
-    <a class="proto-nav-tab" href="l2.html">Level 2 · Future</a>
-  </div>
+  <a class="proto-nav-tab" href="index.html">Overview</a>
+  <a class="proto-nav-tab is-current" href="l1.html">Level 1 · Present</a>
+  <a class="proto-nav-tab" href="l2.html">Level 2 · Future</a>
 </nav>
 
 <!-- v11.2: Reusable SVG sprite for brain + field icons (used by Figma-spec TS panels) -->

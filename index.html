@@ -228,6 +228,48 @@
 </style>
 </head>
 <body>
+
+<!-- ============================================================
+     Sticky top nav — three-tab page switcher
+============================================================ -->
+<style>
+  .proto-nav {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    background: rgba(248, 246, 242, 0.92);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    padding: 11px 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-family: 'Sometype Mono', ui-monospace, SFMono-Regular, monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .proto-nav a { text-decoration: none; }
+  .proto-nav-tab {
+    color: #94a3b8;
+    transition: color 0.15s;
+  }
+  .proto-nav-tab:hover { color: #6647F0; }
+  .proto-nav-tab.is-current {
+    color: #0f172a;
+    font-weight: 600;
+  }
+  @media (max-width: 600px) {
+    .proto-nav { padding: 10px 16px; gap: 16px; font-size: 10.5px; }
+  }
+</style>
+<nav class="proto-nav">
+  <a class="proto-nav-tab is-current" href="index.html">Overview</a>
+  <a class="proto-nav-tab" href="l1.html">Level 1 · Present</a>
+  <a class="proto-nav-tab" href="l2.html">Level 2 · Future</a>
+</nav>
+
 <div class="stage">
 
   <div class="kicker">PM Interview Project · ClickUp · April 2026</div>
