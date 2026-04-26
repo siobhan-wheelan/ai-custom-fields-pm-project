@@ -2,45 +2,216 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ClickUp Canny — Custom Fields signal extraction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Sometype+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root { --ink:#1F1F2E; --muted:#6B6B7C; --rule:#E5E5EE; --bg:#FFFFFF; --pink:#FF5C8D; --purple:#7B68EE; --blue:#49CCF9; --amber:#FFB13B; --green:#22C55E; --red:#EF4444; }
-  html,body { background:var(--bg); color:var(--ink); margin:0; padding:0; }
-  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size:14px; line-height:1.55; max-width:880px; margin:0 auto; padding:32px 24px 96px; }
-  h1 { font-family:'Plus Jakarta Sans', Inter, system-ui, sans-serif; font-size:28px; font-weight:700; letter-spacing:-0.01em; margin:0 0 4px; }
-  h2 { font-family:'Plus Jakarta Sans', Inter, system-ui, sans-serif; font-size:20px; font-weight:600; margin:40px 0 8px; }
-  h3 { font-size:15px; font-weight:600; margin:24px 0 6px; }
-  p { margin:8px 0; }
-  .muted { color:var(--muted); }
-  .rule { border:0; border-top:1px solid var(--rule); margin:28px 0; }
-  .lead { color:var(--muted); font-size:13px; margin-bottom:20px; }
-  .tldr { background:#FAFAFB; border:1px solid var(--rule); border-radius:8px; padding:16px 20px; }
-  .tldr ul { margin:6px 0; padding-left:20px; }
-  .tldr li { margin:6px 0; }
-  .chart { margin:18px 0 8px; }
-  .chart svg { max-width:100%; height:auto; display:block; }
-  .gap { border-left:3px solid var(--pink); padding:6px 14px; margin:14px 0; background:#FFFAFB; border-radius:0 6px 6px 0; }
-  .gap h4 { font-size:14px; margin:0 0 4px; font-weight:600; }
-  .gap p { margin:4px 0; font-size:13px; }
-  .gap .quote { font-style:italic; color:var(--muted); }
-  table { border-collapse:collapse; width:100%; font-size:11px; }
-  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--rule); vertical-align:top; }
-  th { font-weight:600; background:#FAFAFB; position:sticky; top:0; }
-  .scroll { max-height:420px; overflow:auto; border:1px solid var(--rule); border-radius:6px; }
-  .pill { display:inline-block; font-size:11px; padding:1px 7px; border-radius:8px; background:#F1F1F5; color:var(--muted); }
-  .badge-ai { background:#EFEAFF; color:#5B45D8; }
-  ul.tight { margin:4px 0 12px; padding-left:20px; }
-  ul.tight li { margin:3px 0; font-size:13px; }
-  a { color:#1F1F2E; }
-  a:hover { text-decoration:underline; }
-  .stat { display:inline-block; background:#F4F4F8; border-radius:6px; padding:6px 10px; margin:4px 6px 4px 0; font-size:12px; }
-  .stat b { color:var(--ink); font-size:14px; }
+  :root {
+    --proto-bg: #f8f6f2;
+    --proto-bg-alt: #fffdfa;
+    --proto-ink: #0f172a;
+    --proto-ink-soft: #475569;
+    --proto-muted: #94a3b8;
+    --proto-rule: #e7e4dc;
+    --proto-rule-strong: #d6d2c7;
+    --accent: #6647F0;
+    --accent-soft: rgba(102, 71, 240, 0.07);
+    --accent-soft-hover: rgba(102, 71, 240, 0.14);
+    --pink: #FF02F0;
+    --orange: #FC6D2D;
+    --blue: #0091FF;
+    --amber: #FFB13B;
+    --green: #22C55E;
+    --red: #EF4444;
+    --font-head: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Sometype Mono', ui-monospace, SFMono-Regular, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    background: var(--proto-bg);
+    color: var(--proto-ink-soft);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 56px 32px 96px;
+  }
+  h1 {
+    font-family: var(--font-head);
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.018em;
+    line-height: 1.1;
+    margin: 0 0 8px;
+    color: var(--proto-ink);
+  }
+  h2 {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    line-height: 1.25;
+    margin: 56px 0 14px;
+    padding-top: 24px;
+    border-top: 1px solid var(--proto-rule);
+    color: var(--proto-ink);
+  }
+  h2:first-of-type { border-top: 0; padding-top: 0; margin-top: 36px; }
+  h3 {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 28px 0 6px;
+    color: var(--proto-ink);
+  }
+  h4 {
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    color: var(--proto-ink);
+  }
+  p { margin: 10px 0; }
+  strong { color: var(--proto-ink); font-weight: 600; }
+  em { color: var(--proto-ink); }
+  ul, ol { padding-left: 22px; }
+  li { margin: 6px 0; }
+  .muted { color: var(--proto-muted); }
+  .lead {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--proto-muted);
+    margin-bottom: 32px;
+  }
+  .rule {
+    border: 0;
+    border-top: 1px solid var(--proto-rule);
+    margin: 32px 0;
+  }
+  .tldr {
+    background: var(--proto-bg-alt);
+    border: 1px solid var(--proto-rule);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 18px 0 24px;
+  }
+  .tldr ul { margin: 8px 0; padding-left: 22px; }
+  .tldr li { margin: 8px 0; }
+  .chart { margin: 18px 0 12px; }
+  .chart svg { max-width: 100%; height: auto; display: block; }
+  .gap {
+    border-left: 3px solid var(--accent);
+    padding: 10px 18px;
+    margin: 16px 0;
+    background: var(--accent-soft);
+    border-radius: 0 8px 8px 0;
+  }
+  .gap h4 {
+    font-size: 14px;
+    margin: 0 0 6px;
+    font-weight: 600;
+    color: var(--proto-ink);
+  }
+  .gap p { margin: 4px 0; font-size: 13.5px; }
+  .gap .quote {
+    font-style: italic;
+    color: var(--proto-ink-soft);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+    margin: 16px 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--proto-rule);
+    vertical-align: top;
+  }
+  th {
+    font-weight: 600;
+    background: var(--proto-bg-alt);
+    position: sticky;
+    top: 0;
+    color: var(--proto-ink);
+    font-family: var(--font-body);
+  }
+  .scroll {
+    max-height: 440px;
+    overflow: auto;
+    border: 1px solid var(--proto-rule);
+    border-radius: 8px;
+    background: var(--proto-bg-alt);
+  }
+  .pill {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    padding: 2px 9px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.05);
+    color: var(--proto-muted);
+    text-transform: uppercase;
+  }
+  .badge-ai {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  ul.tight {
+    margin: 4px 0 12px;
+    padding-left: 22px;
+  }
+  ul.tight li {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  a:hover { border-bottom-color: var(--accent); }
+  .stat {
+    display: inline-block;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-soft-hover);
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin: 4px 6px 4px 0;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--proto-ink-soft);
+    letter-spacing: 0.02em;
+  }
+  .stat b {
+    color: var(--accent);
+    font-size: 13px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    letter-spacing: 0;
+    margin-right: 4px;
+  }
 </style>
 </head>
 <body>
 
 <h1>ClickUp Canny — Custom Fields signal extraction</h1>
-<p class="lead">Public-feedback corpus analysis · feedback.clickup.com · prepared 2026-04-26</p>
+<p class="lead">Public-feedback corpus analysis · feedback.clickup.com · prepared 2026-04-19</p>
 
 <hr class="rule"/>
 
@@ -78,43 +249,43 @@
 
 <div class="chart">
 <svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Top 10 AI-Custom-Fields posts (real votes; lighter bars = proxy)">
-<text x="20" y="28" font-family="Inter,system-ui,sans-serif" font-size="15" font-weight="600" fill="#1F1F2E">Top 10 AI-Custom-Fields posts (real votes; lighter bars = proxy)</text>
-<text x="410" y="62" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI billing per user</text>
+<text x="20" y="28" font-family="Inter,system-ui,sans-serif" font-size="15" font-weight="600" fill="#0f172a">Top 10 AI-Custom-Fields posts (real votes; lighter bars = proxy)</text>
+<text x="410" y="62" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">AI billing per user</text>
 <rect x="420" y="50" width="220.0" height="20" fill="#FF5C8D" opacity="1" rx="3"/>
-<text x="646.0" y="64" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · 842</text>
-<text x="410" y="96" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI Custom Fields</text>
+<text x="646.0" y="64" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Open · 842</text>
+<text x="410" y="96" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">AI Custom Fields</text>
 <rect x="420" y="84" width="48.3" height="20" fill="#22C55E" opacity="1" rx="3"/>
-<text x="474.3" y="98" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 185</text>
-<text x="410" y="130" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">ClickUp AI - Extract data from attachments</text>
+<text x="474.3" y="98" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Complete · 185</text>
+<text x="410" y="130" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">ClickUp AI - Extract data from attachments</text>
 <rect x="420" y="118" width="31.4" height="20" fill="#FFB13B" opacity="1" rx="3"/>
-<text x="457.4" y="132" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress · 120</text>
-<text x="410" y="164" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Custom Prompts in AI</text>
+<text x="457.4" y="132" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">In Progress · 120</text>
+<text x="410" y="164" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Custom Prompts in AI</text>
 <rect x="420" y="152" width="25.9" height="20" fill="#22C55E" opacity="1" rx="3"/>
-<text x="451.9" y="166" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 99</text>
-<text x="410" y="198" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Enable AI Agents to Access Custom Attachment Fields</text>
+<text x="451.9" y="166" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Complete · 99</text>
+<text x="410" y="198" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Enable AI Agents to Access Custom Attachment Fields</text>
 <rect x="420" y="186" width="14.6" height="20" fill="#FFB13B" opacity="1" rx="3"/>
-<text x="440.6" y="200" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress · 56</text>
-<text x="410" y="232" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Hide AI buttons if not purchased</text>
+<text x="440.6" y="200" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">In Progress · 56</text>
+<text x="410" y="232" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Hide AI buttons if not purchased</text>
 <rect x="420" y="220" width="6.5" height="20" fill="#22C55E" opacity="1" rx="3"/>
-<text x="432.5" y="234" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 25</text>
-<text x="410" y="266" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI Summary of ClickUp lists</text>
+<text x="432.5" y="234" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Complete · 25</text>
+<text x="410" y="266" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">AI Summary of ClickUp lists</text>
 <rect x="420" y="254" width="5.2" height="20" fill="#FF5C8D" opacity="0.45" rx="3"/>
-<text x="431.2" y="268" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · ~ 20</text>
-<text x="410" y="300" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI Summary via API</text>
+<text x="431.2" y="268" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Open · ~ 20</text>
+<text x="410" y="300" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">AI Summary via API</text>
 <rect x="420" y="288" width="5.2" height="20" fill="#FF5C8D" opacity="0.45" rx="3"/>
-<text x="431.2" y="302" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · ~ 20</text>
-<text x="410" y="334" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI (ChatGPT or other) assistant inside Clickup</text>
+<text x="431.2" y="302" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Open · ~ 20</text>
+<text x="410" y="334" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">AI (ChatGPT or other) assistant inside Clickup</text>
 <rect x="420" y="322" width="5.2" height="20" fill="#22C55E" opacity="0.45" rx="3"/>
-<text x="431.2" y="336" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · ~ 20</text>
-<text x="410" y="368" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Add a tooltip for AI Fields that are disabled due to AI…</text>
+<text x="431.2" y="336" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Complete · ~ 20</text>
+<text x="410" y="368" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Add a tooltip for AI Fields that are disabled due to AI…</text>
 <rect x="420" y="356" width="2.6" height="20" fill="#FF5C8D" opacity="0.45" rx="3"/>
-<text x="428.6" y="370" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · ~ 10</text>
+<text x="428.6" y="370" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Open · ~ 10</text>
 <rect x="20" y="374" width="12" height="12" fill="#FF5C8D" rx="2"/>
-<text x="38" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open</text>
+<text x="38" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Open</text>
 <rect x="130" y="374" width="12" height="12" fill="#FFB13B" rx="2"/>
-<text x="148" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress</text>
+<text x="148" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">In Progress</text>
 <rect x="240" y="374" width="12" height="12" fill="#22C55E" rx="2"/>
-<text x="258" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete</text>
+<text x="258" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Complete</text>
 </svg>
 </div>
 
@@ -122,43 +293,43 @@
 
 <div class="chart">
 <svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Top 10 all-CF posts for context (real votes; lighter bars = proxy)">
-<text x="20" y="28" font-family="Inter,system-ui,sans-serif" font-size="15" font-weight="600" fill="#1F1F2E">Top 10 all-CF posts for context (real votes; lighter bars = proxy)</text>
-<text x="410" y="62" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Custom Field Manager</text>
+<text x="20" y="28" font-family="Inter,system-ui,sans-serif" font-size="15" font-weight="600" fill="#0f172a">Top 10 all-CF posts for context (real votes; lighter bars = proxy)</text>
+<text x="410" y="62" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Custom Field Manager</text>
 <rect x="420" y="50" width="220.0" height="20" fill="#22C55E" opacity="1" rx="3"/>
-<text x="646.0" y="64" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 3,500</text>
-<text x="410" y="96" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Formula fields in Dashboard</text>
+<text x="646.0" y="64" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Complete · 3,500</text>
+<text x="410" y="96" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Formula fields in Dashboard</text>
 <rect x="420" y="84" width="169.7" height="20" fill="#FFB13B" opacity="1" rx="3"/>
-<text x="595.7" y="98" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress · 2,700</text>
-<text x="410" y="130" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Granular Permissions for Custom Fields</text>
+<text x="595.7" y="98" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">In Progress · 2,700</text>
+<text x="410" y="130" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Granular Permissions for Custom Fields</text>
 <rect x="420" y="118" width="138.3" height="20" fill="#22C55E" opacity="1" rx="3"/>
-<text x="564.3" y="132" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 2,200</text>
-<text x="410" y="164" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Rollup Custom Field values from subtasks to parent task</text>
+<text x="564.3" y="132" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Complete · 2,200</text>
+<text x="410" y="164" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Rollup Custom Field values from subtasks to parent task</text>
 <rect x="420" y="152" width="125.7" height="20" fill="#FF5C8D" opacity="1" rx="3"/>
-<text x="551.7" y="166" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · 2,000</text>
-<text x="410" y="198" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Sort, filter, group by Formula type custom fields</text>
+<text x="551.7" y="166" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Open · 2,000</text>
+<text x="410" y="198" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Sort, filter, group by Formula type custom fields</text>
 <rect x="420" y="186" width="100.6" height="20" fill="#22C55E" opacity="1" rx="3"/>
-<text x="526.6" y="200" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 1,600</text>
-<text x="410" y="232" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Use any field in formulas, e.g. dropdowns and text</text>
+<text x="526.6" y="200" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Complete · 1,600</text>
+<text x="410" y="232" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Use any field in formulas, e.g. dropdowns and text</text>
 <rect x="420" y="220" width="94.3" height="20" fill="#FF5C8D" opacity="1" rx="3"/>
-<text x="520.3" y="234" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · 1,500</text>
-<text x="410" y="266" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Custom Fields for List, Folder, or Space</text>
+<text x="520.3" y="234" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Open · 1,500</text>
+<text x="410" y="266" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Custom Fields for List, Folder, or Space</text>
 <rect x="420" y="254" width="53.4" height="20" fill="#FFB13B" opacity="1" rx="3"/>
-<text x="479.4" y="268" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress · 849</text>
-<text x="410" y="300" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI billing per user</text>
+<text x="479.4" y="268" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">In Progress · 849</text>
+<text x="410" y="300" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">AI billing per user</text>
 <rect x="420" y="288" width="52.9" height="20" fill="#FF5C8D" opacity="1" rx="3"/>
-<text x="478.9" y="302" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · 842</text>
-<text x="410" y="334" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Convert Custom Fields</text>
+<text x="478.9" y="302" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Open · 842</text>
+<text x="410" y="334" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Convert Custom Fields</text>
 <rect x="420" y="322" width="36.1" height="20" fill="#22C55E" opacity="1" rx="3"/>
-<text x="462.1" y="336" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 575</text>
-<text x="410" y="368" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Different formats for Number Custom Field</text>
+<text x="462.1" y="336" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Complete · 575</text>
+<text x="410" y="368" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Different formats for Number Custom Field</text>
 <rect x="420" y="356" width="33.2" height="20" fill="#FF5C8D" opacity="1" rx="3"/>
-<text x="459.2" y="370" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · 528</text>
+<text x="459.2" y="370" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Open · 528</text>
 <rect x="20" y="374" width="12" height="12" fill="#FF5C8D" rx="2"/>
-<text x="38" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open</text>
+<text x="38" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Open</text>
 <rect x="130" y="374" width="12" height="12" fill="#FFB13B" rx="2"/>
-<text x="148" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress</text>
+<text x="148" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">In Progress</text>
 <rect x="240" y="374" width="12" height="12" fill="#22C55E" rx="2"/>
-<text x="258" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete</text>
+<text x="258" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">Complete</text>
 </svg>
 </div>
 
@@ -166,68 +337,68 @@
 
 <div class="chart">
 <svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Posts per year">
-<text x="20" y="22" font-family="Inter,system-ui,sans-serif" font-size="14" font-weight="600" fill="#1F1F2E">First-seen year of each post — AI vs non-AI</text>
-<line x1="50" y1="210" x2="690" y2="210" stroke="#E5E5EE"/>
-<line x1="50" y1="210.0" x2="690" y2="210.0" stroke="#E5E5EE" stroke-dasharray="2,2"/>
-<text x="44" y="214.0" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">0</text>
-<line x1="50" y1="130.0" x2="690" y2="130.0" stroke="#E5E5EE" stroke-dasharray="2,2"/>
-<text x="44" y="134.0" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">19</text>
-<line x1="50" y1="50.0" x2="690" y2="50.0" stroke="#E5E5EE" stroke-dasharray="2,2"/>
-<text x="44" y="54.0" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">38</text>
+<text x="20" y="22" font-family="Inter,system-ui,sans-serif" font-size="14" font-weight="600" fill="#0f172a">First-seen year of each post — AI vs non-AI</text>
+<line x1="50" y1="210" x2="690" y2="210" stroke="#e7e4dc"/>
+<line x1="50" y1="210.0" x2="690" y2="210.0" stroke="#e7e4dc" stroke-dasharray="2,2"/>
+<text x="44" y="214.0" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#94a3b8">0</text>
+<line x1="50" y1="130.0" x2="690" y2="130.0" stroke="#e7e4dc" stroke-dasharray="2,2"/>
+<text x="44" y="134.0" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#94a3b8">19</text>
+<line x1="50" y1="50.0" x2="690" y2="50.0" stroke="#e7e4dc" stroke-dasharray="2,2"/>
+<text x="44" y="54.0" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#94a3b8">38</text>
 <rect x="53.57142857142857" y="205.78947368421052" width="27.4" height="4.2" fill="#FF5C8D" rx="2"/>
 <text x="67.28571428571429" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">1</text>
-<rect x="83.0" y="210.0" width="27.4" height="0.0" fill="#7B68EE" rx="2"/>
-<text x="96.71428571428571" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">0</text>
-<text x="82.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2017</text>
+<rect x="83.0" y="210.0" width="27.4" height="0.0" fill="#6647F0" rx="2"/>
+<text x="96.71428571428571" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6647F0">0</text>
+<text x="82.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">2017</text>
 <rect x="117.57142857142857" y="205.78947368421052" width="27.4" height="4.2" fill="#FF5C8D" rx="2"/>
 <text x="131.28571428571428" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">1</text>
-<rect x="147.0" y="210.0" width="27.4" height="0.0" fill="#7B68EE" rx="2"/>
-<text x="160.71428571428572" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">0</text>
-<text x="146.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2018</text>
+<rect x="147.0" y="210.0" width="27.4" height="0.0" fill="#6647F0" rx="2"/>
+<text x="160.71428571428572" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6647F0">0</text>
+<text x="146.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">2018</text>
 <rect x="181.57142857142858" y="201.57894736842104" width="27.4" height="8.4" fill="#FF5C8D" rx="2"/>
 <text x="195.28571428571428" y="197.57894736842104" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">2</text>
-<rect x="211.0" y="210.0" width="27.4" height="0.0" fill="#7B68EE" rx="2"/>
-<text x="224.71428571428572" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">0</text>
-<text x="210.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2019</text>
+<rect x="211.0" y="210.0" width="27.4" height="0.0" fill="#6647F0" rx="2"/>
+<text x="224.71428571428572" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6647F0">0</text>
+<text x="210.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">2019</text>
 <rect x="245.57142857142858" y="176.31578947368422" width="27.4" height="33.7" fill="#FF5C8D" rx="2"/>
 <text x="259.2857142857143" y="172.31578947368422" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">8</text>
-<rect x="275.0" y="210.0" width="27.4" height="0.0" fill="#7B68EE" rx="2"/>
-<text x="288.7142857142857" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">0</text>
-<text x="274.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2020</text>
+<rect x="275.0" y="210.0" width="27.4" height="0.0" fill="#6647F0" rx="2"/>
+<text x="288.7142857142857" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6647F0">0</text>
+<text x="274.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">2020</text>
 <rect x="309.57142857142856" y="151.05263157894737" width="27.4" height="58.9" fill="#FF5C8D" rx="2"/>
 <text x="323.2857142857143" y="147.05263157894737" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">14</text>
-<rect x="339.0" y="210.0" width="27.4" height="0.0" fill="#7B68EE" rx="2"/>
-<text x="352.7142857142857" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">0</text>
-<text x="338.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2021</text>
+<rect x="339.0" y="210.0" width="27.4" height="0.0" fill="#6647F0" rx="2"/>
+<text x="352.7142857142857" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6647F0">0</text>
+<text x="338.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">2021</text>
 <rect x="373.57142857142856" y="75.26315789473685" width="27.4" height="134.7" fill="#FF5C8D" rx="2"/>
 <text x="387.2857142857143" y="71.26315789473685" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">32</text>
-<rect x="403.0" y="205.78947368421052" width="27.4" height="4.2" fill="#7B68EE" rx="2"/>
-<text x="416.7142857142857" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">1</text>
-<text x="402.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2022</text>
+<rect x="403.0" y="205.78947368421052" width="27.4" height="4.2" fill="#6647F0" rx="2"/>
+<text x="416.7142857142857" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6647F0">1</text>
+<text x="402.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">2022</text>
 <rect x="437.57142857142856" y="50.0" width="27.4" height="160.0" fill="#FF5C8D" rx="2"/>
 <text x="451.2857142857143" y="46.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">38</text>
-<rect x="467.0" y="193.1578947368421" width="27.4" height="16.8" fill="#7B68EE" rx="2"/>
-<text x="480.7142857142857" y="189.1578947368421" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">4</text>
-<text x="466.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2023</text>
+<rect x="467.0" y="193.1578947368421" width="27.4" height="16.8" fill="#6647F0" rx="2"/>
+<text x="480.7142857142857" y="189.1578947368421" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6647F0">4</text>
+<text x="466.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">2023</text>
 <rect x="501.57142857142856" y="193.1578947368421" width="27.4" height="16.8" fill="#FF5C8D" rx="2"/>
 <text x="515.2857142857143" y="189.1578947368421" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">4</text>
-<rect x="531.0" y="172.10526315789474" width="27.4" height="37.9" fill="#7B68EE" rx="2"/>
-<text x="544.7142857142857" y="168.10526315789474" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">9</text>
-<text x="530.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2024</text>
+<rect x="531.0" y="172.10526315789474" width="27.4" height="37.9" fill="#6647F0" rx="2"/>
+<text x="544.7142857142857" y="168.10526315789474" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6647F0">9</text>
+<text x="530.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">2024</text>
 <rect x="565.5714285714286" y="205.78947368421052" width="27.4" height="4.2" fill="#FF5C8D" rx="2"/>
 <text x="579.2857142857143" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">1</text>
-<rect x="595.0" y="188.94736842105263" width="27.4" height="21.1" fill="#7B68EE" rx="2"/>
-<text x="608.7142857142857" y="184.94736842105263" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">5</text>
-<text x="594.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2025</text>
+<rect x="595.0" y="188.94736842105263" width="27.4" height="21.1" fill="#6647F0" rx="2"/>
+<text x="608.7142857142857" y="184.94736842105263" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6647F0">5</text>
+<text x="594.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">2025</text>
 <rect x="629.5714285714286" y="210.0" width="27.4" height="0.0" fill="#FF5C8D" rx="2"/>
 <text x="643.2857142857143" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">0</text>
-<rect x="659.0" y="205.78947368421052" width="27.4" height="4.2" fill="#7B68EE" rx="2"/>
-<text x="672.7142857142857" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">1</text>
-<text x="658.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2026</text>
+<rect x="659.0" y="205.78947368421052" width="27.4" height="4.2" fill="#6647F0" rx="2"/>
+<text x="672.7142857142857" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6647F0">1</text>
+<text x="658.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">2026</text>
 <rect x="560" y="20" width="12" height="12" fill="#FF5C8D" rx="2"/>
-<text x="576" y="30" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">non-AI</text>
-<rect x="630" y="20" width="12" height="12" fill="#7B68EE" rx="2"/>
-<text x="646" y="30" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">AI</text>
+<text x="576" y="30" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">non-AI</text>
+<rect x="630" y="20" width="12" height="12" fill="#6647F0" rx="2"/>
+<text x="646" y="30" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#0f172a">AI</text>
 </svg>
 </div>
 
@@ -236,59 +407,59 @@
 <h2>4. Theme breakdown</h2>
 <div class="chart">
 <svg viewBox="0 0 760 410" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Theme distribution: post count vs proxy score">
-<text x="20" y="22" font-family="Inter,system-ui,sans-serif" font-size="14" font-weight="600" fill="#1F1F2E">Theme distribution: post count (left) vs proxy salience score (right)</text>
-<text x="200" y="44" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">posts ←</text>
-<text x="500.0" y="44" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">→ score</text>
+<text x="20" y="22" font-family="Inter,system-ui,sans-serif" font-size="14" font-weight="600" fill="#0f172a">Theme distribution: post count (left) vs proxy salience score (right)</text>
+<text x="200" y="44" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#94a3b8">posts ←</text>
+<text x="500.0" y="44" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#94a3b8">→ score</text>
 <rect x="337.1" y="60" width="112.9" height="20" fill="#FFB13B" opacity="0.55" rx="3"/>
-<text x="331.1" y="74" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">14</text>
+<text x="331.1" y="74" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">14</text>
 <rect x="490.0" y="60" width="250.0" height="20" fill="#FFB13B" rx="3"/>
-<text x="746.0" y="74" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">4910</text>
-<text x="470.0" y="74" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Dashboard/aggregation</text>
+<text x="746.0" y="74" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">4910</text>
+<text x="470.0" y="74" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#0f172a" paint-order="stroke" stroke="#f8f6f2" stroke-width="4" stroke-linejoin="round">Dashboard/aggregation</text>
 <rect x="200.0" y="92" width="250.0" height="20" fill="#FF8B6A" opacity="0.55" rx="3"/>
-<text x="194.0" y="106" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">31</text>
+<text x="194.0" y="106" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">31</text>
 <rect x="490.0" y="92" width="238.9" height="20" fill="#FF8B6A" rx="3"/>
-<text x="734.9" y="106" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">4692</text>
-<text x="470.0" y="106" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Field type broken</text>
-<rect x="321.0" y="124" width="129.0" height="20" fill="#49CCF9" opacity="0.55" rx="3"/>
-<text x="315.0" y="138" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">16</text>
-<rect x="490.0" y="124" width="232.5" height="20" fill="#49CCF9" rx="3"/>
-<text x="728.5" y="138" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">4566</text>
-<text x="470.0" y="138" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Bulk management</text>
+<text x="734.9" y="106" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">4692</text>
+<text x="470.0" y="106" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#0f172a" paint-order="stroke" stroke="#f8f6f2" stroke-width="4" stroke-linejoin="round">Field type broken</text>
+<rect x="321.0" y="124" width="129.0" height="20" fill="#0091FF" opacity="0.55" rx="3"/>
+<text x="315.0" y="138" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">16</text>
+<rect x="490.0" y="124" width="232.5" height="20" fill="#0091FF" rx="3"/>
+<text x="728.5" y="138" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">4566</text>
+<text x="470.0" y="138" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#0f172a" paint-order="stroke" stroke="#f8f6f2" stroke-width="4" stroke-linejoin="round">Bulk management</text>
 <rect x="401.6" y="156" width="48.4" height="20" fill="#9CA3AF" opacity="0.55" rx="3"/>
-<text x="395.6" y="170" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">6</text>
+<text x="395.6" y="170" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">6</text>
 <rect x="490.0" y="156" width="115.0" height="20" fill="#9CA3AF" rx="3"/>
-<text x="611.0" y="170" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">2258</text>
-<text x="470.0" y="170" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Permissions/sharing</text>
+<text x="611.0" y="170" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">2258</text>
+<text x="470.0" y="170" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#0f172a" paint-order="stroke" stroke="#f8f6f2" stroke-width="4" stroke-linejoin="round">Permissions/sharing</text>
 <rect x="288.7" y="188" width="161.3" height="20" fill="#FF5C8D" opacity="0.55" rx="3"/>
-<text x="282.7" y="202" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">20</text>
+<text x="282.7" y="202" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">20</text>
 <rect x="490.0" y="188" width="80.2" height="20" fill="#FF5C8D" rx="3"/>
-<text x="576.2" y="202" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">1575</text>
-<text x="470.0" y="202" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Field type missing</text>
+<text x="576.2" y="202" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">1575</text>
+<text x="470.0" y="202" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#0f172a" paint-order="stroke" stroke="#f8f6f2" stroke-width="4" stroke-linejoin="round">Field type missing</text>
 <rect x="385.5" y="220" width="64.5" height="20" fill="#CBD5E1" opacity="0.55" rx="3"/>
-<text x="379.5" y="234" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">8</text>
+<text x="379.5" y="234" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">8</text>
 <rect x="490.0" y="220" width="59.5" height="20" fill="#CBD5E1" rx="3"/>
-<text x="555.5" y="234" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">1169</text>
-<text x="470.0" y="234" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Other</text>
+<text x="555.5" y="234" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">1169</text>
+<text x="470.0" y="234" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#0f172a" paint-order="stroke" stroke="#f8f6f2" stroke-width="4" stroke-linejoin="round">Other</text>
 <rect x="329.0" y="252" width="121.0" height="20" fill="#A78BFA" opacity="0.55" rx="3"/>
-<text x="323.0" y="266" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">15</text>
+<text x="323.0" y="266" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">15</text>
 <rect x="490.0" y="252" width="37.3" height="20" fill="#A78BFA" rx="3"/>
-<text x="533.3" y="266" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">733</text>
-<text x="470.0" y="266" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Cosmetic/UX polish</text>
-<rect x="345.2" y="284" width="104.8" height="20" fill="#7B68EE" opacity="0.55" rx="3"/>
-<text x="339.2" y="298" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">13</text>
-<rect x="490.0" y="284" width="28.6" height="20" fill="#7B68EE" rx="3"/>
-<text x="524.6" y="298" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">561</text>
-<text x="470.0" y="298" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">AI field gap</text>
+<text x="533.3" y="266" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">733</text>
+<text x="470.0" y="266" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#0f172a" paint-order="stroke" stroke="#f8f6f2" stroke-width="4" stroke-linejoin="round">Cosmetic/UX polish</text>
+<rect x="345.2" y="284" width="104.8" height="20" fill="#6647F0" opacity="0.55" rx="3"/>
+<text x="339.2" y="298" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">13</text>
+<rect x="490.0" y="284" width="28.6" height="20" fill="#6647F0" rx="3"/>
+<text x="524.6" y="298" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">561</text>
+<text x="470.0" y="298" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#0f172a" paint-order="stroke" stroke="#f8f6f2" stroke-width="4" stroke-linejoin="round">AI field gap</text>
 <rect x="401.6" y="316" width="48.4" height="20" fill="#22C55E" opacity="0.55" rx="3"/>
-<text x="395.6" y="330" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">6</text>
+<text x="395.6" y="330" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">6</text>
 <rect x="490.0" y="316" width="5.1" height="20" fill="#22C55E" rx="3"/>
-<text x="501.1" y="330" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">100</text>
-<text x="470.0" y="330" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Mobile</text>
+<text x="501.1" y="330" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">100</text>
+<text x="470.0" y="330" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#0f172a" paint-order="stroke" stroke="#f8f6f2" stroke-width="4" stroke-linejoin="round">Mobile</text>
 <rect x="433.9" y="348" width="16.1" height="20" fill="#EF4444" opacity="0.55" rx="3"/>
-<text x="427.9" y="362" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">2</text>
+<text x="427.9" y="362" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">2</text>
 <rect x="490.0" y="348" width="1.9" height="20" fill="#EF4444" rx="3"/>
-<text x="497.9" y="362" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">37</text>
-<text x="470.0" y="362" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Performance</text>
+<text x="497.9" y="362" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">37</text>
+<text x="470.0" y="362" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#0f172a" paint-order="stroke" stroke="#f8f6f2" stroke-width="4" stroke-linejoin="round">Performance</text>
 </svg>
 </div>
 <p>Post-count vs vote-weight flips three rankings. <b>Dashboard/aggregation</b> is 5th by count but 1st by votes (4,910 — Formula-in-Dashboard and Subtask Rollup). <b>Bulk management</b> climbs to 3rd by votes on Custom Field Manager's 3,500. <b>Permissions/sharing</b> punches above its 6-post count via Granular Permissions. <b>AI field gap</b> is 5th by count but 8th by votes — the AI cluster is broad but each individual ask is small (1–120 votes). Theme-by-vote is the better priority signal: dashboard/aggregation/rollup carries the most accumulated weight, and most of it is Open.</p>
@@ -296,26 +467,26 @@
 <h2>5. Status breakdown</h2>
 <div class="chart">
 <svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Status distribution">
-<text x="20" y="22" font-family="Inter,system-ui,sans-serif" font-size="14" font-weight="600" fill="#1F1F2E">Status distribution — full corpus and AI-only</text>
+<text x="20" y="22" font-family="Inter,system-ui,sans-serif" font-size="14" font-weight="600" fill="#0f172a">Status distribution — full corpus and AI-only</text>
 <path d="M 180.0 60.0 A 90 90 0 0 1 269.1 162.8 L 234.4 157.8 A 55 55 0 0 0 180.0 95.0 Z" fill="#22C55E"/>
 <path d="M 269.1 162.8 A 90 90 0 0 1 253.8 201.6 L 225.1 181.5 A 55 55 0 0 0 234.4 157.8 Z" fill="#FFB13B"/>
 <path d="M 253.8 201.6 A 90 90 0 1 1 180.0 60.0 L 180.0 95.0 A 55 55 0 1 0 225.1 181.5 Z" fill="#FF5C8D"/>
-<text x="180" y="146" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="22" font-weight="700" fill="#1F1F2E">121</text>
-<text x="180" y="164" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">all posts</text>
+<text x="180" y="146" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="22" font-weight="700" fill="#0f172a">121</text>
+<text x="180" y="164" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">all posts</text>
 <path d="M 420.0 60.0 A 90 90 0 0 1 505.6 177.8 L 472.3 167.0 A 55 55 0 0 0 420.0 95.0 Z" fill="#22C55E"/>
 <path d="M 505.6 177.8 A 90 90 0 0 1 472.9 222.8 L 452.3 194.5 A 55 55 0 0 0 472.3 167.0 Z" fill="#FFB13B"/>
 <path d="M 472.9 222.8 A 90 90 0 1 1 420.0 60.0 L 420.0 95.0 A 55 55 0 1 0 452.3 194.5 Z" fill="#FF5C8D"/>
-<text x="420" y="146" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="22" font-weight="700" fill="#1F1F2E">20</text>
-<text x="420" y="164" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">AI posts</text>
+<text x="420" y="146" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="22" font-weight="700" fill="#0f172a">20</text>
+<text x="420" y="164" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#94a3b8">AI posts</text>
 <rect x="580" y="110" width="14" height="14" fill="#FF5C8D" rx="2"/>
-<text x="602" y="122" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Open</text>
-<text x="602" y="138" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">all: 79 · AI: 12</text>
+<text x="602" y="122" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Open</text>
+<text x="602" y="138" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#94a3b8">all: 79 · AI: 12</text>
 <rect x="580" y="150" width="14" height="14" fill="#FFB13B" rx="2"/>
-<text x="602" y="162" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">In Progress</text>
-<text x="602" y="178" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">all: 9 · AI: 2</text>
+<text x="602" y="162" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">In Progress</text>
+<text x="602" y="178" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#94a3b8">all: 9 · AI: 2</text>
 <rect x="580" y="190" width="14" height="14" fill="#22C55E" rx="2"/>
-<text x="602" y="202" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Complete</text>
-<text x="602" y="218" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">all: 33 · AI: 6</text>
+<text x="602" y="202" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#0f172a">Complete</text>
+<text x="602" y="218" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#94a3b8">all: 33 · AI: 6</text>
 </svg>
 </div>
 <p>65% Open, 7% In Progress, 27% Complete. Complete is concentrated in 3.0-era infrastructure (CF Manager, Granular Permissions, Convert, Reorder, Searchable, Bulk Actions) plus the AI CF launch. Open splits two ways: cross-cutting power-user gaps (Subtask Rollup, Use-any-field-in-formulas, Conditional CFs) and the AI extension cluster (AI on Number/Rating, AI on attachments, per-user AI billing).</p>
@@ -335,73 +506,73 @@
 <p>Posts where the request points to a deeper product gap, not just a missing feature. Selected to bias toward the parent project's two goals — new user adoption of AI CFs, and power-user CSAT for AI CFs. Each pick is annotated with its <b>AI CF connection</b>: why this constrains or shapes AI Custom Fields, even when the post itself isn't AI-tagged. Direct-AI picks are listed first.</p>
 
 <div class="gap">
-<h4><span class="pill" style="background:#7B68EE1A; color:#7B68EE; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/ai-custom-fields" target="_blank" rel="noopener">AI Custom Fields (anchor) — and Juliana Stanisauskiene's Jan 2026 comment</a> <span class="muted" style="font-weight:400; font-size:12px;">· 185 votes · Complete</span></h4>
+<h4><span class="pill" style="background:#6647F01A; color:#6647F0; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/ai-custom-fields" target="_blank" rel="noopener">AI Custom Fields (anchor) — and Juliana Stanisauskiene's Jan 2026 comment</a> <span class="muted" style="font-weight:400; font-size:12px;">· 185 votes · Complete</span></h4>
 <p class="quote">"AI Custom Fields appear to be text-only. There's no option to set Number/Currency."</p>
 <p>Post shipped Feb 2025; the active conversation moved into the comments. Juliana's Jan 21 2026 ask is unanswered.</p>
-<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Today AI CFs are pre-configured Long Text + Dropdown. Number/Currency/Percent require a NEW underlying type, not a settings change. Prompt-UX and new-type asks belong on separate roadmap tracks.</p>
+<p style="border-top:1px dashed #e7e4dc; padding-top:6px; margin-top:6px;"><b style="color:#6647F0;">AI CF connection:</b> Today AI CFs are pre-configured Long Text + Dropdown. Number/Currency/Percent require a NEW underlying type, not a settings change. Prompt-UX and new-type asks belong on separate roadmap tracks.</p>
 </div>
 
 <div class="gap">
-<h4><span class="pill" style="background:#7B68EE1A; color:#7B68EE; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/ai-billing-per-user" target="_blank" rel="noopener">AI billing per user</a> <span class="muted" style="font-weight:400; font-size:12px;">· 842 votes · Not on the roadmap</span></h4>
+<h4><span class="pill" style="background:#6647F01A; color:#6647F0; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/ai-billing-per-user" target="_blank" rel="noopener">AI billing per user</a> <span class="muted" style="font-weight:400; font-size:12px;">· 842 votes · Not on the roadmap</span></h4>
 <p class="quote">"Charging per number of total seats makes this feature unjustifiable."</p>
 <p>Largest AI-tagged post in the corpus. ClickUp's Mar 19 2026 usage-based-billing counter-proposal was rejected by the comment thread.</p>
-<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> AI CFs are credit-consuming by design. Without per-user governance, admins block AI entry-points entirely. Direct risk to both adoption (new users) and CSAT (power users).</p>
+<p style="border-top:1px dashed #e7e4dc; padding-top:6px; margin-top:6px;"><b style="color:#6647F0;">AI CF connection:</b> AI CFs are credit-consuming by design. Without per-user governance, admins block AI entry-points entirely. Direct risk to both adoption (new users) and CSAT (power users).</p>
 </div>
 
 <div class="gap">
-<h4><span class="pill" style="background:#7B68EE1A; color:#7B68EE; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/clickup-ai-extract-data-from-attachments" target="_blank" rel="noopener">ClickUp AI — Extract data from attachments</a> <span class="muted" style="font-weight:400; font-size:12px;">· 120 votes · Planned</span></h4>
+<h4><span class="pill" style="background:#6647F01A; color:#6647F0; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/clickup-ai-extract-data-from-attachments" target="_blank" rel="noopener">ClickUp AI — Extract data from attachments</a> <span class="muted" style="font-weight:400; font-size:12px;">· 120 votes · Planned</span></h4>
 <p class="quote">"ClickUp AI extract each data from attached word form to each custom field."</p>
 <p>Caroline Ginty Jul 2 2025: 'confirmed that we plan to support this with AI Custom Fields as well.'</p>
-<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Attachment reads (PDF/Word/image) unlock recruitment, invoice processing, and compliance — high-leverage AI CF use cases blocked today.</p>
+<p style="border-top:1px dashed #e7e4dc; padding-top:6px; margin-top:6px;"><b style="color:#6647F0;">AI CF connection:</b> Attachment reads (PDF/Word/image) unlock recruitment, invoice processing, and compliance — high-leverage AI CF use cases blocked today.</p>
 </div>
 
 <div class="gap">
-<h4><span class="pill" style="background:#7B68EE1A; color:#7B68EE; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/enable-ai-agents-to-access-custom-attachment-fields" target="_blank" rel="noopener">Enable AI Agents to Access Custom Attachment Fields</a> <span class="muted" style="font-weight:400; font-size:12px;">· 56 votes · Planned</span></h4>
+<h4><span class="pill" style="background:#6647F01A; color:#6647F0; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/enable-ai-agents-to-access-custom-attachment-fields" target="_blank" rel="noopener">Enable AI Agents to Access Custom Attachment Fields</a> <span class="muted" style="font-weight:400; font-size:12px;">· 56 votes · Planned</span></h4>
 <p class="quote">"Build precise, field-specific workflows."</p>
 <p>Sister post to Extract-from-attachments. Stephen Carlos' use case: per-field-type AI logic for resumes, background checks, IDs.</p>
-<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Custom attachment FIELDS specifically. Closing this seam moves AI CFs from leaf-node to composable.</p>
+<p style="border-top:1px dashed #e7e4dc; padding-top:6px; margin-top:6px;"><b style="color:#6647F0;">AI CF connection:</b> Custom attachment FIELDS specifically. Closing this seam moves AI CFs from leaf-node to composable.</p>
 </div>
 
 <div class="gap">
-<h4><span class="pill" style="background:#7B68EE1A; color:#7B68EE; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/ai-filled-rating-field" target="_blank" rel="noopener">AI Filled Rating Field (and the 'AI on numeric type' pattern)</a> <span class="muted" style="font-weight:400; font-size:12px;">· 1 vote · Future</span></h4>
+<h4><span class="pill" style="background:#6647F01A; color:#6647F0; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/ai-filled-rating-field" target="_blank" rel="noopener">AI Filled Rating Field (and the 'AI on numeric type' pattern)</a> <span class="muted" style="font-weight:400; font-size:12px;">· 1 vote · Future</span></h4>
 <p class="quote">"AI to populate the Rating field."</p>
 <p>Single-vote canary, but joins a recurring pattern: 8+ posts ask for AI on Rating, Number, Currency, Percent, Linked Record, Doc, Duration, or Time.</p>
-<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Defines the strategic decision: stay on Long Text + Dropdown, or invest in new AI-capable underlying types. The latter is the answer to Juliana.</p>
+<p style="border-top:1px dashed #e7e4dc; padding-top:6px; margin-top:6px;"><b style="color:#6647F0;">AI CF connection:</b> Defines the strategic decision: stay on Long Text + Dropdown, or invest in new AI-capable underlying types. The latter is the answer to Juliana.</p>
 </div>
 
 <div class="gap">
 <h4><span class="pill" style="background:#FF8B6A1A; color:#FF8B6A; font-weight:600; margin-right:8px;">AI-CONSTRAINING</span><a href="https://feedback.clickup.com/feature-requests/p/formula-fields-in-dashboard" target="_blank" rel="noopener">Formula fields in Dashboard</a> <span class="muted" style="font-weight:400; font-size:12px;">· 2,700 votes · Planned</span></h4>
 <p class="quote">"Unsupported data type in formula field."</p>
 <p>Partial support shipped. Users still blocked on TODAY()-based formulas, formula-of-formulas, aggregated calculations.</p>
-<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> AI CF outputs (text by default) can't render in Dashboard widgets. Same ingestion gap as formulas. Fix once and AI-CF data flows for free — exactly what Juliana asked for.</p>
+<p style="border-top:1px dashed #e7e4dc; padding-top:6px; margin-top:6px;"><b style="color:#6647F0;">AI CF connection:</b> AI CF outputs (text by default) can't render in Dashboard widgets. Same ingestion gap as formulas. Fix once and AI-CF data flows for free — exactly what Juliana asked for.</p>
 </div>
 
 <div class="gap">
 <h4><span class="pill" style="background:#FF8B6A1A; color:#FF8B6A; font-weight:600; margin-right:8px;">AI-CONSTRAINING</span><a href="https://feedback.clickup.com/feature-requests/p/rollup-custom-field-values-from-subtasks-to-parent-task" target="_blank" rel="noopener">Rollup Custom Field values from subtasks to parent task</a> <span class="muted" style="font-weight:400; font-size:12px;">· 2,000 votes · Future</span></h4>
 <p class="quote">"On our radar, but not on the committed roadmap."</p>
 <p>Open since January 2020. Caroline Ginty Nov 2025: still 'on radar, not committed' — a 6-year standoff.</p>
-<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Without subtask rollup, an AI Summary on a parent can't compose child summaries; AI Sentiment can't aggregate to portfolio. AI CFs become leaf-only.</p>
+<p style="border-top:1px dashed #e7e4dc; padding-top:6px; margin-top:6px;"><b style="color:#6647F0;">AI CF connection:</b> Without subtask rollup, an AI Summary on a parent can't compose child summaries; AI Sentiment can't aggregate to portfolio. AI CFs become leaf-only.</p>
 </div>
 
 <div class="gap">
 <h4><span class="pill" style="background:#FF8B6A1A; color:#FF8B6A; font-weight:600; margin-right:8px;">AI-CONSTRAINING</span><a href="https://feedback.clickup.com/feature-requests/p/use-any-field-in-formulas-eg-dropdowns-and-text-not-just-number-and-date-fields" target="_blank" rel="noopener">Use any field in formulas (dropdowns, text, checkbox)</a> <span class="muted" style="font-weight:400; font-size:12px;">· 1,500 votes · Future</span></h4>
 <p class="quote">"Only possible to reference numeric or date fields in formulas."</p>
 <p>Notion/Airtable parity gap. Formula refs constrained to Number/Date.</p>
-<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> AI Categorize / T-shirt Size output dropdowns; AI Summary outputs text. None can be referenced in a Formula CF, so AI classifications can't drive computed metrics.</p>
+<p style="border-top:1px dashed #e7e4dc; padding-top:6px; margin-top:6px;"><b style="color:#6647F0;">AI CF connection:</b> AI Categorize / T-shirt Size output dropdowns; AI Summary outputs text. None can be referenced in a Formula CF, so AI classifications can't drive computed metrics.</p>
 </div>
 
 <div class="gap">
 <h4><span class="pill" style="background:#FF8B6A1A; color:#FF8B6A; font-weight:600; margin-right:8px;">AI-CONSTRAINING</span><a href="https://feedback.clickup.com/feature-requests/p/allow-adding-formula-custom-field-type-to-multiple-locations" target="_blank" rel="noopener">Allow adding formula CFs to multiple locations ('Use field from library')</a> <span class="muted" style="font-weight:400; font-size:12px;">· 79 votes · Open</span></h4>
 <p class="quote">"Formula CFs don't appear in 'Use field from library'."</p>
 <p>Direct evidence the Add-existing surface has type-class blind spots.</p>
-<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Same architectural risk applies to AI CFs. Verify AI CF variants appear in 'Use field from library' before shipping the Add-existing redesign.</p>
+<p style="border-top:1px dashed #e7e4dc; padding-top:6px; margin-top:6px;"><b style="color:#6647F0;">AI CF connection:</b> Same architectural risk applies to AI CFs. Verify AI CF variants appear in 'Use field from library' before shipping the Add-existing redesign.</p>
 </div>
 
 <div class="gap">
 <h4><span class="pill" style="background:#FF8B6A1A; color:#FF8B6A; font-weight:600; margin-right:8px;">AI-CONSTRAINING</span><a href="https://feedback.clickup.com/feature-requests/p/custom-fields-in-free-plan" target="_blank" rel="noopener">Custom Fields in Free Plan (60-use cap)</a> <span class="muted" style="font-weight:400; font-size:12px;">· 238 votes · Open since 2019</span></h4>
 <p class="quote">"Every change counts as a 'use.'"</p>
 <p>Free plan caps CFs at 60 'uses' (every change counts). Multiple comments report churn to Notion.</p>
-<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> The new user AI CF first experience IS this Free plan. Each AI run is also a credit; AI CFs stack two billing surprises in the same flow. Education + cost transparency need pairing.</p>
+<p style="border-top:1px dashed #e7e4dc; padding-top:6px; margin-top:6px;"><b style="color:#6647F0;">AI CF connection:</b> The new user AI CF first experience IS this Free plan. Each AI run is also a credit; AI CFs stack two billing surprises in the same flow. Education + cost transparency need pairing.</p>
 </div>
 
 <h2>7. Watchlist confirmations</h2>

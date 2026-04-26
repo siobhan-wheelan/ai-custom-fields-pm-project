@@ -2,40 +2,215 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Public Sentiment Research — AI Custom Fields (Outside Canny) — v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Sometype+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif; max-width: 920px; margin: 40px auto; padding: 0 24px 80px; color: #1a1a1a; line-height: 1.55; }
-  h1 { font-size: 28px; margin: 0 0 4px; }
-  h2 { font-size: 20px; margin: 36px 0 10px; padding-top: 20px; border-top: 1px solid #e6e6e6; }
-  h3 { font-size: 16px; margin: 24px 0 8px; }
-  .subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
-  .meta { background: #f5f6f8; border-left: 3px solid #7c3aed; padding: 14px 18px; font-size: 14px; margin: 18px 0 24px; border-radius: 4px; }
-  .changelog { background: #fef9e7; border-left: 3px solid #d97706; padding: 12px 16px; font-size: 13px; margin: 14px 0 24px; border-radius: 4px; }
+  :root {
+    --proto-bg: #f8f6f2;
+    --proto-bg-alt: #fffdfa;
+    --proto-ink: #0f172a;
+    --proto-ink-soft: #475569;
+    --proto-muted: #94a3b8;
+    --proto-rule: #e7e4dc;
+    --proto-rule-strong: #d6d2c7;
+    --accent: #6647F0;
+    --accent-soft: rgba(102, 71, 240, 0.07);
+    --accent-soft-hover: rgba(102, 71, 240, 0.14);
+    --pink: #FF02F0;
+    --orange: #FC6D2D;
+    --blue: #0091FF;
+    --green: #22C55E;
+    --green-soft: rgba(34, 197, 94, 0.10);
+    --red: #EF4444;
+    --red-soft: rgba(239, 68, 68, 0.08);
+    --amber: #d97706;
+    --amber-soft: rgba(217, 119, 6, 0.10);
+    --font-head: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Sometype Mono', ui-monospace, SFMono-Regular, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    background: var(--proto-bg);
+    color: var(--proto-ink-soft);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 56px 32px 96px;
+  }
+  h1 {
+    font-family: var(--font-head);
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.018em;
+    line-height: 1.1;
+    margin: 0 0 8px;
+    color: var(--proto-ink);
+  }
+  h1 span {
+    font-family: var(--font-head) !important;
+    font-size: 18px !important;
+    color: var(--accent) !important;
+    font-weight: 500 !important;
+  }
+  h2 {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    line-height: 1.25;
+    margin: 56px 0 14px;
+    padding-top: 24px;
+    border-top: 1px solid var(--proto-rule);
+    color: var(--proto-ink);
+  }
+  h2:first-of-type { border-top: 0; padding-top: 0; margin-top: 36px; }
+  h3 {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 28px 0 8px;
+    color: var(--proto-ink);
+  }
+  p { margin: 10px 0; }
+  strong { color: var(--proto-ink); font-weight: 600; }
+  em { color: var(--proto-ink); }
   ul, ol { padding-left: 22px; }
   li { margin: 6px 0; }
-  blockquote { margin: 8px 0; padding: 10px 16px; border-left: 3px solid #7c3aed; background: #faf9ff; font-style: italic; color: #2a2a2a; border-radius: 0 4px 4px 0; }
-  blockquote .src { display: block; font-style: normal; font-size: 12px; color: #666; margin-top: 6px; }
-  table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 14px 0; }
-  th, td { border: 1px solid #e0e0e0; padding: 8px 10px; text-align: left; vertical-align: top; }
-  th { background: #f5f6f8; font-weight: 600; }
-  td.neg { background: #fdf2f2; } td.pos { background: #f1faf3; } td.mix { background: #fff8eb; } td.neu { background: #f5f6f8; }
-  .chart-wrap { margin: 20px 0 28px; padding: 16px; background: #fafbfc; border: 1px solid #e6e6e6; border-radius: 6px; }
-  .chart-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-  .chart-caption { font-size: 12px; color: #666; margin-top: 6px; }
-  a { color: #6d28d9; text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .pill { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; background: #eee; margin-right: 4px; }
-  .pill.pos { background: #d6f3df; color: #14532d; }
-  .pill.neg { background: #fbdada; color: #7f1d1d; }
-  .pill.mix { background: #fdebc4; color: #78350f; }
-  .pill.neu { background: #e3e6ea; color: #374151; }
-  .small { font-size: 12px; color: #555; }
-  .verbatim-flag { font-size: 11px; color: #6d28d9; font-weight: 600; }
+  .subtitle {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--proto-muted);
+    margin-bottom: 32px;
+  }
+  .meta {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 14px 20px;
+    font-size: 14px;
+    margin: 20px 0 28px;
+    border-radius: 0 6px 6px 0;
+    color: var(--proto-ink-soft);
+  }
+  .changelog {
+    background: var(--amber-soft);
+    border-left: 3px solid var(--amber);
+    padding: 12px 18px;
+    font-size: 13px;
+    margin: 14px 0 24px;
+    border-radius: 0 6px 6px 0;
+    color: var(--proto-ink-soft);
+  }
+  blockquote {
+    margin: 12px 0;
+    padding: 12px 18px;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    font-style: italic;
+    color: var(--proto-ink);
+    border-radius: 0 6px 6px 0;
+  }
+  blockquote .src {
+    display: block;
+    font-style: normal;
+    font-size: 12px;
+    color: var(--proto-muted);
+    margin-top: 8px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13px;
+    margin: 16px 0;
+  }
+  th, td {
+    border: 1px solid var(--proto-rule);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--proto-bg-alt);
+    font-weight: 600;
+    font-family: var(--font-body);
+    color: var(--proto-ink);
+  }
+  td.neg { background: var(--red-soft); }
+  td.pos { background: var(--green-soft); }
+  td.mix { background: var(--amber-soft); }
+  td.neu { background: var(--proto-bg-alt); }
+  .chart-wrap {
+    margin: 20px 0 28px;
+    padding: 18px;
+    background: var(--proto-bg-alt);
+    border: 1px solid var(--proto-rule);
+    border-radius: 8px;
+  }
+  .chart-title {
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--proto-ink);
+  }
+  .chart-caption {
+    font-size: 12px;
+    color: var(--proto-muted);
+    margin-top: 8px;
+  }
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  a:hover { border-bottom-color: var(--accent); }
+  .pill {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    padding: 2px 9px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.05);
+    color: var(--proto-muted);
+    margin-right: 4px;
+    text-transform: uppercase;
+  }
+  .pill.pos { background: var(--green-soft); color: #14532d; }
+  .pill.neg { background: var(--red-soft); color: #7f1d1d; }
+  .pill.mix { background: var(--amber-soft); color: #78350f; }
+  .pill.neu { background: rgba(15, 23, 42, 0.06); color: #374151; }
+  .small {
+    font-size: 12px;
+    color: var(--proto-muted);
+  }
+  .verbatim-flag {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
 </style>
 </head>
 <body>
 
-<h1>Public Sentiment — ClickUp AI Custom Fields <span style="font-size: 16px; color: #7c3aed; font-weight: 500;">— v2</span></h1>
+<h1>Public Sentiment — ClickUp AI Custom Fields <span>— v2</span></h1>
 <div class="subtitle">Research scan of public internet sources outside the ClickUp Canny board. Companion to the Canny feedback report.</div>
 
 <div class="changelog">
@@ -55,7 +230,7 @@
   <li><strong>Overall sentiment toward Custom Fields is positive; sentiment toward AI Custom Fields is markedly more polarised.</strong> Across the corpus, generic Custom Fields earn praise as a defining ClickUp strength ("the library of custom fields is massive — dropdowns, currency, email, ratings, formulas"), while AI variants split roughly even between positive, mixed, and negative voices.</li>
   <li><strong>The dominant negative theme is capability-gap, not bugs.</strong> Power users repeatedly run into the limits of what AI Fields can do — most often they want AI to drive numbers, dates, and conditional logic, not just dropdowns and long text. One user verbatim: <em>"Brain cannot upload PDFs or Word docs for analysis."</em></li>
   <li><strong>Billing/credit anxiety is the second-largest negative theme</strong> and shows up in voices that otherwise like the product. The 250-uses/month cap and the credit "scarcity mindset" are quoted directly: <em>"Credits create a scarcity mindset."</em></li>
-  <li><strong>Praise clusters around the Brain MAX launch and onboarding-assist use case.</strong> Brain MAX commenters describe the pre-existing pain in the user's own words — <em>"Bouncing between ChatGPT, Claude, Perplexity, copying context like maniacs"</em> — and the strongest new-user positive is verbatim Capterra: <em>"Brain AI was extremely helpful in setting up what I could figure out."</em></li>
+  <li><strong>Praise clusters around the Brain MAX launch and onboarding-assist use case.</strong> Brain MAX commenters describe the pre-existing pain in the user's own words — <em>"Bouncing between ChatGPT, Claude, Perplexity, copying context like maniacs"</em> — and the strongest new user positive is verbatim Capterra: <em>"Brain AI was extremely helpful in setting up what I could figure out."</em></li>
   <li><strong>New user vs. power-user friction is qualitatively different.</strong> New users describe ClickUp as overwhelming and cluttered (<em>"Entering ClickUp was like entering a sophisticated control room filled with knobs"</em>); power users describe specific feature gaps and admin-level frustrations. Both pain shapes need different interventions.</li>
   <li><strong>Competitor comparisons consistently frame Notion AI as smoother and Airtable as more "AI-native."</strong> ClickUp wins on integration depth (data lives where work lives); it loses on fluidity of the AI primitive itself.</li>
   <li><strong>Public-internet signal substantially overlaps with Canny but exposes one large silent-friction theme:</strong> credit/billing surprise. Independent blog headlines now reduce this to one phrase — <em>"the $9 AI add-on that doubles your bill"</em> — but Canny posts mostly route around it.</li>
@@ -90,7 +265,7 @@
       .axis { stroke: #888; stroke-width: 1; }
       .lbl { font: 12px -apple-system, sans-serif; fill: #333; }
       .lblx { font: 11px -apple-system, sans-serif; fill: #555; }
-      .val { font: 11px -apple-system, sans-serif; fill: #1a1a1a; }
+      .val { font: 11px -apple-system, sans-serif; fill: #0f172a; }
       .ttl { font: 12px -apple-system, sans-serif; fill: #666; }
     </style>
     <line class="axis" x1="60" y1="20" x2="60" y2="220"/>
@@ -100,27 +275,27 @@
     <text class="lblx" x="50" y="123" text-anchor="end">10</text>
     <text class="lblx" x="50" y="73" text-anchor="end">15</text>
     <text class="lblx" x="50" y="23" text-anchor="end">20</text>
-    <rect x="100" y="120" width="40" height="100" fill="#7c3aed"/>
+    <rect x="100" y="120" width="40" height="100" fill="#6647F0"/>
     <rect x="142" y="150" width="40" height="70" fill="#a78bfa"/>
     <text class="val" x="120" y="115" text-anchor="middle">10</text>
     <text class="val" x="162" y="145" text-anchor="middle">7</text>
     <text class="lbl" x="141" y="240" text-anchor="middle">Positive</text>
-    <rect x="240" y="120" width="40" height="100" fill="#7c3aed"/>
+    <rect x="240" y="120" width="40" height="100" fill="#6647F0"/>
     <rect x="282" y="130" width="40" height="90" fill="#a78bfa"/>
     <text class="val" x="260" y="115" text-anchor="middle">10</text>
     <text class="val" x="302" y="125" text-anchor="middle">9</text>
     <text class="lbl" x="281" y="240" text-anchor="middle">Mixed</text>
-    <rect x="380" y="60" width="40" height="160" fill="#7c3aed"/>
+    <rect x="380" y="60" width="40" height="160" fill="#6647F0"/>
     <rect x="422" y="100" width="40" height="120" fill="#a78bfa"/>
     <text class="val" x="400" y="55" text-anchor="middle">16</text>
     <text class="val" x="442" y="95" text-anchor="middle">12</text>
     <text class="lbl" x="421" y="240" text-anchor="middle">Negative</text>
-    <rect x="520" y="200" width="40" height="20" fill="#7c3aed"/>
+    <rect x="520" y="200" width="40" height="20" fill="#6647F0"/>
     <rect x="562" y="220" width="40" height="0" fill="#a78bfa"/>
     <text class="val" x="540" y="195" text-anchor="middle">2</text>
     <text class="val" x="582" y="215" text-anchor="middle">0</text>
     <text class="lbl" x="561" y="240" text-anchor="middle">Neutral</text>
-    <rect x="600" y="30" width="14" height="14" fill="#7c3aed"/>
+    <rect x="600" y="30" width="14" height="14" fill="#6647F0"/>
     <text class="ttl" x="620" y="42">Overall corpus (n=38)</text>
     <rect x="600" y="50" width="14" height="14" fill="#a78bfa"/>
     <text class="ttl" x="620" y="62">AI-specific subset (n=28)</text>
@@ -139,18 +314,18 @@
   <svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg">
     <style>
       .lbl { font: 12px -apple-system, sans-serif; fill: #333; }
-      .val { font: 11px -apple-system, sans-serif; fill: #1a1a1a; }
+      .val { font: 11px -apple-system, sans-serif; fill: #0f172a; }
     </style>
-    <rect x="160" y="20"  width="240" height="20" fill="#7c3aed"/><text class="lbl" x="155" y="35" text-anchor="end">Capability-gap</text><text class="val" x="406" y="35">12</text>
-    <rect x="160" y="50"  width="240" height="20" fill="#8b5cf6"/><text class="lbl" x="155" y="65" text-anchor="end">Praise</text><text class="val" x="406" y="65">12</text>
-    <rect x="160" y="80"  width="200" height="20" fill="#a78bfa"/><text class="lbl" x="155" y="95" text-anchor="end">Output-quality</text><text class="val" x="366" y="95">10</text>
-    <rect x="160" y="110" width="180" height="20" fill="#a78bfa"/><text class="lbl" x="155" y="125" text-anchor="end">Setup-friction</text><text class="val" x="346" y="125">9</text>
-    <rect x="160" y="140" width="160" height="20" fill="#c4b5fd"/><text class="lbl" x="155" y="155" text-anchor="end">Billing/credit</text><text class="val" x="326" y="155">8</text>
-    <rect x="160" y="170" width="120" height="20" fill="#c4b5fd"/><text class="lbl" x="155" y="185" text-anchor="end">Discoverability</text><text class="val" x="286" y="185">6</text>
-    <rect x="160" y="200" width="120" height="20" fill="#c4b5fd"/><text class="lbl" x="155" y="215" text-anchor="end">Competitor-compare</text><text class="val" x="286" y="215">6</text>
-    <rect x="160" y="230" width="80"  height="20" fill="#ddd6fe"/><text class="lbl" x="155" y="245" text-anchor="end">Power-user-only</text><text class="val" x="246" y="245">4</text>
-    <rect x="160" y="260" width="40"  height="20" fill="#ddd6fe"/><text class="lbl" x="155" y="275" text-anchor="end">Workaround</text><text class="val" x="206" y="275">2</text>
-    <rect x="160" y="290" width="0"   height="20" fill="#ede9fe"/><text class="lbl" x="155" y="305" text-anchor="end">Mobile (non-Canny)</text><text class="val" x="166" y="305">0</text>
+    <rect x="160" y="20"  width="240" height="20" fill="#6647F0"/><text class="lbl" x="155" y="35" text-anchor="end">Capability-gap</text><text class="val" x="406" y="35">12</text>
+    <rect x="160" y="50"  width="240" height="20" fill="#22C55E"/><text class="lbl" x="155" y="65" text-anchor="end">Praise</text><text class="val" x="406" y="65">12</text>
+    <rect x="160" y="80"  width="200" height="20" fill="#FFB13B"/><text class="lbl" x="155" y="95" text-anchor="end">Output-quality</text><text class="val" x="366" y="95">10</text>
+    <rect x="160" y="110" width="180" height="20" fill="#FF8B6A"/><text class="lbl" x="155" y="125" text-anchor="end">Setup-friction</text><text class="val" x="346" y="125">9</text>
+    <rect x="160" y="140" width="160" height="20" fill="#FF5C8D"/><text class="lbl" x="155" y="155" text-anchor="end">Billing/credit</text><text class="val" x="326" y="155">8</text>
+    <rect x="160" y="170" width="120" height="20" fill="#0091FF"/><text class="lbl" x="155" y="185" text-anchor="end">Discoverability</text><text class="val" x="286" y="185">6</text>
+    <rect x="160" y="200" width="120" height="20" fill="#A78BFA"/><text class="lbl" x="155" y="215" text-anchor="end">Competitor-compare</text><text class="val" x="286" y="215">6</text>
+    <rect x="160" y="230" width="80"  height="20" fill="#9CA3AF"/><text class="lbl" x="155" y="245" text-anchor="end">Power-user-only</text><text class="val" x="246" y="245">4</text>
+    <rect x="160" y="260" width="40"  height="20" fill="#CBD5E1"/><text class="lbl" x="155" y="275" text-anchor="end">Workaround</text><text class="val" x="206" y="275">2</text>
+    <rect x="160" y="290" width="0"   height="20" fill="#EF4444"/><text class="lbl" x="155" y="305" text-anchor="end">Mobile (non-Canny)</text><text class="val" x="166" y="305">0</text>
   </svg>
   <div class="chart-caption">Capability-gap and praise tie for first. Output-quality and setup-friction are close behind. Mobile is empty here only because all mobile-specific signal lives on Canny.</div>
 </div>
@@ -222,13 +397,13 @@
   <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg">
     <style>
       .lbl { font: 12px -apple-system, sans-serif; fill: #333; }
-      .val { font: 11px -apple-system, sans-serif; fill: #1a1a1a; }
+      .val { font: 11px -apple-system, sans-serif; fill: #0f172a; }
     </style>
-    <rect x="160" y="20"  width="180" height="22" fill="#7c3aed"/><text class="lbl" x="155" y="36" text-anchor="end">Notion / Notion AI</text><text class="val" x="345" y="36">3</text>
-    <rect x="160" y="50"  width="120" height="22" fill="#8b5cf6"/><text class="lbl" x="155" y="66" text-anchor="end">Airtable</text><text class="val" x="285" y="66">2</text>
-    <rect x="160" y="80"  width="60"  height="22" fill="#a78bfa"/><text class="lbl" x="155" y="96" text-anchor="end">Asana</text><text class="val" x="225" y="96">1</text>
-    <rect x="160" y="110" width="60"  height="22" fill="#a78bfa"/><text class="lbl" x="155" y="126" text-anchor="end">Monday</text><text class="val" x="225" y="126">1</text>
-    <rect x="160" y="140" width="120" height="22" fill="#c4b5fd"/><text class="lbl" x="155" y="156" text-anchor="end">ChatGPT (as substitute)</text><text class="val" x="285" y="156">2</text>
+    <rect x="160" y="20"  width="180" height="22" fill="#6647F0"/><text class="lbl" x="155" y="36" text-anchor="end">Notion / Notion AI</text><text class="val" x="345" y="36">3</text>
+    <rect x="160" y="50"  width="120" height="22" fill="#FFB13B"/><text class="lbl" x="155" y="66" text-anchor="end">Airtable</text><text class="val" x="285" y="66">2</text>
+    <rect x="160" y="80"  width="60"  height="22" fill="#0091FF"/><text class="lbl" x="155" y="96" text-anchor="end">Asana</text><text class="val" x="225" y="96">1</text>
+    <rect x="160" y="110" width="60"  height="22" fill="#FF8B6A"/><text class="lbl" x="155" y="126" text-anchor="end">Monday</text><text class="val" x="225" y="126">1</text>
+    <rect x="160" y="140" width="120" height="22" fill="#A78BFA"/><text class="lbl" x="155" y="156" text-anchor="end">ChatGPT (as substitute)</text><text class="val" x="285" y="156">2</text>
   </svg>
   <div class="chart-caption">Notion is the most-named comparator. Airtable is named less often but with more pointed criticism of ClickUp's data model.</div>
 </div>
@@ -248,34 +423,34 @@
   <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg">
     <style>
       .lbl { font: 12px -apple-system, sans-serif; fill: #333; }
-      .val { font: 11px -apple-system, sans-serif; fill: #1a1a1a; }
+      .val { font: 11px -apple-system, sans-serif; fill: #0f172a; }
       .ttl { font: 12px -apple-system, sans-serif; fill: #666; }
     </style>
     <text class="lbl" x="160" y="20" text-anchor="end">Setup-friction</text>
-    <rect x="170" y="6" width="120" height="14" fill="#7c3aed"/><text class="val" x="295" y="18">5</text>
+    <rect x="170" y="6" width="120" height="14" fill="#6647F0"/><text class="val" x="295" y="18">5</text>
     <rect x="170" y="22" width="60" height="14" fill="#a78bfa"/><text class="val" x="235" y="34">2</text>
 
     <text class="lbl" x="160" y="60" text-anchor="end">Discoverability</text>
-    <rect x="170" y="46" width="60" height="14" fill="#7c3aed"/><text class="val" x="235" y="58">3</text>
+    <rect x="170" y="46" width="60" height="14" fill="#6647F0"/><text class="val" x="235" y="58">3</text>
     <rect x="170" y="62" width="60" height="14" fill="#a78bfa"/><text class="val" x="235" y="74">3</text>
 
     <text class="lbl" x="160" y="100" text-anchor="end">Capability-gap</text>
-    <rect x="170" y="86" width="20" height="14" fill="#7c3aed"/><text class="val" x="195" y="98">1</text>
+    <rect x="170" y="86" width="20" height="14" fill="#6647F0"/><text class="val" x="195" y="98">1</text>
     <rect x="170" y="102" width="220" height="14" fill="#a78bfa"/><text class="val" x="395" y="114">11</text>
 
     <text class="lbl" x="160" y="140" text-anchor="end">Output-quality</text>
-    <rect x="170" y="126" width="20" height="14" fill="#7c3aed"/><text class="val" x="195" y="138">1</text>
+    <rect x="170" y="126" width="20" height="14" fill="#6647F0"/><text class="val" x="195" y="138">1</text>
     <rect x="170" y="142" width="180" height="14" fill="#a78bfa"/><text class="val" x="355" y="154">9</text>
 
     <text class="lbl" x="160" y="180" text-anchor="end">Billing/credit</text>
-    <rect x="170" y="166" width="20" height="14" fill="#7c3aed"/><text class="val" x="195" y="178">1</text>
+    <rect x="170" y="166" width="20" height="14" fill="#6647F0"/><text class="val" x="195" y="178">1</text>
     <rect x="170" y="182" width="140" height="14" fill="#a78bfa"/><text class="val" x="315" y="194">7</text>
 
     <text class="lbl" x="160" y="220" text-anchor="end">Praise</text>
-    <rect x="170" y="206" width="40" height="14" fill="#7c3aed"/><text class="val" x="215" y="218">2</text>
+    <rect x="170" y="206" width="40" height="14" fill="#6647F0"/><text class="val" x="215" y="218">2</text>
     <rect x="170" y="222" width="200" height="14" fill="#a78bfa"/><text class="val" x="375" y="234">10</text>
 
-    <rect x="500" y="6" width="14" height="14" fill="#7c3aed"/><text class="ttl" x="520" y="18">New user (n≈6)</text>
+    <rect x="500" y="6" width="14" height="14" fill="#6647F0"/><text class="ttl" x="520" y="18">New user (n≈6)</text>
     <rect x="500" y="26" width="14" height="14" fill="#a78bfa"/><text class="ttl" x="520" y="38">Power user (n≈25)</text>
   </svg>
   <div class="chart-caption">New users complain about setup friction and discoverability. Power users complain about capability gaps, output quality, and billing — and provide most of the praise.</div>
@@ -304,17 +479,17 @@
   <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg">
     <style>
       .lbl { font: 12px -apple-system, sans-serif; fill: #333; }
-      .val { font: 11px -apple-system, sans-serif; fill: #1a1a1a; }
+      .val { font: 11px -apple-system, sans-serif; fill: #0f172a; }
     </style>
-    <rect x="200" y="20"  width="280" height="20" fill="#7c3aed"/><text class="lbl" x="195" y="35" text-anchor="end">Independent blogs / Medium / Substack</text><text class="val" x="486" y="35">14</text>
-    <rect x="200" y="50"  width="100" height="20" fill="#8b5cf6"/><text class="lbl" x="195" y="65" text-anchor="end">Capterra</text><text class="val" x="306" y="65">5</text>
-    <rect x="200" y="80"  width="80"  height="20" fill="#a78bfa"/><text class="lbl" x="195" y="95" text-anchor="end">Make / Zapier / ProcessDriven forums</text><text class="val" x="286" y="95">4</text>
-    <rect x="200" y="110" width="80"  height="20" fill="#a78bfa"/><text class="lbl" x="195" y="125" text-anchor="end">Product Hunt</text><text class="val" x="286" y="125">4</text>
-    <rect x="200" y="140" width="60"  height="20" fill="#c4b5fd"/><text class="lbl" x="195" y="155" text-anchor="end">Reddit (via snippets)</text><text class="val" x="266" y="155">3</text>
-    <rect x="200" y="170" width="40"  height="20" fill="#c4b5fd"/><text class="lbl" x="195" y="185" text-anchor="end">G2</text><text class="val" x="246" y="185">2</text>
-    <rect x="200" y="200" width="40"  height="20" fill="#c4b5fd"/><text class="lbl" x="195" y="215" text-anchor="end">TrustRadius</text><text class="val" x="246" y="215">2</text>
-    <rect x="200" y="230" width="20"  height="20" fill="#ddd6fe"/><text class="lbl" x="195" y="245" text-anchor="end">LinkedIn (headline-only)</text><text class="val" x="226" y="245">1</text>
-    <rect x="200" y="260" width="0"   height="14" fill="#ede9fe"/><text class="lbl" x="195" y="272" text-anchor="end">X / Twitter / HN</text><text class="val" x="206" y="272">0</text>
+    <rect x="200" y="20"  width="280" height="20" fill="#6647F0"/><text class="lbl" x="195" y="35" text-anchor="end">Independent blogs / Medium / Substack</text><text class="val" x="486" y="35">14</text>
+    <rect x="200" y="50"  width="100" height="20" fill="#FFB13B"/><text class="lbl" x="195" y="65" text-anchor="end">Capterra</text><text class="val" x="306" y="65">5</text>
+    <rect x="200" y="80"  width="80"  height="20" fill="#FF8B6A"/><text class="lbl" x="195" y="95" text-anchor="end">Make / Zapier / ProcessDriven forums</text><text class="val" x="286" y="95">4</text>
+    <rect x="200" y="110" width="80"  height="20" fill="#FF5C8D"/><text class="lbl" x="195" y="125" text-anchor="end">Product Hunt</text><text class="val" x="286" y="125">4</text>
+    <rect x="200" y="140" width="60"  height="20" fill="#0091FF"/><text class="lbl" x="195" y="155" text-anchor="end">Reddit (via snippets)</text><text class="val" x="266" y="155">3</text>
+    <rect x="200" y="170" width="40"  height="20" fill="#A78BFA"/><text class="lbl" x="195" y="185" text-anchor="end">G2</text><text class="val" x="246" y="185">2</text>
+    <rect x="200" y="200" width="40"  height="20" fill="#22C55E"/><text class="lbl" x="195" y="215" text-anchor="end">TrustRadius</text><text class="val" x="246" y="215">2</text>
+    <rect x="200" y="230" width="20"  height="20" fill="#9CA3AF"/><text class="lbl" x="195" y="245" text-anchor="end">LinkedIn (headline-only)</text><text class="val" x="226" y="245">1</text>
+    <rect x="200" y="260" width="0"   height="14" fill="#CBD5E1"/><text class="lbl" x="195" y="272" text-anchor="end">X / Twitter / HN</text><text class="val" x="206" y="272">0</text>
   </svg>
   <div class="chart-caption">Independent blogs are the largest visible source. Direct user voices on Reddit and X are under-represented — a measurement gap, not a conversational vacuum.</div>
 </div>
