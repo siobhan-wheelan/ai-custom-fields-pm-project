@@ -204,6 +204,48 @@
     transition: transform 0.18s;
   }
   .card:hover .card-cta svg { transform: translateX(3px); }
+  .research {
+    margin: 64px 0 0;
+    padding: 28px 32px;
+    background: var(--proto-bg-alt);
+    border: 1px solid var(--proto-rule);
+    border-radius: 12px;
+  }
+  .research h2 {
+    font-family: var(--font-head);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--proto-muted);
+    font-weight: 600;
+    margin: 0 0 14px;
+  }
+  .research p {
+    margin: 0 0 16px;
+    color: var(--proto-ink-soft);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .research ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .research li {
+    font-size: 15px;
+    color: var(--proto-ink-soft);
+    line-height: 1.55;
+  }
+  .research a {
+    color: var(--accent);
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .research a:hover { border-bottom-color: var(--accent); }
   footer {
     margin-top: 72px;
     padding-top: 28px;
@@ -339,6 +381,15 @@
       </span>
     </a>
 
+  </div>
+
+  <div class="research">
+    <h2>Source research</h2>
+    <p>The audit findings, strategic reframe, and roadmap above are triangulated against direct evidence from ClickUp's own customer voice — Canny feature requests and public sentiment across G2, Capterra, Reddit, and Medium.</p>
+    <ul>
+      <li><a href="research-canny.html?utm_campaign=cu-pm-interview&utm_source=interactive-prototype&utm_medium=research-link&utm_content=cover-page" target="_blank" rel="noopener">Canny signal extraction →</a> &nbsp;121 posts about Custom Fields from ClickUp's own feedback board, 20 AI-tagged. Validates every audit finding with vote-count evidence.</li>
+      <li><a href="research-sentiment.html?utm_campaign=cu-pm-interview&utm_source=interactive-prototype&utm_medium=research-link&utm_content=cover-page" target="_blank" rel="noopener">Public sentiment analysis →</a> &nbsp;G2, Capterra, Reddit, Medium, blogs. Surfaces the new-user vs. power-user friction split and the silent billing-anxiety theme.</li>
+    </ul>
   </div>
 
   <footer>

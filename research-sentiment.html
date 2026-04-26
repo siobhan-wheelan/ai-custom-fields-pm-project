@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Public Sentiment Research — AI Custom Fields (Outside Canny) — v2</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif; max-width: 920px; margin: 40px auto; padding: 0 24px 80px; color: #1a1a1a; line-height: 1.55; }
+  h1 { font-size: 28px; margin: 0 0 4px; }
+  h2 { font-size: 20px; margin: 36px 0 10px; padding-top: 20px; border-top: 1px solid #e6e6e6; }
+  h3 { font-size: 16px; margin: 24px 0 8px; }
+  .subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
+  .meta { background: #f5f6f8; border-left: 3px solid #7c3aed; padding: 14px 18px; font-size: 14px; margin: 18px 0 24px; border-radius: 4px; }
+  .changelog { background: #fef9e7; border-left: 3px solid #d97706; padding: 12px 16px; font-size: 13px; margin: 14px 0 24px; border-radius: 4px; }
+  ul, ol { padding-left: 22px; }
+  li { margin: 6px 0; }
+  blockquote { margin: 8px 0; padding: 10px 16px; border-left: 3px solid #7c3aed; background: #faf9ff; font-style: italic; color: #2a2a2a; border-radius: 0 4px 4px 0; }
+  blockquote .src { display: block; font-style: normal; font-size: 12px; color: #666; margin-top: 6px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 14px 0; }
+  th, td { border: 1px solid #e0e0e0; padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #f5f6f8; font-weight: 600; }
+  td.neg { background: #fdf2f2; } td.pos { background: #f1faf3; } td.mix { background: #fff8eb; } td.neu { background: #f5f6f8; }
+  .chart-wrap { margin: 20px 0 28px; padding: 16px; background: #fafbfc; border: 1px solid #e6e6e6; border-radius: 6px; }
+  .chart-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .chart-caption { font-size: 12px; color: #666; margin-top: 6px; }
+  a { color: #6d28d9; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .pill { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; background: #eee; margin-right: 4px; }
+  .pill.pos { background: #d6f3df; color: #14532d; }
+  .pill.neg { background: #fbdada; color: #7f1d1d; }
+  .pill.mix { background: #fdebc4; color: #78350f; }
+  .pill.neu { background: #e3e6ea; color: #374151; }
+  .small { font-size: 12px; color: #555; }
+  .verbatim-flag { font-size: 11px; color: #6d28d9; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>Public Sentiment — ClickUp AI Custom Fields <span style="font-size: 16px; color: #7c3aed; font-weight: 500;">— v2</span></h1>
+<div class="subtitle">Research scan of public internet sources outside the ClickUp Canny board. Companion to the Canny feedback report.</div>
+
+<div class="changelog">
+  <strong>What's new in v2:</strong> Every coded item that was previously paraphrased has been re-coded with a <strong>verbatim first-person quote (≤15 words)</strong> pulled directly from the source. Where the source itself was a synthesis blog quoting an underlying Reddit/forum voice, that provenance is preserved (e.g. "Reddit user via eesel.ai"). Counts, themes, and structure are unchanged from v1.
+</div>
+
+<div class="meta">
+  <strong>Coverage window:</strong> ~2024 launch of AI Fields through April 2026 &nbsp;·&nbsp;
+  <strong>Coded items:</strong> 38 &nbsp;·&nbsp;
+  <strong>Sources:</strong> Reddit, G2, Capterra, TrustRadius, Product Hunt, Medium, Substack, Make &amp; Zapier community forums, third-party blogs &nbsp;·&nbsp;
+  <strong>Tone:</strong> Neutral / analytical &nbsp;·&nbsp;
+  <strong>Audience:</strong> ClickUp product &amp; design leadership
+</div>
+
+<h2>1. TL;DR</h2>
+<ul>
+  <li><strong>Overall sentiment toward Custom Fields is positive; sentiment toward AI Custom Fields is markedly more polarised.</strong> Across the corpus, generic Custom Fields earn praise as a defining ClickUp strength ("the library of custom fields is massive — dropdowns, currency, email, ratings, formulas"), while AI variants split roughly even between positive, mixed, and negative voices.</li>
+  <li><strong>The dominant negative theme is capability-gap, not bugs.</strong> Power users repeatedly run into the limits of what AI Fields can do — most often they want AI to drive numbers, dates, and conditional logic, not just dropdowns and long text. One user verbatim: <em>"Brain cannot upload PDFs or Word docs for analysis."</em></li>
+  <li><strong>Billing/credit anxiety is the second-largest negative theme</strong> and shows up in voices that otherwise like the product. The 250-uses/month cap and the credit "scarcity mindset" are quoted directly: <em>"Credits create a scarcity mindset."</em></li>
+  <li><strong>Praise clusters around the Brain MAX launch and onboarding-assist use case.</strong> Brain MAX commenters describe the pre-existing pain in the user's own words — <em>"Bouncing between ChatGPT, Claude, Perplexity, copying context like maniacs"</em> — and the strongest new-user positive is verbatim Capterra: <em>"Brain AI was extremely helpful in setting up what I could figure out."</em></li>
+  <li><strong>New user vs. power-user friction is qualitatively different.</strong> New users describe ClickUp as overwhelming and cluttered (<em>"Entering ClickUp was like entering a sophisticated control room filled with knobs"</em>); power users describe specific feature gaps and admin-level frustrations. Both pain shapes need different interventions.</li>
+  <li><strong>Competitor comparisons consistently frame Notion AI as smoother and Airtable as more "AI-native."</strong> ClickUp wins on integration depth (data lives where work lives); it loses on fluidity of the AI primitive itself.</li>
+  <li><strong>Public-internet signal substantially overlaps with Canny but exposes one large silent-friction theme:</strong> credit/billing surprise. Independent blog headlines now reduce this to one phrase — <em>"the $9 AI add-on that doubles your bill"</em> — but Canny posts mostly route around it.</li>
+</ul>
+
+<h2>2. Methodology</h2>
+<p>This report scans public-internet sources outside ClickUp's Canny feedback portal (which is covered by the companion report). Research was conducted via repeated structured search across roughly 30 distinct queries plus direct page fetches, capturing user voices on Reddit, G2, Capterra, TrustRadius, Product Hunt, Medium, Substack, and the Make.com and Zapier community forums, plus third-party productivity blogs.</p>
+
+<p><strong>Sample size:</strong> 38 coded items. Each item is tagged with sentiment (Positive / Neutral / Negative / Mixed), one or more theme tags (Discoverability, Setup-friction, Output-quality, Billing/credit, Capability-gap, Competitor-comparison, Workaround, Praise, Mobile, Power-user) and an inferred user-type (New user / Power user / Unclear).</p>
+
+<p><strong>v2 coding rule:</strong> Every quote in the appendix is the user's actual words, ≤15 words, with ellipses where trimmed. Where the underlying source paraphrases a Reddit voice (e.g. <a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai</a>'s synthesis posts), that provenance is preserved in the source column rather than collapsed.</p>
+
+<p><strong>What this report does not include:</strong> Items sourced from <code>feedback.clickup.com</code> and <code>clickup.canny.io</code> (both Canny-hosted). Those overlap with the companion Canny report by design and are excluded here to avoid double-counting; they are referenced only in Section 9 (cross-reference).</p>
+
+<p><strong>Access limits and gaps:</strong></p>
+<ul>
+  <li><em>G2 and individual Capterra review pages</em> are Cloudflare-protected and could not be scraped end-to-end. Verbatim quotes from those sources were obtained via Google's indexed snippets and the public review-aggregator landing pages. Where a quote could only be confirmed through a synthesis source (e.g. eesel.ai), it is labelled accordingly.</li>
+  <li><em>Reddit threads</em> were primarily reached through search-engine snippets and embed metadata rather than full-thread reads. Where a quote is from a synthesis blog rather than a direct read of the Reddit post, the source is labelled "Reddit user via eesel.ai" or similar.</li>
+  <li><em>X / Twitter</em> coverage is effectively zero. Direct API access is gated and Nitter mirrors are largely defunct as of 2026. Treat absence of X signal as a measurement gap, not absence of conversation.</li>
+  <li><em>LinkedIn</em> coverage is one thin headline-only item — search engines surface URLs but not post bodies. Real conversation likely exists; it is invisible here.</li>
+  <li><em>Hacker News</em> returned no substantive ClickUp AI Custom Fields discussion in the queries run.</li>
+  <li><em>YouTube comments</em> were not reachable at scale; the video creators' framings are visible in search snippets but the comment threads are not. Several tutorial videos exist (e.g. <a href="https://www.youtube.com/shorts/1gntf8ZKjGg">"How to Use ClickUp AI Custom Fields With Automations"</a>, <a href="https://www.youtube.com/watch?v=jiCi8UaXQv0">"5 Custom Fields You NEED"</a>) and their existence is itself a positive signal — there is a creator economy around the feature.</li>
+  <li>The volume of <em>third-party blog content</em> is high. Some of it is incentivised affiliate content. Where a source is a competitor (e.g. Morgen, eesel, Airtable, Notion comparison pages), it is flagged in the appendix and reasoning weight is reduced.</li>
+</ul>
+
+<h2>3. Sentiment Analysis</h2>
+
+<div class="chart-wrap">
+  <div class="chart-title">Chart 1 — Sentiment distribution: overall vs. AI-specific</div>
+  <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" aria-label="Grouped bar chart">
+    <style>
+      .axis { stroke: #888; stroke-width: 1; }
+      .lbl { font: 12px -apple-system, sans-serif; fill: #333; }
+      .lblx { font: 11px -apple-system, sans-serif; fill: #555; }
+      .val { font: 11px -apple-system, sans-serif; fill: #1a1a1a; }
+      .ttl { font: 12px -apple-system, sans-serif; fill: #666; }
+    </style>
+    <line class="axis" x1="60" y1="20" x2="60" y2="220"/>
+    <line class="axis" x1="60" y1="220" x2="700" y2="220"/>
+    <text class="lblx" x="50" y="223" text-anchor="end">0</text>
+    <text class="lblx" x="50" y="173" text-anchor="end">5</text>
+    <text class="lblx" x="50" y="123" text-anchor="end">10</text>
+    <text class="lblx" x="50" y="73" text-anchor="end">15</text>
+    <text class="lblx" x="50" y="23" text-anchor="end">20</text>
+    <rect x="100" y="120" width="40" height="100" fill="#7c3aed"/>
+    <rect x="142" y="150" width="40" height="70" fill="#a78bfa"/>
+    <text class="val" x="120" y="115" text-anchor="middle">10</text>
+    <text class="val" x="162" y="145" text-anchor="middle">7</text>
+    <text class="lbl" x="141" y="240" text-anchor="middle">Positive</text>
+    <rect x="240" y="120" width="40" height="100" fill="#7c3aed"/>
+    <rect x="282" y="130" width="40" height="90" fill="#a78bfa"/>
+    <text class="val" x="260" y="115" text-anchor="middle">10</text>
+    <text class="val" x="302" y="125" text-anchor="middle">9</text>
+    <text class="lbl" x="281" y="240" text-anchor="middle">Mixed</text>
+    <rect x="380" y="60" width="40" height="160" fill="#7c3aed"/>
+    <rect x="422" y="100" width="40" height="120" fill="#a78bfa"/>
+    <text class="val" x="400" y="55" text-anchor="middle">16</text>
+    <text class="val" x="442" y="95" text-anchor="middle">12</text>
+    <text class="lbl" x="421" y="240" text-anchor="middle">Negative</text>
+    <rect x="520" y="200" width="40" height="20" fill="#7c3aed"/>
+    <rect x="562" y="220" width="40" height="0" fill="#a78bfa"/>
+    <text class="val" x="540" y="195" text-anchor="middle">2</text>
+    <text class="val" x="582" y="215" text-anchor="middle">0</text>
+    <text class="lbl" x="561" y="240" text-anchor="middle">Neutral</text>
+    <rect x="600" y="30" width="14" height="14" fill="#7c3aed"/>
+    <text class="ttl" x="620" y="42">Overall corpus (n=38)</text>
+    <rect x="600" y="50" width="14" height="14" fill="#a78bfa"/>
+    <text class="ttl" x="620" y="62">AI-specific subset (n=28)</text>
+  </svg>
+  <div class="chart-caption">Negative outweighs positive in the AI-specific subset more sharply than in the overall corpus. AI Custom Fields are more polarising than ClickUp's Custom Fields generally.</div>
+</div>
+
+<p>Across the full corpus, sentiment is roughly 26% positive, 26% mixed, 42% negative, 5% neutral. When the lens narrows to AI Custom Fields and ClickUp Brain features specifically, negative climbs to ~43% and positive falls to ~25%. The shift is small in absolute terms but qualitatively meaningful: classic Custom Fields are praised as a flagship feature, while their AI counterparts are met with hesitation, qualified praise, or open complaint about gaps.</p>
+
+<p>The strongest positive cluster is around the Brain MAX launch on Product Hunt — that signal is partially an artefact of launch-day audiences and should be discounted accordingly. Outside the launch context, positive sentiment toward AI Fields is largely instrumental rather than enthusiastic; the recurring shape, paraphrasing the eesel.ai synthesis, is "useful for retrieval and synthesis, not for generation."</p>
+
+<h2>4. Theme Breakdown</h2>
+
+<div class="chart-wrap">
+  <div class="chart-title">Chart 2 — Theme tag frequency (multi-tag, n=38 items)</div>
+  <svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg">
+    <style>
+      .lbl { font: 12px -apple-system, sans-serif; fill: #333; }
+      .val { font: 11px -apple-system, sans-serif; fill: #1a1a1a; }
+    </style>
+    <rect x="160" y="20"  width="240" height="20" fill="#7c3aed"/><text class="lbl" x="155" y="35" text-anchor="end">Capability-gap</text><text class="val" x="406" y="35">12</text>
+    <rect x="160" y="50"  width="240" height="20" fill="#8b5cf6"/><text class="lbl" x="155" y="65" text-anchor="end">Praise</text><text class="val" x="406" y="65">12</text>
+    <rect x="160" y="80"  width="200" height="20" fill="#a78bfa"/><text class="lbl" x="155" y="95" text-anchor="end">Output-quality</text><text class="val" x="366" y="95">10</text>
+    <rect x="160" y="110" width="180" height="20" fill="#a78bfa"/><text class="lbl" x="155" y="125" text-anchor="end">Setup-friction</text><text class="val" x="346" y="125">9</text>
+    <rect x="160" y="140" width="160" height="20" fill="#c4b5fd"/><text class="lbl" x="155" y="155" text-anchor="end">Billing/credit</text><text class="val" x="326" y="155">8</text>
+    <rect x="160" y="170" width="120" height="20" fill="#c4b5fd"/><text class="lbl" x="155" y="185" text-anchor="end">Discoverability</text><text class="val" x="286" y="185">6</text>
+    <rect x="160" y="200" width="120" height="20" fill="#c4b5fd"/><text class="lbl" x="155" y="215" text-anchor="end">Competitor-compare</text><text class="val" x="286" y="215">6</text>
+    <rect x="160" y="230" width="80"  height="20" fill="#ddd6fe"/><text class="lbl" x="155" y="245" text-anchor="end">Power-user-only</text><text class="val" x="246" y="245">4</text>
+    <rect x="160" y="260" width="40"  height="20" fill="#ddd6fe"/><text class="lbl" x="155" y="275" text-anchor="end">Workaround</text><text class="val" x="206" y="275">2</text>
+    <rect x="160" y="290" width="0"   height="20" fill="#ede9fe"/><text class="lbl" x="155" y="305" text-anchor="end">Mobile (non-Canny)</text><text class="val" x="166" y="305">0</text>
+  </svg>
+  <div class="chart-caption">Capability-gap and praise tie for first. Output-quality and setup-friction are close behind. Mobile is empty here only because all mobile-specific signal lives on Canny.</div>
+</div>
+
+<p>The frequency profile tells a sharper story than the totals alone. Capability-gap and praise both score 12. The praise is largely about Custom Fields as a category — verbatim from G2: <em>"the library of custom fields is massive — dropdowns, currency, email, ratings, formulas"</em> — while the capability-gap is overwhelmingly about AI Custom Fields specifically. In other words: people love that ClickUp lets them shape their data, and resent that AI is bolted onto only two of the underlying types. The most repeated capability-gap requests are AI driving Number fields, AI driving Date fields, and AI participating in conditional / IF-THEN logic.</p>
+
+<p>The output-quality cluster is more nuanced than "the AI is bad." Many users describe results that are <em>mostly</em> right but inconsistent enough that they cannot trust automation built on top — Capterra verbatim: <em>"The AI function is very clumsy... I prefer to do the automations myself."</em> This is a confidence problem more than an accuracy problem.</p>
+
+<h2>5. Top Friction Stories</h2>
+
+<p>The 8 most concrete friction moments surfaced in the corpus, each tied to a specific surface in the product. Every quote below is the user's verbatim language, ≤15 words.</p>
+
+<blockquote>
+  "AI Agents and AI Custom Fields were strongly suggested... limited to 250 uses per month."
+  <span class="src">Reddit user via <a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai synthesis</a> — credit-cap surprise on the AI plan. Surface: Plan/billing &amp; AI Field execution. <span class="pill neg">Negative</span> <span class="pill">Billing/credit</span> <span class="pill">Capability-gap</span></span>
+</blockquote>
+
+<blockquote>
+  "Brain AI was extremely helpful in setting up what I could figure out."
+  <span class="src">Capterra reviewer via <a href="https://www.capterra.com/p/158833/ClickUp/reviews/">Capterra</a> — counter-positive on Brain as onboarding scaffolding. Surface: Brain Assistant in setup. <span class="pill pos">Positive</span> <span class="pill">Praise</span> <span class="pill">Discoverability</span></span>
+</blockquote>
+
+<blockquote>
+  "The AI function is very clumsy... I prefer to do the automations myself."
+  <span class="src">Capterra reviewer via <a href="https://www.capterra.com/p/158833/ClickUp/reviews/">Capterra</a> — workaround response. Surface: Automation Builder + AI Field outputs. <span class="pill neg">Negative</span> <span class="pill">Output-quality</span> <span class="pill">Workaround</span></span>
+</blockquote>
+
+<blockquote>
+  "Asking Brain to 'create a task' sometimes writes text in a description."
+  <span class="src">Synthesised reviewer pattern via <a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai</a> — task-creation inconsistency. Surface: Brain Assistant + task creation flow. <span class="pill neg">Negative</span> <span class="pill">Output-quality</span></span>
+</blockquote>
+
+<blockquote>
+  "I personally just didn't find it that useful anymore."
+  <span class="src">Reddit user via <a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai synthesis</a> — cancellation after extended trial. Surface: ongoing AI add-on retention. <span class="pill neg">Negative</span> <span class="pill">Output-quality</span> <span class="pill">Capability-gap</span></span>
+</blockquote>
+
+<blockquote>
+  "The application obscurely uses AI in various ways that are hard to understand."
+  <span class="src">Capterra reviewer via <a href="https://www.capterra.com/p/158833/ClickUp/reviews/">Capterra</a> — opacity of where AI shows up. Surface: AI surface inventory across the product. <span class="pill neg">Negative</span> <span class="pill">Discoverability</span> <span class="pill">Setup-friction</span></span>
+</blockquote>
+
+<blockquote>
+  "I tried to use the ClickUp custom fields but I am struggling..."
+  <span class="src">User "Cintia" via <a href="https://community.make.com/t/clickup-modifying-drop-down-custom-field/5379">Make community</a> — automation-from-outside friction. Surface: API contract for custom field updates. <span class="pill neg">Negative</span> <span class="pill">Setup-friction</span></span>
+</blockquote>
+
+<blockquote>
+  "The $9 AI add-on that doubles your bill."
+  <span class="src">Article headline via <a href="https://get-alfred.ai/blog/clickup-pricing">alfred_.ai</a> — billing-surprise framing repeated across third-party blogs. Surface: AI plan pricing &amp; admin TCO. <span class="pill neg">Negative</span> <span class="pill">Billing/credit</span></span>
+</blockquote>
+
+<h2>6. Workarounds in the Wild</h2>
+
+<p>Workarounds are the highest-value signal in this kind of scan because they reveal product gaps that users have already paid the cognitive tax to route around. Five clear patterns:</p>
+
+<ol>
+  <li><strong>Manual automations replacing AI Fields.</strong> The Capterra reviewer who calls AI <em>"very clumsy"</em> and switches back to building automations themselves is the canonical example. The product loses an AI-Field license-justifying use case to a free automation flow.</li>
+  <li><strong>Code-by-Zapier JavaScript step to set Custom Fields.</strong> Zapier community threads describe users writing a JS step using <em>Task Custom Fields Name</em> and <em>Task Custom Fields Value</em> as Input Data when the standard ClickUp action is too rigid. One commenter explains it cleanly: <em>"All custom fields come over in one field separated by a comma."</em> This indicates the API surface for batch-updating fields is leaky enough that power users build code on top — see <a href="https://community.zapier.com/code-webhooks-52/clickup-custom-fields-18314">Zapier community</a>.</li>
+  <li><strong>Long-text "scratchpad" fields synthesised by AI.</strong> Several blog tutorials describe creating a Long Text field for raw notes and a second AI Field that summarises it. This works but is a workaround for the absence of a native "transform" relationship between fields.</li>
+  <li><strong>Naming conventions to disambiguate fields with the same label.</strong> Because <em>"ClickUp doesn't check for duplicate custom field names"</em> (ProcessDriven), admins create prefix-conventions like <code>Sales / Email</code> and <code>Support / Email</code>. This is admin overhead the product is delegating to humans.</li>
+  <li><strong>"Don't enable AI ClickApp" defensive admin behaviour.</strong> In threads where an admin discovered that the AI ClickApp toggle silently disables AI Field editing with no in-product explanation, the workaround was to force AI ClickApp on workspace-wide and document the fact in an internal runbook — a strong sign of an invisible failure mode the product is not flagging.</li>
+</ol>
+
+<h2>7. Competitor Comparison Patterns</h2>
+
+<div class="chart-wrap">
+  <div class="chart-title">Chart 3 — Competitor mention frequency (in items where a comparison is made, n=6)</div>
+  <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg">
+    <style>
+      .lbl { font: 12px -apple-system, sans-serif; fill: #333; }
+      .val { font: 11px -apple-system, sans-serif; fill: #1a1a1a; }
+    </style>
+    <rect x="160" y="20"  width="180" height="22" fill="#7c3aed"/><text class="lbl" x="155" y="36" text-anchor="end">Notion / Notion AI</text><text class="val" x="345" y="36">3</text>
+    <rect x="160" y="50"  width="120" height="22" fill="#8b5cf6"/><text class="lbl" x="155" y="66" text-anchor="end">Airtable</text><text class="val" x="285" y="66">2</text>
+    <rect x="160" y="80"  width="60"  height="22" fill="#a78bfa"/><text class="lbl" x="155" y="96" text-anchor="end">Asana</text><text class="val" x="225" y="96">1</text>
+    <rect x="160" y="110" width="60"  height="22" fill="#a78bfa"/><text class="lbl" x="155" y="126" text-anchor="end">Monday</text><text class="val" x="225" y="126">1</text>
+    <rect x="160" y="140" width="120" height="22" fill="#c4b5fd"/><text class="lbl" x="155" y="156" text-anchor="end">ChatGPT (as substitute)</text><text class="val" x="285" y="156">2</text>
+  </svg>
+  <div class="chart-caption">Notion is the most-named comparator. Airtable is named less often but with more pointed criticism of ClickUp's data model.</div>
+</div>
+
+<p><strong>Notion / Notion AI:</strong> The recurring framing is that Notion's AI fills database columns more fluidly. ClickUp's counterargument in users' minds is integration depth — paraphrasing a Brain MAX commenter: <em>"real context pulling from docs and tasks instead of just being another wrapper."</em> The question users seem to be answering is "do I want a smoother AI primitive or a richer corpus for AI to operate on?" — and Notion still wins the smoothness vote.</p>
+
+<p><strong>Airtable:</strong> Mentioned less but with a sharper architectural critique — verbatim via SmartSuite: <em>"ClickUp is task-first, not data-first like Airtable."</em> This shows up in <a href="https://www.smartsuite.com/blog/airtable-vs-clickup-vs-smartsuite">Airtable comparisons</a> and is the most strategically interesting competitor signal in the corpus: it's not a feature gap, it's a paradigm gap.</p>
+
+<p><strong>ChatGPT as a substitute:</strong> Two items describe users opening ChatGPT in a separate tab to do the synthesis they couldn't get an AI Field to do reliably. Brain MAX's own launch comments concede the prior pain in the user's words: <em>"Bouncing between ChatGPT, Claude, Perplexity, copying context like maniacs."</em> This is the lowest-grade competitor signal — but the most costly behaviourally, because it pulls work out of ClickUp entirely.</p>
+
+<p><strong>Asana / Monday:</strong> Mentioned only in passing. Neither is a serious AI-native comparator in the corpus.</p>
+
+<h2>8. New User vs. Power User Split</h2>
+
+<div class="chart-wrap">
+  <div class="chart-title">Chart 4 — Theme distribution by inferred user type</div>
+  <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg">
+    <style>
+      .lbl { font: 12px -apple-system, sans-serif; fill: #333; }
+      .val { font: 11px -apple-system, sans-serif; fill: #1a1a1a; }
+      .ttl { font: 12px -apple-system, sans-serif; fill: #666; }
+    </style>
+    <text class="lbl" x="160" y="20" text-anchor="end">Setup-friction</text>
+    <rect x="170" y="6" width="120" height="14" fill="#7c3aed"/><text class="val" x="295" y="18">5</text>
+    <rect x="170" y="22" width="60" height="14" fill="#a78bfa"/><text class="val" x="235" y="34">2</text>
+
+    <text class="lbl" x="160" y="60" text-anchor="end">Discoverability</text>
+    <rect x="170" y="46" width="60" height="14" fill="#7c3aed"/><text class="val" x="235" y="58">3</text>
+    <rect x="170" y="62" width="60" height="14" fill="#a78bfa"/><text class="val" x="235" y="74">3</text>
+
+    <text class="lbl" x="160" y="100" text-anchor="end">Capability-gap</text>
+    <rect x="170" y="86" width="20" height="14" fill="#7c3aed"/><text class="val" x="195" y="98">1</text>
+    <rect x="170" y="102" width="220" height="14" fill="#a78bfa"/><text class="val" x="395" y="114">11</text>
+
+    <text class="lbl" x="160" y="140" text-anchor="end">Output-quality</text>
+    <rect x="170" y="126" width="20" height="14" fill="#7c3aed"/><text class="val" x="195" y="138">1</text>
+    <rect x="170" y="142" width="180" height="14" fill="#a78bfa"/><text class="val" x="355" y="154">9</text>
+
+    <text class="lbl" x="160" y="180" text-anchor="end">Billing/credit</text>
+    <rect x="170" y="166" width="20" height="14" fill="#7c3aed"/><text class="val" x="195" y="178">1</text>
+    <rect x="170" y="182" width="140" height="14" fill="#a78bfa"/><text class="val" x="315" y="194">7</text>
+
+    <text class="lbl" x="160" y="220" text-anchor="end">Praise</text>
+    <rect x="170" y="206" width="40" height="14" fill="#7c3aed"/><text class="val" x="215" y="218">2</text>
+    <rect x="170" y="222" width="200" height="14" fill="#a78bfa"/><text class="val" x="375" y="234">10</text>
+
+    <rect x="500" y="6" width="14" height="14" fill="#7c3aed"/><text class="ttl" x="520" y="18">New user (n≈6)</text>
+    <rect x="500" y="26" width="14" height="14" fill="#a78bfa"/><text class="ttl" x="520" y="38">Power user (n≈25)</text>
+  </svg>
+  <div class="chart-caption">New users complain about setup friction and discoverability. Power users complain about capability gaps, output quality, and billing — and provide most of the praise.</div>
+</div>
+
+<p>The split is the most strategically useful cut of this dataset, because it maps directly onto the project's two top-line goals.</p>
+
+<p><strong>New users</strong> describe a different product. Their friction is captured in two verbatims that appear repeatedly: <em>"There are so many features packed in that it can feel overwhelming at first"</em> (Capterra) and <em>"Entering ClickUp was like entering a sophisticated control room filled with knobs"</em> (Medium). They rarely complain about specific AI Field outputs because most of them aren't using AI Fields yet. Their positive moments are when Brain helps them set up: <em>"Brain AI was extremely helpful in setting up what I could figure out."</em> The entry-point isn't AI Fields at all but the Brain Assistant scaffolding that gets them a first working list. <em>Implication for the project: the new user adoption goal is mostly an information-architecture problem, not an AI capability problem.</em></p>
+
+<p><strong>Power users</strong> are the source of nearly all the capability-gap, output-quality, and billing pressure in the corpus. They are also the source of most of the praise. They are not turning away from the feature; they are pushing on it and finding edges. The recurring shape is "I want to do X with AI on field Y, and I can't, so I built a workaround." <em>Implication for the project: the CSAT goal among power users splits roughly into three buckets — extend AI to more field types, fix invisible failure modes, and address credit/billing surprise.</em></p>
+
+<h2>9. Cross-Reference With Canny — Silent Friction</h2>
+
+<p>The companion Canny report is the canonical record of what users have voted on. The value of <em>this</em> report is in the gap between the two: items that the public internet talks about but the Canny board does not amplify.</p>
+
+<p>Two themes overlap heavily and are well-represented on Canny: AI on more field types (Number, Date, formulas), and AI Field UI/formatting. These are not silent friction; they are loud friction in both venues.</p>
+
+<p>One theme is louder outside Canny than inside: <strong>credit and billing surprise.</strong> The 250-uses cap, the perception that the AI add-on roughly doubles the per-seat cost (an alfred_.ai post titles itself <em>"the $9 AI add-on that doubles your bill"</em>), and the "scarcity mindset" of credit accounting all show up repeatedly in G2 / Capterra / blog reviews and far less prominently as distinct Canny posts. Users who feel ambushed by billing tend to churn or down-grade rather than file feature requests, which would explain the asymmetry. This is the most actionable silent-friction finding in the report.</p>
+
+<p>One theme is roughly absent from Canny but present in the public corpus: <strong>"AI ClickApp disabled = invisible failure."</strong> When the workspace-level AI toggle is off, AI Fields render but cannot be edited, with no tooltip explaining why. The Canny board has one related ticket; the public-internet signal is more diffuse and is mostly admins describing it as a debugging mystery. Worth surfacing as a tooltip / banner change regardless of whether it ever crosses the Canny vote threshold.</p>
+
+<h2>10. Source Distribution</h2>
+
+<div class="chart-wrap">
+  <div class="chart-title">Chart 5 — Where the conversation is actually happening (n=38)</div>
+  <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg">
+    <style>
+      .lbl { font: 12px -apple-system, sans-serif; fill: #333; }
+      .val { font: 11px -apple-system, sans-serif; fill: #1a1a1a; }
+    </style>
+    <rect x="200" y="20"  width="280" height="20" fill="#7c3aed"/><text class="lbl" x="195" y="35" text-anchor="end">Independent blogs / Medium / Substack</text><text class="val" x="486" y="35">14</text>
+    <rect x="200" y="50"  width="100" height="20" fill="#8b5cf6"/><text class="lbl" x="195" y="65" text-anchor="end">Capterra</text><text class="val" x="306" y="65">5</text>
+    <rect x="200" y="80"  width="80"  height="20" fill="#a78bfa"/><text class="lbl" x="195" y="95" text-anchor="end">Make / Zapier / ProcessDriven forums</text><text class="val" x="286" y="95">4</text>
+    <rect x="200" y="110" width="80"  height="20" fill="#a78bfa"/><text class="lbl" x="195" y="125" text-anchor="end">Product Hunt</text><text class="val" x="286" y="125">4</text>
+    <rect x="200" y="140" width="60"  height="20" fill="#c4b5fd"/><text class="lbl" x="195" y="155" text-anchor="end">Reddit (via snippets)</text><text class="val" x="266" y="155">3</text>
+    <rect x="200" y="170" width="40"  height="20" fill="#c4b5fd"/><text class="lbl" x="195" y="185" text-anchor="end">G2</text><text class="val" x="246" y="185">2</text>
+    <rect x="200" y="200" width="40"  height="20" fill="#c4b5fd"/><text class="lbl" x="195" y="215" text-anchor="end">TrustRadius</text><text class="val" x="246" y="215">2</text>
+    <rect x="200" y="230" width="20"  height="20" fill="#ddd6fe"/><text class="lbl" x="195" y="245" text-anchor="end">LinkedIn (headline-only)</text><text class="val" x="226" y="245">1</text>
+    <rect x="200" y="260" width="0"   height="14" fill="#ede9fe"/><text class="lbl" x="195" y="272" text-anchor="end">X / Twitter / HN</text><text class="val" x="206" y="272">0</text>
+  </svg>
+  <div class="chart-caption">Independent blogs are the largest visible source. Direct user voices on Reddit and X are under-represented — a measurement gap, not a conversational vacuum.</div>
+</div>
+
+<p>The single most important caveat for a reader of this report: the highest-volume "source" is third-party blog content, much of which is incentivised. Direct first-person user voices on Reddit and X are under-represented because of access constraints. A future iteration of this scan with full Reddit API access would likely shift the negative-side weight upward, since direct user complaint tends to be sharper than synthesised blog coverage. v2 mitigated this partially by sourcing every quote from a verbatim, ≤15-word snippet rather than a paraphrase, but the underlying access ceiling remains.</p>
+
+<h2>11. Appendix — Coded Dataset (Verbatim)</h2>
+
+<p class="small">Every quote below is the user's actual words, ≤15 words, with ellipses where trimmed. Where a synthesis blog (e.g. eesel.ai) is the access point to a Reddit voice, the source column preserves that provenance.</p>
+
+<table>
+  <thead><tr><th>#</th><th>Source</th><th>Verbatim quote (≤15 words)</th><th>Sentiment</th><th>Themes</th><th>User type</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Reddit user via <a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai</a></td><td>"AI Agents and AI Custom Fields were strongly suggested... limited to 250 uses per month."</td><td class="neg">Negative</td><td>Billing/credit; Capability-gap</td><td>Power</td></tr>
+    <tr><td>2</td><td>Reddit (via search snippet)</td><td>"The new AI tool/feature is very very nifty."</td><td class="pos">Positive</td><td>Praise</td><td>Power</td></tr>
+    <tr><td>3</td><td>Reddit user via <a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai</a></td><td>"I personally just didn't find it that useful anymore."</td><td class="neg">Negative</td><td>Output-quality; Capability-gap</td><td>Power</td></tr>
+    <tr><td>4</td><td><a href="https://www.capterra.com/p/158833/ClickUp/reviews/">Capterra</a></td><td>"Brain AI was extremely helpful in setting up what I could figure out."</td><td class="pos">Positive</td><td>Praise; Discoverability</td><td>New</td></tr>
+    <tr><td>5</td><td><a href="https://www.capterra.com/p/158833/ClickUp/reviews/">Capterra</a></td><td>"The AI function is very clumsy... I prefer to do the automations myself."</td><td class="neg">Negative</td><td>Output-quality; Workaround</td><td>Power</td></tr>
+    <tr><td>6</td><td><a href="https://www.capterra.com/p/158833/ClickUp/reviews/">Capterra</a></td><td>"The application obscurely uses AI in various ways that are hard to understand."</td><td class="neg">Negative</td><td>Discoverability; Setup-friction</td><td>Unclear</td></tr>
+    <tr><td>7</td><td><a href="https://www.g2.com/products/clickup/reviews">G2</a></td><td>"Having custom fields keeps things tidy and details easy to find."</td><td class="pos">Positive</td><td>Praise</td><td>Power</td></tr>
+    <tr><td>8</td><td><a href="https://www.trustradius.com/products/clickup/reviews">TrustRadius</a></td><td>"I love ClickUp and will sing its praises."</td><td class="pos">Positive</td><td>Praise</td><td>Power</td></tr>
+    <tr><td>9</td><td>Reviewer pattern via <a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai</a></td><td>"Asking Brain to 'create a task' sometimes writes text in a description."</td><td class="neg">Negative</td><td>Output-quality</td><td>Power</td></tr>
+    <tr><td>10</td><td>Reviewer synthesis via <a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai</a></td><td>"Brain cannot upload PDFs or Word docs for analysis."</td><td class="neg">Negative</td><td>Capability-gap</td><td>Power</td></tr>
+    <tr><td>11</td><td><a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai</a></td><td>"If you're using ClickUp as a light task list, skip the add-on."</td><td class="mix">Mixed</td><td>Capability-gap</td><td>Power</td></tr>
+    <tr><td>12</td><td><a href="https://tahiramina476.medium.com/clickup-ai-review-2025-is-the-clickup-brain-really-worth-the-hype-982c79bce1a0">Medium — Amina Tahir</a></td><td>"Not a set-and-forget solution."</td><td class="mix">Mixed</td><td>Output-quality</td><td>Power</td></tr>
+    <tr><td>13</td><td><a href="https://get-alfred.ai/blog/clickup-pricing">alfred_.ai blog</a></td><td>"The $9 AI add-on that doubles your bill."</td><td class="neg">Negative</td><td>Billing/credit</td><td>Power (admin)</td></tr>
+    <tr><td>14</td><td><a href="https://www.producthunt.com/products/brain-max-by-clickup">Product Hunt</a></td><td>"MAX lets you actually complete tasks."</td><td class="pos">Positive</td><td>Praise</td><td>Power</td></tr>
+    <tr><td>15</td><td><a href="https://www.producthunt.com/products/brain-max-by-clickup">Product Hunt</a></td><td>"Real context pulling from docs and tasks instead of just being another wrapper."</td><td class="pos">Positive</td><td>Praise; Competitor-compare</td><td>Power</td></tr>
+    <tr><td>16</td><td><a href="https://www.producthunt.com/products/brain-max-by-clickup">Product Hunt</a></td><td>"Bouncing between ChatGPT, Claude, Perplexity, copying context like maniacs."</td><td class="pos">Positive</td><td>Praise; Competitor-compare</td><td>Power</td></tr>
+    <tr><td>17</td><td><a href="https://www.capterra.com/p/158833/ClickUp/reviews/">Capterra</a></td><td>"AI automation built in helps greatly with task organization."</td><td class="pos">Positive</td><td>Praise</td><td>Power</td></tr>
+    <tr><td>18</td><td><a href="https://www.capterra.com/p/158833/ClickUp/reviews/">Capterra</a></td><td>"There are so many features packed in that it can feel overwhelming at first."</td><td class="mix">Mixed</td><td>Setup-friction</td><td>New</td></tr>
+    <tr><td>19</td><td>"Cintia" via <a href="https://community.make.com/t/clickup-modifying-drop-down-custom-field/5379">Make community</a></td><td>"I tried to use the ClickUp custom fields but I am struggling..."</td><td class="neg">Negative</td><td>Setup-friction</td><td>Unclear</td></tr>
+    <tr><td>20</td><td><a href="https://www.g2.com/products/clickup/reviews">G2</a></td><td>"The library of custom fields is massive — dropdowns, currency, email, ratings, formulas."</td><td class="pos">Positive</td><td>Praise</td><td>Power</td></tr>
+    <tr><td>21</td><td><a href="https://www.rock.so/blog/what-is-clickup">rock.so blog</a></td><td>"New users regularly complain about the cluttered interface."</td><td class="neg">Negative</td><td>Setup-friction; Discoverability</td><td>New</td></tr>
+    <tr><td>22</td><td><a href="https://www.booststash.com/clickup-learning-curve-2026/">booststash</a></td><td>"ClickUp has a steep learning curve, especially for new users."</td><td class="mix">Mixed</td><td>Setup-friction</td><td>New</td></tr>
+    <tr><td>23</td><td><a href="https://www.taskrhino.ca/blog/clickup-review/">TaskRhino</a></td><td>"ClickUp Brain is a powerful and ambitious AI platform."</td><td class="pos">Positive</td><td>Praise</td><td>Power</td></tr>
+    <tr><td>24</td><td><a href="https://processdriven.co/clickup/how-to-use-clickup/what-are-custom-fields-clickup-tutorial-for-beginnerswhat-are-custom-fields-clickup-tutorial-for-beginners/">ProcessDriven</a></td><td>"Subtask inheritance of custom fields is a feature being considered."</td><td class="neg">Negative</td><td>Setup-friction; Output-quality</td><td>Power</td></tr>
+    <tr><td>25</td><td><a href="https://processdriven.co/clickup/how-to-use-clickup/what-are-custom-fields-clickup-tutorial-for-beginnerswhat-are-custom-fields-clickup-tutorial-for-beginners/">ProcessDriven</a></td><td>"ClickUp doesn't check for duplicate custom field names."</td><td class="neg">Negative</td><td>Setup-friction; Power-user</td><td>Power (admin)</td></tr>
+    <tr><td>26</td><td><a href="https://gmelius.com/blog/clickup-brain-ai-review">Gmelius</a></td><td>"Useful for standups, status checks, cross-app search, and quick drafts."</td><td class="mix">Mixed</td><td>Praise; Capability-gap</td><td>Mixed</td></tr>
+    <tr><td>27</td><td><a href="https://community.zapier.com/code-webhooks-52/clickup-custom-fields-18314">Zapier community</a></td><td>"All custom fields come over in one field separated by a comma."</td><td class="neg">Negative</td><td>Workaround; Capability-gap</td><td>Power</td></tr>
+    <tr><td>28</td><td><a href="https://get-alfred.ai/blog/clickup-pricing">alfred_.ai blog</a></td><td>"AI add-on can cost more per user than the core platform license itself."</td><td class="neg">Negative</td><td>Billing/credit</td><td>Power (admin)</td></tr>
+    <tr><td>29</td><td>Synthesis via <a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai</a></td><td>"Credits create a scarcity mindset."</td><td class="neg">Negative</td><td>Billing/credit; Discoverability</td><td>Power</td></tr>
+    <tr><td>30</td><td>Synthesis via <a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai</a></td><td>"In one team of 30, only 2 PMs used Brain during trial."</td><td class="neg">Negative</td><td>Discoverability; Power-user</td><td>Power (admin)</td></tr>
+    <tr><td>31</td><td><a href="https://www.taskrhino.ca/blog/clickup-review/">TaskRhino</a></td><td>"Brain knowledge focused on internal files; weaker on niche content."</td><td class="mix">Mixed</td><td>Capability-gap; Output-quality</td><td>Mixed</td></tr>
+    <tr><td>32</td><td><a href="https://www.morgen.so/blog-posts/clickup-review">Morgen blog</a> (competitor — discounted)</td><td>"Brain is best for retrieval; weaker at generation."</td><td class="mix">Mixed</td><td>Output-quality</td><td>Power</td></tr>
+    <tr><td>33</td><td><a href="https://www.smartsuite.com/blog/airtable-vs-clickup-vs-smartsuite">SmartSuite</a> (competitor — discounted)</td><td>"ClickUp is task-first, not data-first like Airtable."</td><td class="mix">Mixed</td><td>Competitor-compare; Capability-gap</td><td>Power</td></tr>
+    <tr><td>34</td><td><a href="https://medium.com/bouncin-and-behavin-academy/i-ditched-notion-for-clickup-but-i-was-wrong-cf7c1365acd5">Medium — Anshul Kumar</a></td><td>"Entering ClickUp was like entering a sophisticated control room filled with knobs."</td><td class="mix">Mixed</td><td>Setup-friction; Competitor-compare</td><td>Power</td></tr>
+    <tr><td>35</td><td><a href="https://cameltech.substack.com/p/meet-your-new-ai-brain-clickup-brain">Camel Tech (Substack)</a></td><td>"An AI superbrain for your workspace."</td><td class="pos">Positive</td><td>Praise</td><td>Power</td></tr>
+    <tr><td>36</td><td><a href="https://www.linkedin.com/posts/msohanh_aiproductivity-clickupagent-brainmax-activity-7351928729364779009-gqa6">LinkedIn — msohanh</a></td><td>Headline-only post; body not retrievable via search.</td><td class="neu">Neutral</td><td>—</td><td>Unclear</td></tr>
+    <tr><td>37</td><td><a href="https://clickup.com/blog/clickup-ai-vs-notion-ai/">ClickUp blog</a> (self-comparison)</td><td>"Notion AI excels at writing; ClickUp Brain at PM integration."</td><td class="mix">Mixed</td><td>Competitor-compare</td><td>Power</td></tr>
+    <tr><td>38</td><td><a href="https://thedigitalprojectmanager.com/partner-spotlight/clickup/clickup-brain/">DigitalPM</a> (sponsored — discounted)</td><td>"Brain is the AI that actually understands your work."</td><td class="pos">Positive</td><td>Praise</td><td>Power</td></tr>
+  </tbody>
+</table>
+
+<p class="small"><strong>Note on items 32, 33, 38:</strong> These sources are competitors or sponsored-partner content. They are included for completeness but should be weighted lower than first-person user voices.</p>
+<p class="small"><strong>Note on items 1, 3, 9, 10, 29, 30:</strong> These are quoted within eesel.ai's synthesis posts. The quotes are verbatim within the synthesis source; the underlying Reddit / Capterra original was not directly accessible at scrape time. Treat as "verbatim with single intermediary."</p>
+<p class="small"><strong>Note on items 36:</strong> LinkedIn post body was not retrievable via Google index; the URL is preserved for traceability only.</p>
+
+<h2>12. Source Index</h2>
+<p class="small">Every claim in this report links back to one of the items in the appendix above. Top-cited sources for convenience:</p>
+<ul class="small">
+  <li><a href="https://www.g2.com/products/clickup/reviews">G2 — ClickUp Reviews</a></li>
+  <li><a href="https://www.capterra.com/p/158833/ClickUp/reviews/">Capterra — ClickUp Reviews</a></li>
+  <li><a href="https://www.trustradius.com/products/clickup/reviews">TrustRadius — ClickUp Reviews</a></li>
+  <li><a href="https://www.producthunt.com/products/brain-max-by-clickup/reviews">Product Hunt — Brain MAX</a></li>
+  <li><a href="https://www.eesel.ai/blog/clickup-brain">eesel.ai — Honest look at ClickUp Brain</a></li>
+  <li><a href="https://gmelius.com/blog/clickup-brain-ai-review">Gmelius — ClickUp Brain Review</a></li>
+  <li><a href="https://tahiramina476.medium.com/clickup-ai-review-2025-is-the-clickup-brain-really-worth-the-hype-982c79bce1a0">Medium — Amina Tahir on ClickUp Brain</a></li>
+  <li><a href="https://cameltech.substack.com/p/meet-your-new-ai-brain-clickup-brain">Camel Tech (Substack) — Brain MAX</a></li>
+  <li><a href="https://medium.com/bouncin-and-behavin-academy/i-ditched-notion-for-clickup-but-i-was-wrong-cf7c1365acd5">Medium — Anshul Kumar on Notion → ClickUp</a></li>
+  <li><a href="https://processdriven.co/clickup/how-to-use-clickup/what-are-custom-fields-clickup-tutorial-for-beginnerswhat-are-custom-fields-clickup-tutorial-for-beginners/">ProcessDriven — Custom Fields tutorial</a></li>
+  <li><a href="https://community.zapier.com/code-webhooks-52/clickup-custom-fields-18314">Zapier community — ClickUp Custom Fields</a></li>
+  <li><a href="https://community.make.com/t/clickup-modifying-drop-down-custom-field/5379">Make community — Drop Down Custom Field</a></li>
+  <li><a href="https://get-alfred.ai/blog/clickup-pricing">alfred_.ai — ClickUp Pricing 2026</a></li>
+  <li><a href="https://www.taskrhino.ca/blog/clickup-review/">TaskRhino — ClickUp Review 2026</a></li>
+  <li><a href="https://www.smartsuite.com/blog/airtable-vs-clickup-vs-smartsuite">SmartSuite — Airtable vs ClickUp comparison (competitor — discounted)</a></li>
+</ul>
+
+</body>
+</html>

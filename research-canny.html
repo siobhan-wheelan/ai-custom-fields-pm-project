@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>ClickUp Canny — Custom Fields signal extraction</title>
+<style>
+  :root { --ink:#1F1F2E; --muted:#6B6B7C; --rule:#E5E5EE; --bg:#FFFFFF; --pink:#FF5C8D; --purple:#7B68EE; --blue:#49CCF9; --amber:#FFB13B; --green:#22C55E; --red:#EF4444; }
+  html,body { background:var(--bg); color:var(--ink); margin:0; padding:0; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size:14px; line-height:1.55; max-width:880px; margin:0 auto; padding:32px 24px 96px; }
+  h1 { font-family:'Plus Jakarta Sans', Inter, system-ui, sans-serif; font-size:28px; font-weight:700; letter-spacing:-0.01em; margin:0 0 4px; }
+  h2 { font-family:'Plus Jakarta Sans', Inter, system-ui, sans-serif; font-size:20px; font-weight:600; margin:40px 0 8px; }
+  h3 { font-size:15px; font-weight:600; margin:24px 0 6px; }
+  p { margin:8px 0; }
+  .muted { color:var(--muted); }
+  .rule { border:0; border-top:1px solid var(--rule); margin:28px 0; }
+  .lead { color:var(--muted); font-size:13px; margin-bottom:20px; }
+  .tldr { background:#FAFAFB; border:1px solid var(--rule); border-radius:8px; padding:16px 20px; }
+  .tldr ul { margin:6px 0; padding-left:20px; }
+  .tldr li { margin:6px 0; }
+  .chart { margin:18px 0 8px; }
+  .chart svg { max-width:100%; height:auto; display:block; }
+  .gap { border-left:3px solid var(--pink); padding:6px 14px; margin:14px 0; background:#FFFAFB; border-radius:0 6px 6px 0; }
+  .gap h4 { font-size:14px; margin:0 0 4px; font-weight:600; }
+  .gap p { margin:4px 0; font-size:13px; }
+  .gap .quote { font-style:italic; color:var(--muted); }
+  table { border-collapse:collapse; width:100%; font-size:11px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--rule); vertical-align:top; }
+  th { font-weight:600; background:#FAFAFB; position:sticky; top:0; }
+  .scroll { max-height:420px; overflow:auto; border:1px solid var(--rule); border-radius:6px; }
+  .pill { display:inline-block; font-size:11px; padding:1px 7px; border-radius:8px; background:#F1F1F5; color:var(--muted); }
+  .badge-ai { background:#EFEAFF; color:#5B45D8; }
+  ul.tight { margin:4px 0 12px; padding-left:20px; }
+  ul.tight li { margin:3px 0; font-size:13px; }
+  a { color:#1F1F2E; }
+  a:hover { text-decoration:underline; }
+  .stat { display:inline-block; background:#F4F4F8; border-radius:6px; padding:6px 10px; margin:4px 6px 4px 0; font-size:12px; }
+  .stat b { color:var(--ink); font-size:14px; }
+</style>
+</head>
+<body>
+
+<h1>ClickUp Canny — Custom Fields signal extraction</h1>
+<p class="lead">Public-feedback corpus analysis · feedback.clickup.com · prepared 2026-04-26</p>
+
+<hr class="rule"/>
+
+<h2>1. TL;DR</h2>
+<div class="tldr">
+<p class="muted" style="margin:0 0 8px;">Lens: signals that constrain or shape AI Custom Fields. Broader CF posts are kept only when they materially affect AI CF behaviour (dashboard ingestion of AI outputs, rollup composition of AI summaries, Add-existing for AI CFs, etc.).</p>
+<ul>
+<li><b>Juliana Stanisauskiene's January 21 2026 comment</b> on the AI Custom Fields thread is the canonical statement of the most-cited AI CF gap: AI CFs are text-only, so AI-derived numeric values can't be summed or charted. ClickUp has not replied. Full text in §7.</li>
+<li><b>AI billing per user is the largest AI-tagged ask in the corpus by ~5×</b> — 842 votes, marked "not on the roadmap" March 19 2026. ClickUp's usage-based-billing counter-proposal was rejected by the comment thread; admins want per-seat governance. Direct risk to AI CF adoption since AI CFs are credit-consuming by design.</li>
+<li><b>"AI on a non-text-non-dropdown type" recurs across 8+ posts</b> — Rating, Number, Currency, Percent, Linked Record, Doc, Duration, Time. These are roadmap-distinct from prompt-tuning asks. Today only Long Text and Dropdown are AI-capable.</li>
+<li><b>The seam between AI CFs and the broader CF graph is the hot zone.</b> AI Agents can't read custom attachment fields (56v, planned); attachments-to-CF extraction (120v, planned) is in flight. Caroline Ginty has confirmed AI CFs will support attachment reads.</li>
+<li><b>AI CF outputs are dashboard-blind.</b> Formula fields in Dashboard (2,700v, partial) and Subtask Rollup (2,000v, "not on committed roadmap" 6 yrs) are the structural reasons AI CF data can't aggregate or report — even though those posts pre-date AI CFs.</li>
+<li><b>The new user AI CF first experience is the unconfigured Free plan.</b> Free plan caps CFs at 60 "uses" (every change counts), which 238 voters hit before they understand what 'use' means. AI CFs amplify the same pattern — each AI run is also a credit. Education and cost transparency need pairing.</li>
+<li><b>Corpus context.</b> 121 distinct posts after duplicate-merging across Feature Requests, Public API, ClickUp Mobile, AI Super Agents, and Changelog. 20 are AI-tagged; 8 ask for AI on a new underlying type.</li>
+</ul>
+</div>
+
+<h2>2. Methodology</h2>
+<p>Two-pass crawl of <a href="https://feedback.clickup.com/" target="_blank" rel="noopener">feedback.clickup.com</a>. Pass 1: ~30 Google site-restricted queries surfaced the high-relevance post URLs. Pass 2: direct browser fetches captured real vote counts, official status badges, dates, and body text for the top 25 priority posts. Long-tail posts retain a documented prominence proxy (queries × 10).</p>
+<ul class="tight">
+<li><b>121 unique posts</b> after dropping 2 merge-duplicates; <b>25</b> with confirmed vote counts.</li>
+<li>Sample is keyword-driven (Canny exposes no full board listing). Likely under-counts long-tail and very recent submissions.</li>
+<li>Bolded vote counts in the appendix are confirmed; greyed numbers are proxy.</li>
+</ul>
+
+<h2>3. Volume &amp; momentum</h2>
+<p>
+<span class="stat"><b>121</b> unique posts</span>
+<span class="stat"><b>20</b> AI-related</span>
+<span class="stat"><b>101</b> non-AI</span>
+<span class="stat"><b>8</b> ask for AI on a new underlying type</span>
+<span class="stat"><b>25</b> with confirmed vote counts</span>
+<span class="stat">Total vote weight (confirmed + proxy): <b>19,397</b></span>
+</p>
+
+<div class="chart">
+<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Top 10 AI-Custom-Fields posts (real votes; lighter bars = proxy)">
+<text x="20" y="28" font-family="Inter,system-ui,sans-serif" font-size="15" font-weight="600" fill="#1F1F2E">Top 10 AI-Custom-Fields posts (real votes; lighter bars = proxy)</text>
+<text x="410" y="62" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI billing per user</text>
+<rect x="420" y="50" width="220.0" height="20" fill="#FF5C8D" opacity="1" rx="3"/>
+<text x="646.0" y="64" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · 842</text>
+<text x="410" y="96" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI Custom Fields</text>
+<rect x="420" y="84" width="48.3" height="20" fill="#22C55E" opacity="1" rx="3"/>
+<text x="474.3" y="98" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 185</text>
+<text x="410" y="130" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">ClickUp AI - Extract data from attachments</text>
+<rect x="420" y="118" width="31.4" height="20" fill="#FFB13B" opacity="1" rx="3"/>
+<text x="457.4" y="132" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress · 120</text>
+<text x="410" y="164" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Custom Prompts in AI</text>
+<rect x="420" y="152" width="25.9" height="20" fill="#22C55E" opacity="1" rx="3"/>
+<text x="451.9" y="166" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 99</text>
+<text x="410" y="198" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Enable AI Agents to Access Custom Attachment Fields</text>
+<rect x="420" y="186" width="14.6" height="20" fill="#FFB13B" opacity="1" rx="3"/>
+<text x="440.6" y="200" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress · 56</text>
+<text x="410" y="232" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Hide AI buttons if not purchased</text>
+<rect x="420" y="220" width="6.5" height="20" fill="#22C55E" opacity="1" rx="3"/>
+<text x="432.5" y="234" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 25</text>
+<text x="410" y="266" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI Summary of ClickUp lists</text>
+<rect x="420" y="254" width="5.2" height="20" fill="#FF5C8D" opacity="0.45" rx="3"/>
+<text x="431.2" y="268" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · ~ 20</text>
+<text x="410" y="300" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI Summary via API</text>
+<rect x="420" y="288" width="5.2" height="20" fill="#FF5C8D" opacity="0.45" rx="3"/>
+<text x="431.2" y="302" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · ~ 20</text>
+<text x="410" y="334" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI (ChatGPT or other) assistant inside Clickup</text>
+<rect x="420" y="322" width="5.2" height="20" fill="#22C55E" opacity="0.45" rx="3"/>
+<text x="431.2" y="336" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · ~ 20</text>
+<text x="410" y="368" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Add a tooltip for AI Fields that are disabled due to AI…</text>
+<rect x="420" y="356" width="2.6" height="20" fill="#FF5C8D" opacity="0.45" rx="3"/>
+<text x="428.6" y="370" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · ~ 10</text>
+<rect x="20" y="374" width="12" height="12" fill="#FF5C8D" rx="2"/>
+<text x="38" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open</text>
+<rect x="130" y="374" width="12" height="12" fill="#FFB13B" rx="2"/>
+<text x="148" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress</text>
+<rect x="240" y="374" width="12" height="12" fill="#22C55E" rx="2"/>
+<text x="258" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete</text>
+</svg>
+</div>
+
+<p>The AI cluster is dominated by <b>AI billing per user (842v, not on roadmap)</b> — ~5× any other AI-tagged ask. The next tier is a thin one: AI Custom Fields anchor (185v, complete), Extract-from-attachments (120v, planned), Custom Prompts in AI (99v, complete via Saved Prompts). Beneath that, every AI ask is &lt;60 votes. The AI conversation in the corpus is more about cost control and graph-completeness than feature variety.</p>
+
+<div class="chart">
+<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Top 10 all-CF posts for context (real votes; lighter bars = proxy)">
+<text x="20" y="28" font-family="Inter,system-ui,sans-serif" font-size="15" font-weight="600" fill="#1F1F2E">Top 10 all-CF posts for context (real votes; lighter bars = proxy)</text>
+<text x="410" y="62" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Custom Field Manager</text>
+<rect x="420" y="50" width="220.0" height="20" fill="#22C55E" opacity="1" rx="3"/>
+<text x="646.0" y="64" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 3,500</text>
+<text x="410" y="96" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Formula fields in Dashboard</text>
+<rect x="420" y="84" width="169.7" height="20" fill="#FFB13B" opacity="1" rx="3"/>
+<text x="595.7" y="98" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress · 2,700</text>
+<text x="410" y="130" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Granular Permissions for Custom Fields</text>
+<rect x="420" y="118" width="138.3" height="20" fill="#22C55E" opacity="1" rx="3"/>
+<text x="564.3" y="132" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 2,200</text>
+<text x="410" y="164" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Rollup Custom Field values from subtasks to parent task</text>
+<rect x="420" y="152" width="125.7" height="20" fill="#FF5C8D" opacity="1" rx="3"/>
+<text x="551.7" y="166" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · 2,000</text>
+<text x="410" y="198" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Sort, filter, group by Formula type custom fields</text>
+<rect x="420" y="186" width="100.6" height="20" fill="#22C55E" opacity="1" rx="3"/>
+<text x="526.6" y="200" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 1,600</text>
+<text x="410" y="232" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Use any field in formulas, e.g. dropdowns and text</text>
+<rect x="420" y="220" width="94.3" height="20" fill="#FF5C8D" opacity="1" rx="3"/>
+<text x="520.3" y="234" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · 1,500</text>
+<text x="410" y="266" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Custom Fields for List, Folder, or Space</text>
+<rect x="420" y="254" width="53.4" height="20" fill="#FFB13B" opacity="1" rx="3"/>
+<text x="479.4" y="268" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress · 849</text>
+<text x="410" y="300" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">AI billing per user</text>
+<rect x="420" y="288" width="52.9" height="20" fill="#FF5C8D" opacity="1" rx="3"/>
+<text x="478.9" y="302" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · 842</text>
+<text x="410" y="334" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Convert Custom Fields</text>
+<rect x="420" y="322" width="36.1" height="20" fill="#22C55E" opacity="1" rx="3"/>
+<text x="462.1" y="336" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete · 575</text>
+<text x="410" y="368" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Different formats for Number Custom Field</text>
+<rect x="420" y="356" width="33.2" height="20" fill="#FF5C8D" opacity="1" rx="3"/>
+<text x="459.2" y="370" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open · 528</text>
+<rect x="20" y="374" width="12" height="12" fill="#FF5C8D" rx="2"/>
+<text x="38" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Open</text>
+<rect x="130" y="374" width="12" height="12" fill="#FFB13B" rx="2"/>
+<text x="148" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">In Progress</text>
+<rect x="240" y="374" width="12" height="12" fill="#22C55E" rx="2"/>
+<text x="258" y="384" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">Complete</text>
+</svg>
+</div>
+
+<p>The overall top is shown for context. These pre-date AI CFs but shape the substrate they run on: dashboard ingestion (Formula in Dashboard, 2,700v), aggregation (Subtask Rollup, 2,000v), formula composability (Use-any-field, 1,500v), permissions (2,200v, shipped). Custom Field Manager (3,500v, shipped) is where AI CF management lives.</p>
+
+<div class="chart">
+<svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Posts per year">
+<text x="20" y="22" font-family="Inter,system-ui,sans-serif" font-size="14" font-weight="600" fill="#1F1F2E">First-seen year of each post — AI vs non-AI</text>
+<line x1="50" y1="210" x2="690" y2="210" stroke="#E5E5EE"/>
+<line x1="50" y1="210.0" x2="690" y2="210.0" stroke="#E5E5EE" stroke-dasharray="2,2"/>
+<text x="44" y="214.0" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">0</text>
+<line x1="50" y1="130.0" x2="690" y2="130.0" stroke="#E5E5EE" stroke-dasharray="2,2"/>
+<text x="44" y="134.0" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">19</text>
+<line x1="50" y1="50.0" x2="690" y2="50.0" stroke="#E5E5EE" stroke-dasharray="2,2"/>
+<text x="44" y="54.0" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">38</text>
+<rect x="53.57142857142857" y="205.78947368421052" width="27.4" height="4.2" fill="#FF5C8D" rx="2"/>
+<text x="67.28571428571429" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">1</text>
+<rect x="83.0" y="210.0" width="27.4" height="0.0" fill="#7B68EE" rx="2"/>
+<text x="96.71428571428571" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">0</text>
+<text x="82.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2017</text>
+<rect x="117.57142857142857" y="205.78947368421052" width="27.4" height="4.2" fill="#FF5C8D" rx="2"/>
+<text x="131.28571428571428" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">1</text>
+<rect x="147.0" y="210.0" width="27.4" height="0.0" fill="#7B68EE" rx="2"/>
+<text x="160.71428571428572" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">0</text>
+<text x="146.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2018</text>
+<rect x="181.57142857142858" y="201.57894736842104" width="27.4" height="8.4" fill="#FF5C8D" rx="2"/>
+<text x="195.28571428571428" y="197.57894736842104" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">2</text>
+<rect x="211.0" y="210.0" width="27.4" height="0.0" fill="#7B68EE" rx="2"/>
+<text x="224.71428571428572" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">0</text>
+<text x="210.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2019</text>
+<rect x="245.57142857142858" y="176.31578947368422" width="27.4" height="33.7" fill="#FF5C8D" rx="2"/>
+<text x="259.2857142857143" y="172.31578947368422" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">8</text>
+<rect x="275.0" y="210.0" width="27.4" height="0.0" fill="#7B68EE" rx="2"/>
+<text x="288.7142857142857" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">0</text>
+<text x="274.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2020</text>
+<rect x="309.57142857142856" y="151.05263157894737" width="27.4" height="58.9" fill="#FF5C8D" rx="2"/>
+<text x="323.2857142857143" y="147.05263157894737" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">14</text>
+<rect x="339.0" y="210.0" width="27.4" height="0.0" fill="#7B68EE" rx="2"/>
+<text x="352.7142857142857" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">0</text>
+<text x="338.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2021</text>
+<rect x="373.57142857142856" y="75.26315789473685" width="27.4" height="134.7" fill="#FF5C8D" rx="2"/>
+<text x="387.2857142857143" y="71.26315789473685" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">32</text>
+<rect x="403.0" y="205.78947368421052" width="27.4" height="4.2" fill="#7B68EE" rx="2"/>
+<text x="416.7142857142857" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">1</text>
+<text x="402.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2022</text>
+<rect x="437.57142857142856" y="50.0" width="27.4" height="160.0" fill="#FF5C8D" rx="2"/>
+<text x="451.2857142857143" y="46.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">38</text>
+<rect x="467.0" y="193.1578947368421" width="27.4" height="16.8" fill="#7B68EE" rx="2"/>
+<text x="480.7142857142857" y="189.1578947368421" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">4</text>
+<text x="466.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2023</text>
+<rect x="501.57142857142856" y="193.1578947368421" width="27.4" height="16.8" fill="#FF5C8D" rx="2"/>
+<text x="515.2857142857143" y="189.1578947368421" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">4</text>
+<rect x="531.0" y="172.10526315789474" width="27.4" height="37.9" fill="#7B68EE" rx="2"/>
+<text x="544.7142857142857" y="168.10526315789474" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">9</text>
+<text x="530.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2024</text>
+<rect x="565.5714285714286" y="205.78947368421052" width="27.4" height="4.2" fill="#FF5C8D" rx="2"/>
+<text x="579.2857142857143" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">1</text>
+<rect x="595.0" y="188.94736842105263" width="27.4" height="21.1" fill="#7B68EE" rx="2"/>
+<text x="608.7142857142857" y="184.94736842105263" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">5</text>
+<text x="594.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2025</text>
+<rect x="629.5714285714286" y="210.0" width="27.4" height="0.0" fill="#FF5C8D" rx="2"/>
+<text x="643.2857142857143" y="206.0" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#FF5C8D">0</text>
+<rect x="659.0" y="205.78947368421052" width="27.4" height="4.2" fill="#7B68EE" rx="2"/>
+<text x="672.7142857142857" y="201.78947368421052" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#7B68EE">1</text>
+<text x="658.0" y="226" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">2026</text>
+<rect x="560" y="20" width="12" height="12" fill="#FF5C8D" rx="2"/>
+<text x="576" y="30" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">non-AI</text>
+<rect x="630" y="20" width="12" height="12" fill="#7B68EE" rx="2"/>
+<text x="646" y="30" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#1F1F2E">AI</text>
+</svg>
+</div>
+
+<p>By year of first post, AI volume picks up sharply from 2024 onward as Brain rolled out; non-AI CF posts cluster in 2020–2023 (the 3.0 / CF Manager era).</p>
+
+<h2>4. Theme breakdown</h2>
+<div class="chart">
+<svg viewBox="0 0 760 410" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Theme distribution: post count vs proxy score">
+<text x="20" y="22" font-family="Inter,system-ui,sans-serif" font-size="14" font-weight="600" fill="#1F1F2E">Theme distribution: post count (left) vs proxy salience score (right)</text>
+<text x="200" y="44" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">posts ←</text>
+<text x="500.0" y="44" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">→ score</text>
+<rect x="337.1" y="60" width="112.9" height="20" fill="#FFB13B" opacity="0.55" rx="3"/>
+<text x="331.1" y="74" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">14</text>
+<rect x="490.0" y="60" width="250.0" height="20" fill="#FFB13B" rx="3"/>
+<text x="746.0" y="74" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">4910</text>
+<text x="470.0" y="74" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Dashboard/aggregation</text>
+<rect x="200.0" y="92" width="250.0" height="20" fill="#FF8B6A" opacity="0.55" rx="3"/>
+<text x="194.0" y="106" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">31</text>
+<rect x="490.0" y="92" width="238.9" height="20" fill="#FF8B6A" rx="3"/>
+<text x="734.9" y="106" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">4692</text>
+<text x="470.0" y="106" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Field type broken</text>
+<rect x="321.0" y="124" width="129.0" height="20" fill="#49CCF9" opacity="0.55" rx="3"/>
+<text x="315.0" y="138" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">16</text>
+<rect x="490.0" y="124" width="232.5" height="20" fill="#49CCF9" rx="3"/>
+<text x="728.5" y="138" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">4566</text>
+<text x="470.0" y="138" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Bulk management</text>
+<rect x="401.6" y="156" width="48.4" height="20" fill="#9CA3AF" opacity="0.55" rx="3"/>
+<text x="395.6" y="170" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">6</text>
+<rect x="490.0" y="156" width="115.0" height="20" fill="#9CA3AF" rx="3"/>
+<text x="611.0" y="170" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">2258</text>
+<text x="470.0" y="170" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Permissions/sharing</text>
+<rect x="288.7" y="188" width="161.3" height="20" fill="#FF5C8D" opacity="0.55" rx="3"/>
+<text x="282.7" y="202" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">20</text>
+<rect x="490.0" y="188" width="80.2" height="20" fill="#FF5C8D" rx="3"/>
+<text x="576.2" y="202" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">1575</text>
+<text x="470.0" y="202" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Field type missing</text>
+<rect x="385.5" y="220" width="64.5" height="20" fill="#CBD5E1" opacity="0.55" rx="3"/>
+<text x="379.5" y="234" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">8</text>
+<rect x="490.0" y="220" width="59.5" height="20" fill="#CBD5E1" rx="3"/>
+<text x="555.5" y="234" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">1169</text>
+<text x="470.0" y="234" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Other</text>
+<rect x="329.0" y="252" width="121.0" height="20" fill="#A78BFA" opacity="0.55" rx="3"/>
+<text x="323.0" y="266" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">15</text>
+<rect x="490.0" y="252" width="37.3" height="20" fill="#A78BFA" rx="3"/>
+<text x="533.3" y="266" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">733</text>
+<text x="470.0" y="266" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Cosmetic/UX polish</text>
+<rect x="345.2" y="284" width="104.8" height="20" fill="#7B68EE" opacity="0.55" rx="3"/>
+<text x="339.2" y="298" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">13</text>
+<rect x="490.0" y="284" width="28.6" height="20" fill="#7B68EE" rx="3"/>
+<text x="524.6" y="298" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">561</text>
+<text x="470.0" y="298" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">AI field gap</text>
+<rect x="401.6" y="316" width="48.4" height="20" fill="#22C55E" opacity="0.55" rx="3"/>
+<text x="395.6" y="330" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">6</text>
+<rect x="490.0" y="316" width="5.1" height="20" fill="#22C55E" rx="3"/>
+<text x="501.1" y="330" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">100</text>
+<text x="470.0" y="330" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Mobile</text>
+<rect x="433.9" y="348" width="16.1" height="20" fill="#EF4444" opacity="0.55" rx="3"/>
+<text x="427.9" y="362" text-anchor="end" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">2</text>
+<rect x="490.0" y="348" width="1.9" height="20" fill="#EF4444" rx="3"/>
+<text x="497.9" y="362" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">37</text>
+<text x="470.0" y="362" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" font-weight="500" fill="#1F1F2E">Performance</text>
+</svg>
+</div>
+<p>Post-count vs vote-weight flips three rankings. <b>Dashboard/aggregation</b> is 5th by count but 1st by votes (4,910 — Formula-in-Dashboard and Subtask Rollup). <b>Bulk management</b> climbs to 3rd by votes on Custom Field Manager's 3,500. <b>Permissions/sharing</b> punches above its 6-post count via Granular Permissions. <b>AI field gap</b> is 5th by count but 8th by votes — the AI cluster is broad but each individual ask is small (1–120 votes). Theme-by-vote is the better priority signal: dashboard/aggregation/rollup carries the most accumulated weight, and most of it is Open.</p>
+
+<h2>5. Status breakdown</h2>
+<div class="chart">
+<svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Status distribution">
+<text x="20" y="22" font-family="Inter,system-ui,sans-serif" font-size="14" font-weight="600" fill="#1F1F2E">Status distribution — full corpus and AI-only</text>
+<path d="M 180.0 60.0 A 90 90 0 0 1 269.1 162.8 L 234.4 157.8 A 55 55 0 0 0 180.0 95.0 Z" fill="#22C55E"/>
+<path d="M 269.1 162.8 A 90 90 0 0 1 253.8 201.6 L 225.1 181.5 A 55 55 0 0 0 234.4 157.8 Z" fill="#FFB13B"/>
+<path d="M 253.8 201.6 A 90 90 0 1 1 180.0 60.0 L 180.0 95.0 A 55 55 0 1 0 225.1 181.5 Z" fill="#FF5C8D"/>
+<text x="180" y="146" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="22" font-weight="700" fill="#1F1F2E">121</text>
+<text x="180" y="164" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">all posts</text>
+<path d="M 420.0 60.0 A 90 90 0 0 1 505.6 177.8 L 472.3 167.0 A 55 55 0 0 0 420.0 95.0 Z" fill="#22C55E"/>
+<path d="M 505.6 177.8 A 90 90 0 0 1 472.9 222.8 L 452.3 194.5 A 55 55 0 0 0 472.3 167.0 Z" fill="#FFB13B"/>
+<path d="M 472.9 222.8 A 90 90 0 1 1 420.0 60.0 L 420.0 95.0 A 55 55 0 1 0 452.3 194.5 Z" fill="#FF5C8D"/>
+<text x="420" y="146" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="22" font-weight="700" fill="#1F1F2E">20</text>
+<text x="420" y="164" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="#6B6B7C">AI posts</text>
+<rect x="580" y="110" width="14" height="14" fill="#FF5C8D" rx="2"/>
+<text x="602" y="122" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Open</text>
+<text x="602" y="138" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">all: 79 · AI: 12</text>
+<rect x="580" y="150" width="14" height="14" fill="#FFB13B" rx="2"/>
+<text x="602" y="162" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">In Progress</text>
+<text x="602" y="178" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">all: 9 · AI: 2</text>
+<rect x="580" y="190" width="14" height="14" fill="#22C55E" rx="2"/>
+<text x="602" y="202" font-family="Inter,system-ui,sans-serif" font-size="12" fill="#1F1F2E">Complete</text>
+<text x="602" y="218" font-family="Inter,system-ui,sans-serif" font-size="10" fill="#6B6B7C">all: 33 · AI: 6</text>
+</svg>
+</div>
+<p>65% Open, 7% In Progress, 27% Complete. Complete is concentrated in 3.0-era infrastructure (CF Manager, Granular Permissions, Convert, Reorder, Searchable, Bulk Actions) plus the AI CF launch. Open splits two ways: cross-cutting power-user gaps (Subtask Rollup, Use-any-field-in-formulas, Conditional CFs) and the AI extension cluster (AI on Number/Rating, AI on attachments, per-user AI billing).</p>
+<p><b>Open with 2+ years of age and confirmed high vote counts:</b></p>
+<ul class="tight">
+<li><a href="https://feedback.clickup.com/feature-requests/p/rollup-custom-field-values-from-subtasks-to-parent-task" target="_blank" rel="noopener">Rollup Custom Field values from subtasks to parent task</a> <span class="muted">· first seen 2020 · score 2000</span></li>
+<li><a href="https://feedback.clickup.com/feature-requests/p/use-any-field-in-formulas-eg-dropdowns-and-text-not-just-number-and-date-fields" target="_blank" rel="noopener">Use any field in formulas, e.g. dropdowns and text</a> <span class="muted">· first seen 2021 · score 1500</span></li>
+<li><a href="https://feedback.clickup.com/feature-requests/p/ai-billing-per-user" target="_blank" rel="noopener">AI billing per user</a> <span class="muted">· first seen 2023 · score 842</span></li>
+<li><a href="https://feedback.clickup.com/feature-requests/p/different-formats-for-number-custom-field" target="_blank" rel="noopener">Different formats for Number Custom Field</a> <span class="muted">· first seen 2019 · score 528</span></li>
+<li><a href="https://feedback.clickup.com/feature-requests/p/conditional-custom-fields" target="_blank" rel="noopener">Conditional custom fields</a> <span class="muted">· first seen 2020 · score 358</span></li>
+<li><a href="https://feedback.clickup.com/feature-requests/p/custom-fields-in-free-plan" target="_blank" rel="noopener">Custom Fields in Free Plan</a> <span class="muted">· first seen 2019 · score 238</span></li>
+<li><a href="https://feedback.clickup.com/feature-requests/p/conditional-custom-fields-show-if-based-on-value-of-another-field" target="_blank" rel="noopener">Conditional Custom Fields (Show if based on value of another field)</a> <span class="muted">· first seen 2023 · score 107</span></li>
+</ul>
+<p>These are the posts most likely to surface in interview prep as "why hasn't this shipped?" questions.</p>
+
+<h2>6. Strategic gaps surfaced</h2>
+<p>Posts where the request points to a deeper product gap, not just a missing feature. Selected to bias toward the parent project's two goals — new user adoption of AI CFs, and power-user CSAT for AI CFs. Each pick is annotated with its <b>AI CF connection</b>: why this constrains or shapes AI Custom Fields, even when the post itself isn't AI-tagged. Direct-AI picks are listed first.</p>
+
+<div class="gap">
+<h4><span class="pill" style="background:#7B68EE1A; color:#7B68EE; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/ai-custom-fields" target="_blank" rel="noopener">AI Custom Fields (anchor) — and Juliana Stanisauskiene's Jan 2026 comment</a> <span class="muted" style="font-weight:400; font-size:12px;">· 185 votes · Complete</span></h4>
+<p class="quote">"AI Custom Fields appear to be text-only. There's no option to set Number/Currency."</p>
+<p>Post shipped Feb 2025; the active conversation moved into the comments. Juliana's Jan 21 2026 ask is unanswered.</p>
+<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Today AI CFs are pre-configured Long Text + Dropdown. Number/Currency/Percent require a NEW underlying type, not a settings change. Prompt-UX and new-type asks belong on separate roadmap tracks.</p>
+</div>
+
+<div class="gap">
+<h4><span class="pill" style="background:#7B68EE1A; color:#7B68EE; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/ai-billing-per-user" target="_blank" rel="noopener">AI billing per user</a> <span class="muted" style="font-weight:400; font-size:12px;">· 842 votes · Not on the roadmap</span></h4>
+<p class="quote">"Charging per number of total seats makes this feature unjustifiable."</p>
+<p>Largest AI-tagged post in the corpus. ClickUp's Mar 19 2026 usage-based-billing counter-proposal was rejected by the comment thread.</p>
+<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> AI CFs are credit-consuming by design. Without per-user governance, admins block AI entry-points entirely. Direct risk to both adoption (new users) and CSAT (power users).</p>
+</div>
+
+<div class="gap">
+<h4><span class="pill" style="background:#7B68EE1A; color:#7B68EE; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/clickup-ai-extract-data-from-attachments" target="_blank" rel="noopener">ClickUp AI — Extract data from attachments</a> <span class="muted" style="font-weight:400; font-size:12px;">· 120 votes · Planned</span></h4>
+<p class="quote">"ClickUp AI extract each data from attached word form to each custom field."</p>
+<p>Caroline Ginty Jul 2 2025: 'confirmed that we plan to support this with AI Custom Fields as well.'</p>
+<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Attachment reads (PDF/Word/image) unlock recruitment, invoice processing, and compliance — high-leverage AI CF use cases blocked today.</p>
+</div>
+
+<div class="gap">
+<h4><span class="pill" style="background:#7B68EE1A; color:#7B68EE; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/enable-ai-agents-to-access-custom-attachment-fields" target="_blank" rel="noopener">Enable AI Agents to Access Custom Attachment Fields</a> <span class="muted" style="font-weight:400; font-size:12px;">· 56 votes · Planned</span></h4>
+<p class="quote">"Build precise, field-specific workflows."</p>
+<p>Sister post to Extract-from-attachments. Stephen Carlos' use case: per-field-type AI logic for resumes, background checks, IDs.</p>
+<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Custom attachment FIELDS specifically. Closing this seam moves AI CFs from leaf-node to composable.</p>
+</div>
+
+<div class="gap">
+<h4><span class="pill" style="background:#7B68EE1A; color:#7B68EE; font-weight:600; margin-right:8px;">DIRECT-AI</span><a href="https://feedback.clickup.com/feature-requests/p/ai-filled-rating-field" target="_blank" rel="noopener">AI Filled Rating Field (and the 'AI on numeric type' pattern)</a> <span class="muted" style="font-weight:400; font-size:12px;">· 1 vote · Future</span></h4>
+<p class="quote">"AI to populate the Rating field."</p>
+<p>Single-vote canary, but joins a recurring pattern: 8+ posts ask for AI on Rating, Number, Currency, Percent, Linked Record, Doc, Duration, or Time.</p>
+<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Defines the strategic decision: stay on Long Text + Dropdown, or invest in new AI-capable underlying types. The latter is the answer to Juliana.</p>
+</div>
+
+<div class="gap">
+<h4><span class="pill" style="background:#FF8B6A1A; color:#FF8B6A; font-weight:600; margin-right:8px;">AI-CONSTRAINING</span><a href="https://feedback.clickup.com/feature-requests/p/formula-fields-in-dashboard" target="_blank" rel="noopener">Formula fields in Dashboard</a> <span class="muted" style="font-weight:400; font-size:12px;">· 2,700 votes · Planned</span></h4>
+<p class="quote">"Unsupported data type in formula field."</p>
+<p>Partial support shipped. Users still blocked on TODAY()-based formulas, formula-of-formulas, aggregated calculations.</p>
+<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> AI CF outputs (text by default) can't render in Dashboard widgets. Same ingestion gap as formulas. Fix once and AI-CF data flows for free — exactly what Juliana asked for.</p>
+</div>
+
+<div class="gap">
+<h4><span class="pill" style="background:#FF8B6A1A; color:#FF8B6A; font-weight:600; margin-right:8px;">AI-CONSTRAINING</span><a href="https://feedback.clickup.com/feature-requests/p/rollup-custom-field-values-from-subtasks-to-parent-task" target="_blank" rel="noopener">Rollup Custom Field values from subtasks to parent task</a> <span class="muted" style="font-weight:400; font-size:12px;">· 2,000 votes · Future</span></h4>
+<p class="quote">"On our radar, but not on the committed roadmap."</p>
+<p>Open since January 2020. Caroline Ginty Nov 2025: still 'on radar, not committed' — a 6-year standoff.</p>
+<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Without subtask rollup, an AI Summary on a parent can't compose child summaries; AI Sentiment can't aggregate to portfolio. AI CFs become leaf-only.</p>
+</div>
+
+<div class="gap">
+<h4><span class="pill" style="background:#FF8B6A1A; color:#FF8B6A; font-weight:600; margin-right:8px;">AI-CONSTRAINING</span><a href="https://feedback.clickup.com/feature-requests/p/use-any-field-in-formulas-eg-dropdowns-and-text-not-just-number-and-date-fields" target="_blank" rel="noopener">Use any field in formulas (dropdowns, text, checkbox)</a> <span class="muted" style="font-weight:400; font-size:12px;">· 1,500 votes · Future</span></h4>
+<p class="quote">"Only possible to reference numeric or date fields in formulas."</p>
+<p>Notion/Airtable parity gap. Formula refs constrained to Number/Date.</p>
+<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> AI Categorize / T-shirt Size output dropdowns; AI Summary outputs text. None can be referenced in a Formula CF, so AI classifications can't drive computed metrics.</p>
+</div>
+
+<div class="gap">
+<h4><span class="pill" style="background:#FF8B6A1A; color:#FF8B6A; font-weight:600; margin-right:8px;">AI-CONSTRAINING</span><a href="https://feedback.clickup.com/feature-requests/p/allow-adding-formula-custom-field-type-to-multiple-locations" target="_blank" rel="noopener">Allow adding formula CFs to multiple locations ('Use field from library')</a> <span class="muted" style="font-weight:400; font-size:12px;">· 79 votes · Open</span></h4>
+<p class="quote">"Formula CFs don't appear in 'Use field from library'."</p>
+<p>Direct evidence the Add-existing surface has type-class blind spots.</p>
+<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> Same architectural risk applies to AI CFs. Verify AI CF variants appear in 'Use field from library' before shipping the Add-existing redesign.</p>
+</div>
+
+<div class="gap">
+<h4><span class="pill" style="background:#FF8B6A1A; color:#FF8B6A; font-weight:600; margin-right:8px;">AI-CONSTRAINING</span><a href="https://feedback.clickup.com/feature-requests/p/custom-fields-in-free-plan" target="_blank" rel="noopener">Custom Fields in Free Plan (60-use cap)</a> <span class="muted" style="font-weight:400; font-size:12px;">· 238 votes · Open since 2019</span></h4>
+<p class="quote">"Every change counts as a 'use.'"</p>
+<p>Free plan caps CFs at 60 'uses' (every change counts). Multiple comments report churn to Notion.</p>
+<p style="border-top:1px dashed #E5E5EE; padding-top:6px; margin-top:6px;"><b style="color:#7B68EE;">AI CF connection:</b> The new user AI CF first experience IS this Free plan. Each AI run is also a credit; AI CFs stack two billing surprises in the same flow. Education + cost transparency need pairing.</p>
+</div>
+
+<h2>7. Watchlist confirmations</h2>
+
+<h3>Juliana Stanisauskiene — Number/Currency AI fields + Dashboard aggregation (Jan 2026) — <span style="color:#22C55E;">CONFIRMED</span></h3>
+<p>Located on direct browse of <a href="https://feedback.clickup.com/feature-requests/p/ai-custom-fields" target="_blank" rel="noopener">the AI Custom Fields thread</a>. <b>Format:</b> the referenced item is a comment on that thread, not a standalone post — dated <b>January 21, 2026</b>. The host post itself has <b>185 votes</b> and is marked <b>completed</b> (Jack Dowd, Feb 13 2025). Juliana's comment opens with: "We've noticed a limitation with AI Custom Fields and wanted to ask about your product roadmap." She lays out three asks for the ClickUp team:</p>
+<ul class="tight">
+<li>Make Number/Currency (Money) a valid AI Custom Field <i>type</i> — today AI CFs are text-only, so AI-derived numeric values are stored as strings.</li>
+<li>Provide an automatic conversion/casting feature, OR clarify whether the text-only behaviour is intentional.</li>
+<li>Make AI CF values usable for Dashboard aggregations (charts, sums) — today they aren't, since Dashboards expect true numeric/currency fields.</li>
+</ul>
+<p>The closing question — "If there's a recommended workaround … to make AI outputs dashboard-friendly today, we'd really appreciate your suggestion" — is unanswered as of this report's date. ClickUp has not replied to the comment publicly.</p>
+<p><i>Note: she is also a confirmed voter on the AI Custom Fields post (top of voters list) and on Formula Column Calculations.</i></p>
+
+<h3>AI billing surprise / credit consumption — <span style="color:#22C55E;">CONFIRMED</span></h3>
+<p>Anchor: <a href="https://feedback.clickup.com/feature-requests/p/ai-billing-per-user" target="_blank" rel="noopener">AI billing per user</a> (<b>842v</b>, "not on the roadmap" Mar 19 2026 with usage-based-billing counter-proposal). Comment thread shows the response was unconvincing — admins want governance and per-seat control, not metered usage. Adjacent: <a href="https://feedback.clickup.com/ai-super-agents/p/super-agent-credit-allowance" target="_blank" rel="noopener">Super Agent Credit allowance</a> (9v, completed — 75% discount on first 3 agent runs, avg cost shown), <a href="https://feedback.clickup.com/feature-requests/p/hide-ai-buttons-if-not-purchased" target="_blank" rel="noopener">Hide AI buttons if not purchased</a> (25v, complete), <a href="https://feedback.clickup.com/feature-requests/p/allow-individual-users-to-disable-ai" target="_blank" rel="noopener">Allow Individual Users to Disable AI</a> (8v, open).</p>
+
+<h3>"Add existing" tab behaviour — <span style="color:#FFB13B;">INDIRECTLY CONFIRMED</span></h3>
+<p><a href="https://feedback.clickup.com/feature-requests/p/allow-adding-formula-custom-field-type-to-multiple-locations" target="_blank" rel="noopener">Allow adding "formula" custom field type to multiple locations</a> (79v) is direct evidence the Add-existing / Use-field-from-library surface has type-class blind spots — formula CFs are excluded. Same risk class for AI CFs.</p>
+
+<h3>Custom Field Manager bulk operations — <span style="color:#22C55E;">CONFIRMED</span></h3>
+<p><a href="https://feedback.clickup.com/feature-requests/p/custom-field-manager" target="_blank" rel="noopener">Custom Field Manager</a> (<b>3,500v</b>, complete). Comments flag two regressions from 2.0 (lost manual ordering, lost pinning) and the Business-Plus gate on move-field. Adjacent: <a href="https://feedback.clickup.com/feature-requests/p/bulk-custom-field-removal" target="_blank" rel="noopener">Bulk custom field removal</a> (4v, open), <a href="https://feedback.clickup.com/feature-requests/p/convert-custom-fields" target="_blank" rel="noopener">Convert Custom Fields</a> (575v, complete; conversion is one-way).</p>
+
+<h3>Mobile field creation — <span style="color:#FFB13B;">CONFIRMED OPEN</span></h3>
+<p><a href="https://feedback.clickup.com/new-mobile-app/p/add-edit-custom-fields-in-new-mobile-app" target="_blank" rel="noopener">Add &amp; Edit Custom Fields in Mobile</a>, plus <a href="https://feedback.clickup.com/new-mobile-app/p/improve-mobile-task-creation-custom-fields-and-required-recent-locations-and-mor" target="_blank" rel="noopener">Mobile Task creation — Custom Fields</a> (in progress) and <a href="https://feedback.clickup.com/new-mobile-app/p/signature-custom-field-support-on-mobile" target="_blank" rel="noopener">Signature CF on mobile</a>.</p>
+
+<h3>Progress field manual vs. auto — <span style="color:#22C55E;">CONFIRMED</span></h3>
+<p><a href="https://feedback.clickup.com/feature-requests/p/convert-progress-manual-into-progress-auto-in-30" target="_blank" rel="noopener">Convert Progress (Manual) into Progress (Auto)</a>, <a href="https://feedback.clickup.com/feature-requests/p/progress-bar-auto-updates-from-custom-fields" target="_blank" rel="noopener">Auto-Progress driven by CFs</a>, <a href="https://feedback.clickup.com/feature-requests/p/auto-progress-rollup-nested-partial-subtask-completion" target="_blank" rel="noopener">Auto-Progress nested subtasks</a>, <a href="https://feedback.clickup.com/feature-requests/p/customize-progress-bar" target="_blank" rel="noopener">Weighted/formula auto-progress</a>.</p>
+
+<h2>8. Appendix — full coded dataset</h2>
+<p class="muted">★ in "New type?" column = the post asks for AI on a CF type that's currently not AI-capable (Number, Formula, Linked Record, Doc, Duration, Time, Rating). Bolded vote counts are confirmed via direct page fetch; greyed numbers prefixed with ~ are prominence-proxy estimates.</p>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Title</th><th>Board</th><th>Status</th><th>AI?</th><th>Themes</th><th>Surfaces</th><th>User signal</th><th>New type?</th><th>Votes</th>
+</tr></thead>
+<tbody>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/ai-custom-fields" target="_blank" rel="noopener">AI Custom Fields</a></td><td>Feature Requests</td><td>Complete</td><td>Yes</td><td>AI field gap</td><td>Field Settings, Field Display</td><td>Unknown</td><td style='text-align:center'></td><td style='text-align:right'><b>185</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/clickup-ai-extract-data-from-attachments" target="_blank" rel="noopener">ClickUp AI - Extract data from attachments</a></td><td>Feature Requests</td><td>In Progress</td><td>Yes</td><td>AI field gap</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'>★</td><td style='text-align:right'><b>120</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/enable-ai-agents-to-access-custom-attachment-fields" target="_blank" rel="noopener">Enable AI Agents to Access Custom Attachment Fields</a></td><td>Feature Requests</td><td>In Progress</td><td>Yes</td><td>AI field gap</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>56</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/ai-filled-rating-field" target="_blank" rel="noopener">AI Filled Rating Field</a></td><td>Feature Requests</td><td>Open</td><td>Yes</td><td>AI field gap, Field type missing</td><td>Field Settings</td><td>Unknown</td><td style='text-align:center'>★</td><td style='text-align:right'><b>1</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/ai-summary-of-clickup-lists" target="_blank" rel="noopener">AI Summary of ClickUp lists</a></td><td>Feature Requests</td><td>Open</td><td>Yes</td><td>AI field gap</td><td>Other</td><td>Unknown</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/public-api/p/ai-summary-via-api" target="_blank" rel="noopener">AI Summary via API</a></td><td>Public API</td><td>Open</td><td>Yes</td><td>AI field gap</td><td>Other</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/add-a-tooltip-for-ai-fields-that-are-disabled-due-to-ai-clickapp-being-turned-of" target="_blank" rel="noopener">Add a tooltip for AI Fields that are disabled due to AI ClickApp being turned off</a></td><td>Feature Requests</td><td>Open</td><td>Yes</td><td>Cosmetic/UX polish, AI field gap</td><td>Field Display</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-prompts-in-ai" target="_blank" rel="noopener">Custom Prompts in AI</a></td><td>Feature Requests</td><td>Complete</td><td>Yes</td><td>AI field gap</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>99</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/add-custom-instructions-to-clickup-ai-persistent-across-all-uses" target="_blank" rel="noopener">Add Custom Instructions to ClickUp AI (Persistent Across All Uses)</a></td><td>Feature Requests</td><td>Open</td><td>Yes</td><td>AI field gap</td><td>Other</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/instructions-for-clickup-ai-make-it-fit-to-me" target="_blank" rel="noopener">Instructions for Clickup AI - make it fit to me</a></td><td>Feature Requests</td><td>Open</td><td>Yes</td><td>AI field gap</td><td>Other</td><td>Unknown</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/ai-billing-per-user" target="_blank" rel="noopener">AI billing per user</a></td><td>Feature Requests</td><td>Open</td><td>Yes</td><td>Other</td><td>Other</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><b>842</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/ai-super-agents/p/super-agent-credit-allowance" target="_blank" rel="noopener">Super Agent Credit allowance</a></td><td>AI Super Agents</td><td>Complete</td><td>Yes</td><td>Other</td><td>Other</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><b>9</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/clickup-brain-ai-pricing" target="_blank" rel="noopener">ClickUp Brain AI Pricing</a></td><td>Feature Requests</td><td>Open</td><td>Yes</td><td>Other</td><td>Other</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/allow-individual-users-to-disable-ai" target="_blank" rel="noopener">Allow Individual Users to Disable AI</a></td><td>Feature Requests</td><td>Open</td><td>Yes</td><td>Permissions/sharing</td><td>Other</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><b>8</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/hide-ai-buttons-if-not-purchased" target="_blank" rel="noopener">Hide AI buttons if not purchased</a></td><td>Feature Requests</td><td>Complete</td><td>Yes</td><td>Cosmetic/UX polish</td><td>Field Display</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><b>25</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/turn-off-ai" target="_blank" rel="noopener">Turn off AI</a></td><td>Feature Requests</td><td>Open</td><td>Yes</td><td>Permissions/sharing</td><td>Other</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-field-manager" target="_blank" rel="noopener">Custom Field Manager</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Bulk management</td><td>Custom Field Manager</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><b>3,500</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/bulk-actions-with-custom-fields" target="_blank" rel="noopener">Bulk Actions with Custom Fields</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Bulk management</td><td>Custom Field Manager</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>297</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/bulk-custom-field-removal" target="_blank" rel="noopener">Bulk custom field removal!</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Bulk management</td><td>Custom Field Manager</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><b>4</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/ability-to-merge-custom-fields" target="_blank" rel="noopener">Ability to Merge Custom Fields</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Bulk management</td><td>Custom Field Manager</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~30</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/convert-custom-fields" target="_blank" rel="noopener">Convert Custom Fields</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Bulk management, Field type broken</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><b>575</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/ability-to-copy-custom-fields" target="_blank" rel="noopener">Ability to copy custom fields</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Bulk management</td><td>Custom Field Manager</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/quickly-copy-custom-field-id" target="_blank" rel="noopener">Quickly Copy Custom Field ID</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Cosmetic/UX polish</td><td>Custom Field Manager</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/move-workspace-level-custom-fields-to-folders-and-lists" target="_blank" rel="noopener">Move Workspace level Custom Fields to Folders and Lists</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Bulk management</td><td>Custom Field Manager</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-fields-for-list-folder-or-space" target="_blank" rel="noopener">Custom Fields for List, Folder, or Space</a></td><td>Feature Requests</td><td>In Progress</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'>★</td><td style='text-align:right'><b>849</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/conditional-custom-fields-show-if-based-on-value-of-another-field" target="_blank" rel="noopener">Conditional Custom Fields (Show if based on value of another field)</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>107</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/conditional-custom-fields" target="_blank" rel="noopener">Conditional custom fields</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>358</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/dependent-custom-fields-options-depend-on-other-options" target="_blank" rel="noopener">Dependent Custom Fields (options depend on other options)</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~30</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/conditional-formatting-for-custom-fields-color-based-on-value" target="_blank" rel="noopener">Conditional Formatting for Custom Fields (Color based on value)</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Cosmetic/UX polish</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/time-custom-field" target="_blank" rel="noopener">Time custom field</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Type Selection Screen</td><td>Power user</td><td style='text-align:center'>★</td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/new-custom-field-type-duration" target="_blank" rel="noopener">New Custom Field type: Duration</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Type Selection Screen</td><td>Power user</td><td style='text-align:center'>★</td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-field-type-doc" target="_blank" rel="noopener">Custom Field Type: Doc</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Type Selection Screen</td><td>Power user</td><td style='text-align:center'>★</td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/location-custom-field" target="_blank" rel="noopener">Location custom field</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Field type missing</td><td>Type Selection Screen</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/new-mobile-app/p/signature-custom-field-support-on-mobile" target="_blank" rel="noopener">Signature Custom Field support on mobile</a></td><td>ClickUp Mobile</td><td>In Progress</td><td>No</td><td>Mobile, Field type missing</td><td>Mobile</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/add-signature-field-to-forms" target="_blank" rel="noopener">Add signature field to forms</a></td><td>Feature Requests</td><td>In Progress</td><td>No</td><td>Field type missing</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/different-formats-for-number-custom-field" target="_blank" rel="noopener">Different formats for Number Custom Field</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken, Cosmetic/UX polish</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>528</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/customize-currency-settings-regional-formatting-default-currency-display-format" target="_blank" rel="noopener">Customize Currency Settings: Regional formatting, default currency, display format</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-field-type-number-remove-comma" target="_blank" rel="noopener">Custom Field Type Number - Remove comma</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Unknown</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/format-number-output-from-formula-fields" target="_blank" rel="noopener">Format number output from Formula Fields</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/formula-custom-field" target="_blank" rel="noopener">Formula Column Calculations</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Dashboard/aggregation</td><td>Dashboard</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~40</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/formula-fields-in-dashboard" target="_blank" rel="noopener">Formula fields in Dashboard</a></td><td>Feature Requests</td><td>In Progress</td><td>No</td><td>Dashboard/aggregation</td><td>Dashboard</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>2,700</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/sort-filter-group-by-formula-type-custom-fields" target="_blank" rel="noopener">Sort, filter, group by Formula type custom fields</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Field type broken</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>1,600</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/use-any-field-in-formulas-eg-dropdowns-and-text-not-just-number-and-date-fields" target="_blank" rel="noopener">Use any field in formulas, e.g. dropdowns and text</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>1,500</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/use-formulascustom-fields-to-update-task-names" target="_blank" rel="noopener">Use Formulas/Custom Fields to update Task names</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/add-formula-fields-in-automations" target="_blank" rel="noopener">Add Formula Fields In Automations</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Field type broken</td><td>Other</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/more-advanced-functions-in-formulas" target="_blank" rel="noopener">More advanced functions in Formulas</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/formula-field-ideas-improvements" target="_blank" rel="noopener">Formula Field Ideas & Improvements</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/use-formulas-in-custom-charts" target="_blank" rel="noopener">Use Formulas in Custom Charts</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Dashboard/aggregation</td><td>Dashboard</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/restrict-dropdown-custom-field-options-by-location-folder-list" target="_blank" rel="noopener">Restrict Dropdown Custom Field Options by Location (Folder/List)</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-field-dropdown-menu-selecting-multiple-values" target="_blank" rel="noopener">Custom Field - Dropdown Menu - selecting multiple values</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/multiple-selections-in-custom-fields" target="_blank" rel="noopener">Multiple Selections in Custom Fields</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/extend-the-option-limit-for-custom-fields-labelsdropdowns" target="_blank" rel="noopener">Extend the Option limit for custom fields: Labels/Dropdowns</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken, Performance</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/auto-sorting-for-dropdownlabel-options" target="_blank" rel="noopener">Auto Sorting for Dropdown/Label Options</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Cosmetic/UX polish</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/automation-rules-based-on-colors-in-custom-field-dropdown" target="_blank" rel="noopener">Automation Rules based on Colors in Custom Field (Dropdown)</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Other</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/conditional-logic-ability-to-filter-limit-dropdown-and-label-options-based-on-pr" target="_blank" rel="noopener">Conditional Logic: Ability to filter/limit dropdown and label options based on previous selections</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/changelog/paste-options-in-bulk-for-label-dropdown-custom-fields" target="_blank" rel="noopener">Paste Options in Bulk for Label & Dropdown Custom Fields</a></td><td>Changelog</td><td>Complete</td><td>No</td><td>Bulk management</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/allow-custom-relationship-fields-to-be-defined-at-the-workspace-space-or-folder" target="_blank" rel="noopener">Allow custom Relationship fields to be defined at the workspace, space or folder level</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/edit-rollup-fields-from-custom-relationship-field" target="_blank" rel="noopener">Edit rollup fields from custom relationship field</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/ability-to-roll-up-relationship-fields" target="_blank" rel="noopener">Ability to Roll Up Relationship Fields</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Dashboard/aggregation</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/rollup-enhancements-for-relationship" target="_blank" rel="noopener">Rollup enhancements for Relationship</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Dashboard/aggregation</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/rollup-custom-field-values-from-subtasks-to-parent-task" target="_blank" rel="noopener">Rollup Custom Field values from subtasks to parent task</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Dashboard/aggregation</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>2,000</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-fields-rollup" target="_blank" rel="noopener">Rollup Custom Field values from subtasks to parent task (Formulas, Numbers, Currency)</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Dashboard/aggregation</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/the-ability-to-roll-up-the-values-of-a-custom-field-from-subtask-to-parent-task" target="_blank" rel="noopener">The ability to roll up the values of a Custom Field from subtask to parent task</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Dashboard/aggregation</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/ability-to-show-rollup-custom-fields-in-all-view-types" target="_blank" rel="noopener">Ability to show RollUp Custom Fields in all view types</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Dashboard/aggregation</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/sort-group-filter-rollup-fields" target="_blank" rel="noopener">Sort / Group / Filter Rollup Fields</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-field-on-dashboard" target="_blank" rel="noopener">Custom Field on dashboard</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Dashboard/aggregation</td><td>Dashboard</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/display-value-of-custom-field-in-dashboard" target="_blank" rel="noopener">Display value of custom field in dashboard</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Dashboard/aggregation</td><td>Dashboard</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/dashboard-group-by-relationship" target="_blank" rel="noopener">Dashboard group by relationship</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Dashboard/aggregation</td><td>Dashboard</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/make-relationshiprollup-fields-reportable-in-dashboards" target="_blank" rel="noopener">Make Relationship/Rollup fields reportable in dashboards</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Dashboard/aggregation</td><td>Dashboard</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/group-by-custom-field-1" target="_blank" rel="noopener">Group by Custom Field</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Field type broken</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/group-by-number-formula-custom-fields" target="_blank" rel="noopener">Group by Number (& Formula) Custom Fields</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>79</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/enable-filter-group-by-custom-field-for-all-field-types" target="_blank" rel="noopener">Enable filter & group by custom field for all field types</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/increment-custom-field-number-through-buttons-or-automation" target="_blank" rel="noopener">Increment custom field number through buttons or automation</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/hide-columns-from-specific-users" target="_blank" rel="noopener">Granular Permissions for Custom Fields</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Permissions/sharing</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><b>2,200</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/hide-custom-fields-when-sharing-publicly" target="_blank" rel="noopener">Hide Custom Fields when sharing publicly</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Permissions/sharing</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/give-ability-to-hide-custom-fields-from-workspace-members" target="_blank" rel="noopener">Granular Permissions for Fields and Custom Fields</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Permissions/sharing</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/ability-to-share-individual-custom-fields-with-guest-users" target="_blank" rel="noopener">Ability to Share Individual Custom Fields with Guest Users</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Permissions/sharing</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/new-mobile-app/p/improve-mobile-task-creation-custom-fields-and-required-recent-locations-and-mor" target="_blank" rel="noopener">Improve Mobile Task creation - Custom Fields (and required), recent locations, and more</a></td><td>Mobile Feature Requests</td><td>In Progress</td><td>No</td><td>Mobile</td><td>Mobile</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~30</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/new-mobile-app/p/add-edit-custom-fields-in-new-mobile-app" target="_blank" rel="noopener">Add & Edit Custom Fields in New Mobile App</a></td><td>ClickUp Mobile</td><td>Open</td><td>No</td><td>Mobile</td><td>Mobile</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-fields-on-android" target="_blank" rel="noopener">Custom fields on Android</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Mobile</td><td>Mobile</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/new-mobile-app/p/allow-tasks-be-displayed-by-the-date-custom-field-in-calendar-view" target="_blank" rel="noopener">Allow tasks be displayed by the Date Custom Field in Calendar view</a></td><td>ClickUp Mobile</td><td>Open</td><td>No</td><td>Mobile, Field type broken</td><td>Mobile</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/new-mobile-app/p/mobile-30-remove-the-need-to-horizontally-scroll-to-see-custom-fields-or-task-da" target="_blank" rel="noopener">Mobile 3.0 - Remove the need to horizontally scroll to see Custom Fields</a></td><td>ClickUp Mobile</td><td>Open</td><td>No</td><td>Mobile, Cosmetic/UX polish</td><td>Mobile</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/progress-bar-auto-updates-from-custom-fields" target="_blank" rel="noopener">Progress Bar (Auto) updates from Custom Fields</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/convert-progress-manual-into-progress-auto-in-30" target="_blank" rel="noopener">Convert Progress (Manual) into Progress (Auto) in 3.0</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken, Bulk management</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/auto-progress-rollup-nested-partial-subtask-completion" target="_blank" rel="noopener">Auto Progress - Rollup nested & partial subtask completion</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/customize-progress-bar" target="_blank" rel="noopener">Custom weighting/formula for auto progress bar</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/set-default-value-for-custom-fields" target="_blank" rel="noopener">Set default value for custom fields</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/granular-settings-for-required-custom-fields" target="_blank" rel="noopener">Granular settings for Required Custom Fields</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/granular-settings-for-pinned-custom-fields" target="_blank" rel="noopener">Granular settings for Pinned Custom Fields</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Cosmetic/UX polish</td><td>Field Display</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/reorder-or-swap-custom-field-positions-in-tasks" target="_blank" rel="noopener">Reorder or swap custom field positions in Tasks</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Cosmetic/UX polish</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/pinned-custom-fields-should-be-pinned-in-all-modals" target="_blank" rel="noopener">Pinned custom fields should be pinned in ALL modals</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Cosmetic/UX polish</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/searchable-custom-fields" target="_blank" rel="noopener">Searchable Custom Fields</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Field type broken</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/descriptions-for-custom-fields-and-statuses" target="_blank" rel="noopener">Descriptions for custom fields and statuses</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Cosmetic/UX polish</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/map-custom-fields-during-import" target="_blank" rel="noopener">Map custom fields during CSV import</a></td><td>Feature Requests</td><td>In Progress</td><td>No</td><td>Bulk management</td><td>Other</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/csv-import-use-01-for-checkbox-custom-fields" target="_blank" rel="noopener">CSV import use 0/1 for checkbox custom fields</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Bulk management</td><td>Other</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/performance" target="_blank" rel="noopener">Performance</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Performance</td><td>Other</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><b>17</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/public-api/p/create-edit-delete-custom-field-options-via-api" target="_blank" rel="noopener">Create/Edit/Delete Custom Field Options via API</a></td><td>Public API</td><td>Open</td><td>No</td><td>Bulk management</td><td>Other</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/public-api/p/create-and-edit-custom-fields-with-api" target="_blank" rel="noopener">Create and Edit Custom fields with API</a></td><td>Public API</td><td>Open</td><td>No</td><td>Bulk management</td><td>Other</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/public-api/p/update-available-custom-dropdown-label-options-via-clickup-api" target="_blank" rel="noopener">Update available custom Dropdown / Label options via ClickUp API</a></td><td>Public API</td><td>Open</td><td>No</td><td>Bulk management</td><td>Other</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/organizing-custom-fields-into-groups-and-custom-fields-visibility-at-task-level" target="_blank" rel="noopener">Organizing Custom Fields into Groups and Custom Fields Visibility at Task Level</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Cosmetic/UX polish</td><td>Field Display</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-fields-in-custom-order-not-aphabetical" target="_blank" rel="noopener">Custom fields in custom order, not aphabetical</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Cosmetic/UX polish</td><td>Custom Field Manager</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/set-custom-fields-at-the-tasksubtask-level" target="_blank" rel="noopener">Set Custom Fields at the task/subtask level</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/different-custom-fields-in-subtasks" target="_blank" rel="noopener">Different custom fields in subtasks</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-fields-by-task-type" target="_blank" rel="noopener">Custom fields by task type</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-fields-in-free-plan" target="_blank" rel="noopener">Custom Fields in Free Plan</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Other</td><td>Other</td><td>New user</td><td style='text-align:center'></td><td style='text-align:right'><b>238</b></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/remove-the-limitation-of-100-uses-of-custom-fields" target="_blank" rel="noopener">Remove the limitation of 100 uses of custom fields</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Other</td><td>Other</td><td>New user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/sorting-by-custom-fields-on-board-view" target="_blank" rel="noopener">Sorting by Custom Fields on Board View</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type broken</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/hide-custom-fields-in-board-view-if-there-is-no-value-in-them" target="_blank" rel="noopener">Hide custom fields in Board view if there is no value</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Cosmetic/UX polish</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/option-to-always-show-hide-when-empty-or-always-hide-custom-fields-in-task-view" target="_blank" rel="noopener">Option to always show, hide when empty or always hide custom fields in task view</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Cosmetic/UX polish</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/move-custom-fields-between-spaces-folders-and-lists" target="_blank" rel="noopener">Move Custom Fields between Spaces, Folders, and Lists</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Bulk management</td><td>Custom Field Manager</td><td>Admin</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/spreadsheet-table-view" target="_blank" rel="noopener">Spreadsheet / Table View</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Dashboard/aggregation</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/databases-and-relationships" target="_blank" rel="noopener">Databases and relationships</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'>★</td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/keep-competing-with-the-likes-of-notion-airtable-coda-anytype-fibery-etc" target="_blank" rel="noopener">Keep competing with the likes of Notion, Airtable, Coda, Anytype, Fibery etc.</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Other</td><td>Other</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-field-for-docs-like-notion" target="_blank" rel="noopener">Custom field for docs (like Notion)</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'>★</td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-fields" target="_blank" rel="noopener">Custom Fields</a></td><td>Feature Requests</td><td>Complete</td><td>No</td><td>Other</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/ai-chatgpt-or-other-assistant-inside-clickup" target="_blank" rel="noopener">AI (ChatGPT or other) assistant inside Clickup</a></td><td>Feature Requests</td><td>Complete</td><td>Yes</td><td>Other</td><td>Other</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~20</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/custom-ai-standup" target="_blank" rel="noopener">Custom AI StandUp</a></td><td>Feature Requests</td><td>Open</td><td>Yes</td><td>AI field gap</td><td>Other</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/use-multi-select-in-list-view-with-clickup-ai-to-ask-about-multiple-tasks-at-onc" target="_blank" rel="noopener">Use multi-select in List view with ClickUp AI, to ask about multiple Tasks at once</a></td><td>Feature Requests</td><td>Open</td><td>Yes</td><td>AI field gap, Bulk management</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/clickup-ai-should-be-able-to-access-time-tracking" target="_blank" rel="noopener">ClickUp AI should be able to access Time Tracking</a></td><td>Feature Requests</td><td>Complete</td><td>Yes</td><td>AI field gap</td><td>Other</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/add-custom-fields-to-overview" target="_blank" rel="noopener">Add custom fields to overview</a></td><td>Feature Requests</td><td>In Progress</td><td>No</td><td>Field type missing</td><td>Field Display</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+<tr><td><a href="https://feedback.clickup.com/feature-requests/p/variables-dynamic-values-in-templates-task-name-description-assignee-etc" target="_blank" rel="noopener">Variables (dynamic values) in Templates</a></td><td>Feature Requests</td><td>Open</td><td>No</td><td>Field type missing</td><td>Field Settings</td><td>Power user</td><td style='text-align:center'></td><td style='text-align:right'><span class='muted'>~10</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>9. Source links</h2>
+<p>Every post in the dataset table above is linked. Anchor sources beyond the dataset:</p>
+<ul class="tight">
+<li>ClickUp Canny board home — <a href="https://feedback.clickup.com/" target="_blank" rel="noopener">feedback.clickup.com</a></li>
+<li>Feature Requests board — <a href="https://feedback.clickup.com/feature-requests" target="_blank" rel="noopener">feedback.clickup.com/feature-requests</a></li>
+<li>Public API board — <a href="https://feedback.clickup.com/public-api" target="_blank" rel="noopener">feedback.clickup.com/public-api</a></li>
+<li>ClickUp Mobile board — <a href="https://feedback.clickup.com/new-mobile-app" target="_blank" rel="noopener">feedback.clickup.com/new-mobile-app</a></li>
+<li>AI Super Agents board — <a href="https://feedback.clickup.com/ai-super-agents" target="_blank" rel="noopener">feedback.clickup.com/ai-super-agents</a></li>
+<li>Changelog — <a href="https://feedback.clickup.com/changelog" target="_blank" rel="noopener">feedback.clickup.com/changelog</a></li>
+<li>What are AI Fields? (Help) — <a href="https://help.clickup.com/hc/en-us/articles/18450100382871-What-are-AI-Fields" target="_blank" rel="noopener">help.clickup.com</a></li>
+<li>Intro to Custom Field Manager (Help) — <a href="https://help.clickup.com/hc/en-us/articles/13066263096727-Intro-to-Custom-Field-Manager" target="_blank" rel="noopener">help.clickup.com</a></li>
+</ul>
+
+</body>
+</html>
