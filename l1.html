@@ -2602,7 +2602,7 @@ body {
         <div class="umb-card-head">
           <div class="umb-card-chip">A1</div>
           <div style="flex:1; display: flex; flex-direction: column; gap: 3px;">
-            <div class="umb-card-ref">Catalog F1 · Axis 1</div>
+            <div class="umb-card-ref">Catalog G1 · Axis 1</div>
             <div class="umb-card-title">Controls don't coordinate with each other</div>
           </div>
         </div>
@@ -2620,7 +2620,7 @@ body {
           <p>Treat the panel as one coordinated form. All controls bind to a single form model. Template change cascades to Field name (unless user-edited), Format, Property, Language — each resets to the new template's default. No stuck controls, no stale values at submit.</p>
           <h4>Findings</h4>
           <ul class="nested">
-            <li>3 — Field name doesn't update when Template changes</li>
+            <li>G3 — Field name doesn't update when Template changes</li>
             <li>L1 — Format dropdown locks after two template switches</li>
             <li>L3 — Translation Property picker gets stuck</li>
           </ul>
@@ -2632,7 +2632,7 @@ body {
         <div class="umb-card-head">
           <div class="umb-card-chip">A2</div>
           <div style="flex:1; display: flex; flex-direction: column; gap: 3px;">
-            <div class="umb-card-ref">Catalog F1 · Axis 2</div>
+            <div class="umb-card-ref">Catalog G1 · Axis 2</div>
             <div class="umb-card-title">Form doesn't coordinate with the path the user took</div>
           </div>
         </div>
@@ -2653,7 +2653,7 @@ body {
           <p>Path should not determine form state. Fill method renders on every path. Field name pre-population follows one consistent rule. Progress Updates defaults to "Last 24 hours" everywhere.</p>
           <h4>Findings</h4>
           <ul class="nested">
-            <li>4 — Fill method switcher missing on AI-direct</li>
+            <li>G4 — Fill method switcher missing on AI-direct</li>
             <li>L2 — Progress Updates default splits on path</li>
           </ul>
         </div>
@@ -2664,7 +2664,7 @@ body {
         <div class="umb-card-head">
           <div class="umb-card-chip">A3</div>
           <div style="flex:1; display: flex; flex-direction: column; gap: 3px;">
-            <div class="umb-card-ref">Catalog F2</div>
+            <div class="umb-card-ref">Catalog G2</div>
             <div class="umb-card-title">Same form looks different depending on where you opened it</div>
           </div>
         </div>
@@ -2685,10 +2685,10 @@ body {
           <p>One component, three contexts. Variants differ only in width and density — never in controls or capabilities. Permissions are a field-level property, not a View-only capability.</p>
           <h4>Findings</h4>
           <ul class="nested">
-            <li>5 — Permissions are View-only</li>
-            <li>10 — Description treatment differs across variants</li>
-            <li>14 — "Visible to Guests" casing differs across variants</li>
-            <li>15 — "Pinned" toggle has three different treatments</li>
+            <li>G5 — Permissions are View-only</li>
+            <li>G10 — Description treatment differs across variants</li>
+            <li>G14 — "Visible to Guests" casing differs across variants</li>
+            <li>G15 — "Pinned" toggle has three different treatments</li>
           </ul>
         </div>
       </article>
@@ -3322,9 +3322,9 @@ const FINDINGS = [
 
   // ==== P0 SHIP-BLOCKERS (numbered top-to-bottom on Current panel) ====
   {
-    id: '3', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '3',
+    id: 'G3', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G3',
     title: 'Field name doesn\'t update when Template changes',
-    catalogRef: '3',
+    catalogRef: 'G3',
     oneliner: 'Switch Template from Summary to Action Items → Field name still says "Summary."',
     finding: 'The Header type picker updates Field name correctly when type changes. The Template dropdown doesn\'t. Fields end up mis-labeled and hard to trust.',
     suggestion: 'On Template change, update Field name to match — unless the user has edited it. Preserve user edits. Match the Header picker\'s behavior.',
@@ -3334,9 +3334,9 @@ const FINDINGS = [
     highlightProposed: { el: 'field-name' },
   },
   {
-    id: '4', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '4',
+    id: 'G4', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G4',
     title: 'Fill method switcher is missing on AI-direct',
-    catalogRef: '4',
+    catalogRef: 'G4',
     oneliner: 'Enter via an AI template and there\'s no way to switch to Manual without cancelling and starting over.',
     finding: 'The Manual / Fill with AI switcher only renders on the manual→fillwithAI path. AI-direct hides it. Users lose their work to change their mind.',
     suggestion: 'Render the switcher on every path. Users flip between Manual and AI without losing work.',
@@ -3381,9 +3381,9 @@ const FINDINGS = [
     highlightProposed: { el: 'template' },
   },
   {
-    id: '6', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '6',
+    id: 'G6', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G6',
     title: 'Automations are created silently, with no transparency',
-    catalogRef: '6',
+    catalogRef: 'G6',
     oneliner: 'Toggles silently create real automations that count against quota. "Autofill existing tasks" runs with no confirmation.',
     finding: 'Generic names like "Automation #6," no bidirectional links, no cost preview. "Autofill existing tasks" retroactively fills every task in scope. Badge reads "⚡AI" in Task, "⚡1" in View.',
     suggestion: 'Auto-name automations after the field. Show cost + remaining quota. Add a task-count confirmation for "Autofill existing tasks." Unify the badge to the numeric count.',
@@ -3393,9 +3393,9 @@ const FINDINGS = [
     highlightProposed: { el: 'automations' },
   },
   {
-    id: '5', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '5',
+    id: 'G5', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G5',
     title: 'Permissions are a View-only capability',
-    catalogRef: '5',
+    catalogRef: 'G5',
     oneliner: 'CFM — the bulk-admin flow — can\'t set permissions on field creation. Neither can Task.',
     finding: 'Baseline, Custom, Make Private, per-user roles — all View-only. Fields created from Task or CFM have to be reopened from View to set permissions. Two steps where one should do.',
     suggestion: 'Expose the full Settings + Permissions section in every entry point. Preserve each variant\'s layout; make the controls identical.',
@@ -3406,31 +3406,20 @@ const FINDINGS = [
 
   // ==== P1 SECONDARY ====
   {
-    id: '11a', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '11a',
-    title: 'Prompt label is inconsistent across templates',
-    catalogRef: '11a',
-    oneliner: '"Tell AI how to fill out this field" here. "Prompt" everywhere else. Same control, two labels.',
-    finding: 'Copy drift between templates. Undermines the sense that this is one coherent control.',
-    suggestion: 'Use "Prompt" across every template. Short, unambiguous, industry standard.',
+    id: 'G11', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G11',
+    title: 'Naming is inconsistent across templates and screens',
+    catalogRef: 'G11',
+    oneliner: 'Prompt label drifts between templates ("Tell AI..." vs "Prompt"). Template name drifts between screens ("Custom Instructions" here vs "Custom Text" on Type Selection).',
+    finding: 'Two distinct naming drifts in one form. (1) The prompt control reads "Tell AI how to fill out this field" on some templates, "Prompt" on others — same control, two labels. (2) The Type Selection screen says "Custom Text"; this screen says "Custom Instructions" — same template, two names. Both undermine the sense that this is one coherent product.',
+    suggestion: 'Use "Prompt" as the canonical label across every template. Adopt "Custom Instructions" as canonical across both screens. Copy-only fixes, zero engineering work.',
     anchorCurrent: { el: 'prompt', anchor: 'top-right', offsetX: -6, offsetY: 6 },
     highlightCurrent: { el: 'prompt' },
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: '11b', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '11b',
-    title: '"Custom Instructions" / "Custom Text" name mismatch',
-    catalogRef: '11b',
-    oneliner: 'Type Selection screen says "Custom Text." This screen says "Custom Instructions." Same thing, two names.',
-    finding: 'Users search help docs for one name and can\'t find it. Product copy divergence, zero engineering work to fix.',
-    suggestion: 'Adopt "Custom Instructions" as canonical across both screens.',
-    anchorCurrent: { el: 'template', anchor: 'top-left', offsetX: 6, offsetY: 6 },
-    highlightCurrent: { el: 'template' },
-    highlightProposed: { el: 'template' },
-  },
-  {
-    id: '8', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '8',
+    id: 'G8', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G8',
     title: 'No way to preview the prompt before saving',
-    catalogRef: '8',
+    catalogRef: 'G8',
     oneliner: 'Users commit a prompt blind. Bad prompt = bad fills before they realize. Compounds with the "Autofill existing tasks" risk.',
     finding: 'No feedback loop until after the field is saved and tasks start getting filled.',
     suggestion: '"Preview output" button next to the prompt. One click, one sample against a chosen task. Show cost on the button. Cap per session.',
@@ -3440,9 +3429,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: '22', tier: 'p2', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '22',
+    id: 'G22', tier: 'p2', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G22',
     title: 'Trigger copy doesn\'t match the Automations screen',
-    catalogRef: '22',
+    catalogRef: 'G22',
     oneliner: 'This screen says "when tasks change." The Automations screen says "when task is updated." Same trigger, two phrasings.',
     finding: 'Cross-screen copy drift. Adds cognitive load for users reasoning about the same automation in two places.',
     suggestion: 'Align on "when task is updated" — match the canonical Automations screen.',
@@ -3451,9 +3440,9 @@ const FINDINGS = [
     highlightProposed: { el: 'autom-trigger' },
   },
   {
-    id: '7', tier: 'p0', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: '7',
+    id: 'G7', tier: 'p0', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'G7',
     title: 'Prompt variable picker has UX issues that hurt AI output',
-    catalogRef: '7',
+    catalogRef: 'G7',
     oneliner: 'Cursor drops after insertion. Accepts invalid fields. Output doesn\'t match the prompt — labels altered, fields reordered.',
     finding: '"Fields in Workspace" picker lets users pick fields not usable at the current location (silent runtime failure). Wrapping variable labels in quotes partially fixes the output drift — users shouldn\'t need the workaround.',
     suggestion: 'Preserve cursor position. Filter the picker to usable fields only. Trace what happens to the prompt between submission and the Brain call.',
@@ -3463,9 +3452,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: '9', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '9',
+    id: 'G9', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G9',
     title: 'AI references don\'t use ClickUp Brain branding',
-    catalogRef: '9',
+    catalogRef: 'G9',
     oneliner: 'Every AI reference says "AI." The Brain icon is already on the form. Inconsistent branding, missed product reinforcement.',
     finding: '"Fill with AI," "Tell AI how to fill out this field," "Automations ⚡AI." "ClickUp Brain" never appears in copy.',
     suggestion: 'Swap generic "AI" for "ClickUp Brain" where it reads well. Add the Brain icon wherever only the word appears.',
@@ -3498,9 +3487,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: '10', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '10',
+    id: 'G10', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G10',
     title: 'Description field treatment differs across variants',
-    catalogRef: '10',
+    catalogRef: 'G10',
     oneliner: 'View buries Description in More Settings. Task and CFM put it on top with different helper copy.',
     finding: 'Three treatments for one field. View has no helper; Task and CFM use "View descriptions when hovering..."',
     suggestion: 'Align on View\'s pattern with stronger placeholder: "Short description — appears when users hover this field."',
@@ -3511,9 +3500,9 @@ const FINDINGS = [
 
   // ==== P2 MINOR ====
   {
-    id: '23', tier: 'p2', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: '23',
+    id: 'G23', tier: 'p2', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'G23',
     title: 'Default prompts have copy quality issues',
-    catalogRef: '23',
+    catalogRef: 'G23',
     oneliner: 'Summary default is missing punctuation. Progress Updates default is ambiguously worded.',
     finding: 'These are the first AI outputs new users see. Summary runs sentences together. Progress Updates confuses "activity" with "task info."',
     suggestion: 'Copy pass. Summary → "Summarize this task\'s most important details and latest updates." Progress Updates → "Summarize only the recent activity on this task."',
@@ -3523,9 +3512,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: '12', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '12',
+    id: 'G12', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G12',
     title: '"Tell AI…" tooltip is redundant',
-    catalogRef: '12',
+    catalogRef: 'G12',
     oneliner: 'The ⓘ tooltip content nearly duplicates the label it\'s attached to.',
     finding: 'Tooltip reads "Tell ClickUp Brain how you would like to fill in the values for this field" — restates the label.',
     suggestion: 'Remove the tooltip. Label does the work.',
@@ -3534,9 +3523,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: '13', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: '13',
+    id: 'G13', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G13',
     title: 'Prompt textarea size differs across entry points',
-    catalogRef: '13',
+    catalogRef: 'G13',
     oneliner: 'Task: 3 lines. View: 4–5. CFM: 5–6, wider. Progress Updates default cuts off mid-sentence in all three.',
     finding: 'The most important control on the form is three different sizes. Task users see the least; CFM users see the most.',
     suggestion: 'Standardize size. Add an expand affordance — "view full prompt" or fullscreen edit.',
