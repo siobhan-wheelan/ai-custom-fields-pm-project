@@ -1356,6 +1356,26 @@ const EVIDENCE = {
 function evidenceFor(id) { return EVIDENCE[id] || { png: null, mp4: null }; }
 
 /* ============================================================================
+   ONBOARDING_STAGE_IMAGES — top-of-carousel screenshot per stage.
+   Sourced from onboarding-audit/_assets/ + evidence/annotated/AD15 (workflow task).
+   File names normalized to {stageId}.png; both drafts/ and hosting/ mirror.
+============================================================================ */
+const ONBOARDING_STAGE_IMAGES = {
+  wizardStep5:            'images/onboarding-stages/wizardStep5.png',
+  workspaceLanding:       'images/onboarding-stages/workspaceLanding.png',
+  sidebarNav:             'images/onboarding-stages/sidebarNav.png',
+  brainHub:               'images/onboarding-stages/brainHub.png',
+  plannerPage:            'images/onboarding-stages/plannerPage.png',
+  getStartedList:         'images/onboarding-stages/getStartedList.png',
+  getStartedAITask:       'images/onboarding-stages/getStartedAITask.png',
+  getStartedWorkflowTask: 'images/onboarding-stages/getStartedWorkflowTask.png',
+  helpDocs:               'images/onboarding-stages/helpDocs.png',
+  globalSearch:           'images/onboarding-stages/globalSearch.png',
+};
+
+function onboardingStageImage(stageId) { return ONBOARDING_STAGE_IMAGES[stageId] || null; }
+
+/* ============================================================================
    Exports — exposed on window for vanilla-JS prototypes (no module bundler)
 ============================================================================ */
 
@@ -1369,6 +1389,7 @@ if (typeof window !== 'undefined') {
     FINDINGS,
     DESIGN_MOVES,
     EVIDENCE,
+    ONBOARDING_STAGE_IMAGES,
     findingById,
     umbrellaById,
     moveById,
@@ -1376,5 +1397,6 @@ if (typeof window !== 'undefined') {
     findingsByTheme,
     resolveLinks,
     evidenceFor,
+    onboardingStageImage,
   };
 }

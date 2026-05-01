@@ -1519,6 +1519,23 @@ img { max-width: 100%; height: auto; display: block; }
   margin-top: 8px;
 }
 
+/* v18d: When a real stage screenshot is loaded, drop the padding + label-style and
+   let the image fill the frame. */
+.carousel-screenshot.has-image {
+  padding: 0;
+  background: #0f172a;
+  overflow: hidden;
+  align-items: stretch;
+  justify-content: stretch;
+}
+.carousel-screenshot.has-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  max-height: 720px;
+}
+
 .carousel-cards {
   display: flex;
   flex-direction: column;
@@ -2769,11 +2786,18 @@ function renderCarousel() {
   });
   updateMilestoneProgress();
 
-  // Update screenshot placeholder. Per build spec — stage screenshots stay as
-  // placeholders during build; visual swap-in is the final step after Siobhan
-  // proofs the source captures.
+  // v18d: Stage screenshot pulled from CAT.ONBOARDING_STAGE_IMAGES (sourced from
+  // onboarding-audit/_assets/ + evidence/annotated/AD15). Falls back to the
+  // labeled placeholder if a stage doesn't have an image yet.
   const sc = document.getElementById('carousel-screenshot');
-  sc.innerHTML = `<strong>${stage.label}</strong><span class="carousel-screenshot-meta">Stage screenshot — pending sign-off</span>`;
+  const stageImg = (CAT.onboardingStageImage ? CAT.onboardingStageImage(stage.id) : null);
+  if (stageImg) {
+    sc.classList.add('has-image');
+    sc.innerHTML = `<img src="${stageImg}" alt="${escapeHtml(stage.label)}" loading="lazy" />`;
+  } else {
+    sc.classList.remove('has-image');
+    sc.innerHTML = `<strong>${stage.label}</strong><span class="carousel-screenshot-meta">Stage screenshot — pending capture</span>`;
+  }
 
   // Filter findings for this stage + apply filter
   const allForStage = CAT.findingsForScreen(stage.id);
