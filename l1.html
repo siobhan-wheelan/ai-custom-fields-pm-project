@@ -249,9 +249,9 @@ body {
 /* --- Stage: left-aligned, fixed width, no fluid stretching --- */
 
 .proto-stage {
-  max-width: 1320px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 60px 40px 80px;
+  padding: 60px 56px 80px;   /* v17: more side padding so workspace pins never push off-screen */
 }
 
 /* ====================================================================
@@ -354,6 +354,216 @@ body {
 .proto-hero-thesis strong {
   color: var(--proto-ink);
   font-weight: 600;
+}
+.chapter-kicker {
+  font-family: 'Sometype Mono', ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cu-brand-pink, #FF02F0);
+  margin-bottom: 6px;
+}
+
+/* v17 Patch R — Design-move rail card "Resolves on L0" footer pills */
+.finding-card-resolves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.resolves-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(102, 71, 240, 0.06);
+  border: 1px solid rgba(102, 71, 240, 0.20);
+  color: var(--cu-brand-purple, #6647F0);
+  font-family: 'Sometype Mono', ui-monospace, monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.resolves-pill:hover {
+  background: rgba(102, 71, 240, 0.12);
+  border-color: rgba(102, 71, 240, 0.45);
+}
+.resolves-pill::before {
+  content: '↗ ';
+  margin-right: 3px;
+  opacity: 0.7;
+}
+
+/* v17b — Design moves grid (replaces findings-grid for L1) */
+.moves-grid {
+  margin-top: 56px;
+  padding: 32px 40px;
+  background: var(--proto-surface, #ffffff);
+  border: 1px solid var(--cu-border, #e8e9ed);
+  border-radius: 14px;
+}
+.moves-grid-intro {
+  margin-bottom: 22px;
+}
+.moves-grid-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cu-brand-purple, #6647F0);
+  margin-bottom: 6px;
+}
+.moves-grid-sub {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  color: var(--proto-ink-soft, #475569);
+  line-height: 1.5;
+  max-width: 760px;
+}
+.moves-grid-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+.move-card {
+  background: #fff;
+  border: 1px solid var(--cu-border, #e8e9ed);
+  border-radius: 10px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: transform 140ms cubic-bezier(0.22, 0.61, 0.36, 1),
+              box-shadow 140ms cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 140ms ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.move-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(102, 71, 240, 0.35);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 8px 20px -4px rgba(102, 71, 240, 0.18);
+}
+.move-card.active {
+  border-color: var(--cu-brand-purple, #6647F0);
+  box-shadow:
+    0 0 0 1px var(--cu-brand-purple, #6647F0),
+    0 8px 22px -4px rgba(102, 71, 240, 0.28);
+}
+.move-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.move-card-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  min-width: 48px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: linear-gradient(135deg, #7d61f3 0%, var(--cu-brand-purple, #6647F0) 60%, #5538dd 100%);
+  flex-shrink: 0;
+}
+.move-card-title {
+  font-family: var(--font-display, 'Plus Jakarta Sans');
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--proto-ink, #0f172a);
+}
+.move-card-what {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--proto-ink-soft, #475569);
+  margin: 0;
+}
+.move-card-resolves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--proto-rule, #e7e4dc);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--proto-ink-mute, #64748b);
+  align-items: center;
+}
+.move-card-resolves strong {
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  font-weight: 500;
+  margin-right: 4px;
+}
+.move-card-resolves .move-resolves-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(102, 71, 240, 0.06);
+  border: 1px solid rgba(102, 71, 240, 0.18);
+  color: var(--cu-brand-purple, #6647F0);
+  font-weight: 600;
+  font-size: 10px;
+}
+
+/* v17 Patch R — design-move pins. Refined gradient body + polished shadow. */
+.pin.move {
+  /* Brand purple → pink gradient (the "AI / Brain" idiom from the brand stack) */
+  background: linear-gradient(135deg, #7d61f3 0%, var(--cu-brand-purple, #6647F0) 55%, #5538dd 100%);
+  color: #fff;
+  height: 26px;
+  min-width: 50px;
+  padding: 0 12px;
+  border-radius: 7px;
+  font-family: 'Sometype Mono', ui-monospace, monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  border: none;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.16) inset,
+    0 0 0 1px rgba(15, 23, 42, 0.04),
+    0 1px 2px rgba(15, 23, 42, 0.10),
+    0 4px 10px -2px rgba(102, 71, 240, 0.30);
+  transition:
+    transform 160ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 160ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    filter 160ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pin.move:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+    0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 2px 4px rgba(15, 23, 42, 0.12),
+    0 10px 22px -4px rgba(102, 71, 240, 0.40);
+}
+.pin.move:active { transform: translateY(0); }
+.pin.move.active {
+  box-shadow:
+    0 0 0 2px #fff inset,
+    0 0 0 3px var(--cu-brand-purple, #6647F0),
+    0 6px 14px -2px rgba(102, 71, 240, 0.40);
 }
 .proto-sub {
   font-family: var(--font-mono);
@@ -750,24 +960,267 @@ body {
   margin-top: 24px;   /* v11: very tight gap when fix-workspace follows toggle */
 }
 
+/* v17 layout restructure: 3-column grid — Current LEFT | Center (stepper + rail) | Proposed RIGHT */
 .fix-workspace-panels {
-  flex: 0 0 auto;
-  display: flex;
-  gap: 56px;          /* v11: increased from 16px to 56px to make room for pins outside panel edges */
-  align-items: flex-start;
-  padding: 0 36px;     /* v11: side padding gives pins on outer left/right edges a track */
+  flex: 1 1 auto;
+  display: grid;
+  /* minmax(420px, 1fr) ensures each side column is wide enough for the panel + pin track */
+  grid-template-columns: minmax(420px, 1fr) 340px minmax(420px, 1fr);
+  gap: 32px;
+  align-items: start;
+  padding: 0 12px;
+  min-height: 600px;
 }
 
-.fix-workspace-rail {
-  flex: 1 1 auto;
-  min-width: 300px;
-  max-width: 380px;
+/* All current/proposed sides share the same row but get explicit grid placement.
+   Display: none hides the inactive LT/DD pair; the visible pair fills col 1 + col 3. */
+.fix-workspace-panels .side.current  { grid-column: 1; grid-row: 1; justify-self: end; }
+.fix-workspace-panels .side.proposed { grid-column: 3; grid-row: 1; justify-self: start; }
+.fix-workspace-panels .fix-center-col { grid-column: 2; grid-row: 1; }
+
+/* The center column — brand arrow by default, rail card when active */
+.fix-center-col {
   position: sticky;
   top: 24px;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 56px;     /* aligned with the white top of the panels (after side-header) */
+  min-height: 400px;
+  gap: 24px;
+}
+
+/* Stepper — vertical clickable progress through the design moves.
+   Sits at the top of the center column, rail card below it. */
+.fix-stepper-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--proto-muted);
+  margin-bottom: 14px;
+  display: block;
+}
+.fix-stepper {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  position: relative;
+  margin-bottom: 22px;
+}
+.fix-stepper::before {
+  /* Vertical connector line (full height, behind nodes) */
+  content: '';
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  left: 16px;
+  width: 2px;
+  background: var(--proto-rule);
+  border-radius: 1px;
+}
+.fix-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 8px 7px 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  border-radius: 6px;
+  transition: background 140ms ease;
+}
+.fix-step:hover { background: rgba(102, 71, 240, 0.04); }
+.fix-step-num {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--proto-rule);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--proto-muted);
+  transition: all 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.fix-step-title {
+  font-family: var(--font-display, 'Plus Jakarta Sans');
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--proto-ink-soft);
+  line-height: 1.3;
+  transition: color 140ms ease;
+}
+.fix-step:hover .fix-step-title { color: var(--proto-ink); }
+.fix-step.is-current .fix-step-num {
+  background: linear-gradient(135deg, var(--cu-brand-purple, #6647F0) 0%, #5538dd 100%);
+  border-color: var(--cu-brand-purple, #6647F0);
+  color: #fff;
+  box-shadow: 0 4px 10px -2px rgba(102, 71, 240, 0.40);
+}
+.fix-step.is-current .fix-step-title {
+  color: var(--proto-ink);
+  font-weight: 600;
+}
+
+/* Rail target inside center col — design-note card for the active move.
+   v18b: When the column is active, the stepper is REPLACED by the card —
+   no stacking, no overlap with side panels. When not active, this slot is empty. */
+.fix-rail-target {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* v18b: When a move is PINNED (clicked, not just hovered), hide the stepper + eyebrow
+   so the card occupies the same vertical space they did. Hovers still preview the
+   card below — only clicks trigger the stepper-replace pop. */
+.fix-center-col.is-pinned .fix-stepper,
+.fix-center-col.is-pinned .fix-stepper-eyebrow {
+  display: none;
+}
+.fix-center-col.is-pinned .fix-rail-target {
+  border-top: none;
+  padding-top: 0;
+}
+
+/* v18: Pop the rail card when it appears so the click → card connection is visible.
+   Without this the card just blink-appears below the stepper and the interaction feels dead. */
+.fix-rail-target .finding-card {
+  animation: fix-rail-card-pop 220ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 12px 28px -10px rgba(102, 71, 240, 0.18);
+}
+
+/* v18b: Back-to-moves button at the top of the rail card (move tier only). */
+.fix-rail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 6px 10px 6px 8px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  color: var(--proto-ink-soft);
+  background: rgba(102, 71, 240, 0.06);
+  border: 1px solid rgba(102, 71, 240, 0.14);
+  border-radius: 6px;
+  cursor: pointer;
   align-self: flex-start;
-  /* Offset the rail down by the height of the side-header (label + bottom margin)
-     so the rail's top aligns with the panel's white top, not the label above it. */
-  padding-top: 28px;
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+.fix-rail-back:hover {
+  background: rgba(102, 71, 240, 0.10);
+  color: var(--cu-brand-purple, #6647F0);
+  border-color: rgba(102, 71, 240, 0.32);
+}
+.fix-rail-back svg {
+  width: 11px; height: 11px;
+}
+@keyframes fix-rail-card-pop {
+  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Legacy rail container — used for the show-all grid below; rail-body itself moved into center col */
+.fix-workspace-rail {
+  display: none;  /* deprecated location — rail card now lives in .fix-center-col */
+}
+
+/* Close button is hidden by default — only visible inside the narrow-viewport media query
+   when the center col floats as a modal. Without this rule the default <button> styling
+   leaks into the desktop layout (showed up as a small pill above the stepper eyebrow). */
+.fix-card-close { display: none; }
+
+/* v17b — Responsive collapse: below 1240px, panels go side-by-side without center column.
+   The design-note rail card pops up as a floating sticky panel when a move is clicked. */
+@media (max-width: 1240px) {
+  .fix-workspace-panels {
+    grid-template-columns: minmax(0, 1fr) 0 minmax(0, 1fr);
+    gap: 24px;
+    padding: 0;
+  }
+  .fix-workspace-panels .fix-center-col {
+    /* Float the center column as a fixed-position panel that overlays the workspace
+       when a move is activated. Hidden when not active. */
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(92vw, 440px);
+    max-height: 82vh;
+    overflow-y: auto;
+    z-index: 200;
+    background: var(--cu-surface, #ffffff);
+    border-radius: 14px;
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.06),
+      0 24px 48px -8px rgba(15, 23, 42, 0.30);
+    padding: 24px;
+    align-self: auto;
+    margin: 0;
+  }
+  .fix-workspace-panels .fix-center-col.is-active {
+    display: flex;
+    animation: fix-card-pop 240ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  /* Backdrop behind the floating card */
+  .fix-workspace-panels .fix-center-col.is-active::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: -1;
+    animation: fix-backdrop-fade 240ms ease;
+  }
+  /* Close button — only shown when center col floats as a modal (narrow viewport) */
+  .fix-card-close {
+    display: inline-flex;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--cu-surface-alt, #f7f8fa);
+    border: 1px solid var(--cu-border, #e8e9ed);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cu-text-secondary, #6f7590);
+    z-index: 1;
+  }
+  .fix-card-close:hover { background: var(--cu-surface-hover, #f1f2f4); color: var(--cu-text-primary, #292d34); }
+  .fix-card-close svg { width: 16px; height: 16px; }
+}
+@keyframes fix-card-pop {
+  from { opacity: 0; transform: translate(-50%, -45%) scale(0.96); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes fix-backdrop-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* Panel header area */
@@ -1004,6 +1457,10 @@ body {
   padding: 10px 12px 40px;
   min-height: 92px;
 }
+/* v17c: Proposed panels get a larger prompt textarea — more room to write */
+[id^="panel-proposed-settings"] .cu-prompt {
+  min-height: 200px;
+}
 .cu-prompt .prompt-editor { font-size: 14px; color: var(--cu-text-placeholder); line-height: 1.45; }
 .cu-prompt .prompt-editor::before {
   content: "|";
@@ -1231,15 +1688,15 @@ body {
 /* ---- Tabs (Proposed only — Current has no tabs) ---- */
 .fig-tabs {
   display: flex;
-  padding: 12px 16px 0;
+  gap: 28px;                          /* v17: explicit space between Create new + Add existing */
+  padding: 12px 20px 0;
   border-bottom: 1px solid #E8E9ED;
 }
 .fig-tab {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 18px 12px 0;
-  margin-right: 4px;
+  padding: 8px 4px 12px;              /* v17: even padding both sides; gap on parent handles spacing */
   font-weight: 400;
   font-size: 14px;
   color: #6F7590;
@@ -1276,6 +1733,20 @@ body {
   color: #A5A8B4;
   margin-bottom: 4px;
 }
+/* v17c: Suggested-by-Brain icon — uses the actual field-type SVG (not the brain sparkle).
+   AI-capable rows render the icon in brand purple to signal Brain capability. */
+.fig-suggestion-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #6F7590;
+}
+.fig-suggestion-icon.is-ai { color: #8C52FF; }
+.fig-suggestion-icon svg { width: 14px; height: 14px; }
+
 .fig-suggestion-row {
   display: flex;
   justify-content: space-between;
@@ -1800,6 +2271,11 @@ body {
   transition: background 0.12s, border-color 0.12s;
 }
 .filter-chip:hover { background: var(--cu-surface-alt); }
+.filter-chip .dot.cc { background: #6647F0; }
+.filter-chip .dot.cs { background: #0091FF; }
+.filter-chip .dot.aq { background: #FF02F0; }
+.filter-chip .dot.ad { background: #FC6D2D; }
+.filter-chip .dot.fg { background: #22C55E; }
 .filter-chip .dot {
   width: 8px; height: 8px;
   border-radius: 50%;
@@ -2340,46 +2816,75 @@ body {
      Sticky top nav — three-tab page switcher
 ============================================================ -->
 <style>
+  /* ============================================================
+     UNIFIED NAV — identical to L0. Single source of truth. */
   .proto-nav {
     position: sticky;
     top: 0;
-    z-index: 9999;
+    z-index: 50;
     background: rgba(248, 246, 242, 0.92);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: saturate(180%) blur(8px);
+    backdrop-filter: saturate(180%) blur(8px);
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-    padding: 11px 32px;
+  }
+  .proto-nav-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 12px 56px;
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 28px;
     font-family: 'Sometype Mono', ui-monospace, SFMono-Regular, monospace;
-    font-size: 11.5px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.04em;
   }
-  .proto-nav a { text-decoration: none; }
-  .proto-nav-tab {
-    color: #94a3b8;
-    transition: color 0.15s;
-  }
-  .proto-nav-tab:hover { color: #6647F0; }
-  .proto-nav-tab.is-current {
+  .proto-nav-brand {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0;
+    text-transform: none;
     color: #0f172a;
+    margin-right: auto;
+    display: inline-flex;
+    align-items: center;
+  }
+  .proto-nav-brand .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6647F0 0%, #0091FF 100%);
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  .proto-nav a {
+    color: #475569;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 140ms ease, color 140ms ease;
+  }
+  .proto-nav a:hover { background: rgba(15, 23, 42, 0.05); color: #0f172a; }
+  .proto-nav a.is-current {
+    background: #0f172a;
+    color: #fff;
     font-weight: 600;
   }
-  .proto-nav-spacer { flex: 1; min-width: 0; }
-  .proto-nav { flex-wrap: wrap; }
-  @media (max-width: 600px) {
-    .proto-nav { padding: 10px 16px; gap: 16px; font-size: 10.5px; }
+  @media (max-width: 720px) {
+    .proto-nav-inner { padding: 10px 24px; gap: 16px; font-size: 10.5px; }
+    .proto-nav-brand { font-size: 13px; }
   }
 </style>
-<nav class="proto-nav">
-  <a class="proto-nav-tab" href="index.html">Overview</a>
-  <a class="proto-nav-tab is-current" href="l1.html">Level 1 · Present</a>
-  <a class="proto-nav-tab" href="l2.html">Level 2 · Future</a>
-  <span class="proto-nav-spacer"></span>
-  <a class="proto-nav-tab" href="https://link.consultsdw.com/ai-custom-fields-doc" target="_blank" rel="noopener">ClickUp Doc ↗</a>
-  <a class="proto-nav-tab" href="https://link.consultsdw.com/ai-custom-fields-figma2" target="_blank" rel="noopener">Figma ↗</a>
+<nav class="proto-nav" aria-label="Prototype navigation">
+  <div class="proto-nav-inner">
+    <span class="proto-nav-brand"><span class="dot"></span>AI Custom Fields</span>
+    <a href="index.html">Overview</a>
+    <a href="l0.html">L0 — Audit</a>
+    <a href="l1.html" class="is-current" aria-current="page">L1 — Integration</a>
+    <a href="l2.html">L2 — Direction</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-doc" target="_blank" rel="noopener">Doc ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-figma2" target="_blank" rel="noopener">Figma ↗</a>
+  </div>
 </nav>
 
 <!-- v11.2: Reusable SVG sprite for brain + field icons (used by Figma-spec TS panels) -->
@@ -2451,15 +2956,15 @@ body {
 
   <!-- Top eyebrow + hero (v13: copy + typography matched to L2) -->
   <div class="top-eyebrow">L1 Prototype · Unified · AI Custom Fields</div>
-  <div class="proto-title">One component.<br><em>Every screen.</em></div>
+  <h1 class="proto-title">One component.<br><em>Every screen.</em></h1>
   <div class="proto-hero-thesis">
-    <p>Two audits, two screens, two field types. Field Type Selection diverges three ways. The Settings Screen diverges dozens of ways. On paper it looks like separate problems. On the page it's <strong>the same problem wearing different clothes:</strong> ClickUp's custom field creation flow evolved screen-by-screen, and nothing enforced a shared contract.</p>
-    <p>Level 1 isn't a redesign. It's a unification. Treat every variant as an instance of one component, keep the narrow exceptions where they're genuinely appropriate, and the 30+ findings collapse into a handful of code-level changes and a copy pass.</p>
+    <p>L0 mapped what's broken across every screen. <strong>L1 is the integration-level work</strong> — Phase 1 moves to resolve the Coordination and Consistency findings on the two screens that carry most of them.</p>
+    <p>Each pin below = one design move, with the findings it resolves. The two screens are Field Type Selection and the Settings Screen. The redesign treats both as instances of one shared component. Direction-level moves (Phases 5 and 6) live on L2.</p>
   </div>
   <div class="proto-sub">
     <span><strong>Author</strong> Siobhan Wheelan</span>
-    <span><strong>Companion</strong> ClickUp Doc · Level 2 prototype · Figma file</span>
-    <span><strong>Phase</strong> 1 of the six-phase roadmap</span>
+    <span><strong>Companion</strong> L0 (audit) · L2 (direction) · ClickUp Doc · Figma</span>
+    <span><strong>Phase</strong> 1 of six · Integration-level</span>
   </div>
 
   <!-- ================================================================
@@ -2512,6 +3017,13 @@ body {
           </div>
         </div>
 
+        <!-- v17 layout — center column: stepper on top, design-note rail card below -->
+        <div class="fix-center-col" id="fix-center-col-ts">
+          <span class="fix-stepper-eyebrow">Phase 1 · Five moves</span>
+          <div class="fix-stepper" id="fix-stepper-ts" data-surface="typeSelection"></div>
+          <div class="fix-rail-target" id="rail-body-ts"></div>
+        </div>
+
         <!-- ==== TYPE SELECTION · PROPOSED ==== -->
         <div class="side proposed surface-panel">
           <div class="side-header">
@@ -2526,47 +3038,23 @@ body {
 
       </div>
 
-      <!-- Act 1 rail — v10: no chrome, empty by default, expanded card on hover/click -->
-      <aside class="fix-workspace-rail">
+      <!-- v17: legacy rail aside hidden — rail card moved into the center column above. -->
+      <aside class="fix-workspace-rail" aria-hidden="true">
         <div class="rail">
-          <div class="rail-body" id="rail-body-ts">
-            <div class="rail-empty" id="rail-empty-ts">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-              <div>
-                <strong>Hover a pin</strong> to preview the finding here.<br><strong>Click</strong> to keep it open.
-              </div>
-            </div>
-          </div>
-          <div class="rail-helper-caption">Click any pin to change what's shown here.</div>
+          <div class="rail-empty"><div></div></div>
         </div>
       </aside>
 
     </div>
 
-    <!-- Act 1 grid — v10: always visible, filter chips at top -->
-    <div class="findings-grid always-on" id="findings-grid-ts">
-      <div class="findings-grid-intro">
-        <div class="findings-grid-eyebrow">All findings on this screen</div>
-        <div class="findings-grid-sub">Click any card to expand. Hover a pin above to highlight the matching card.</div>
-        <div class="grid-filter-row" id="grid-filter-row-ts">
-          <button class="filter-chip active" data-filter="all"><span class="dot all"></span>All</button>
-          <button class="filter-chip" data-filter="p0"><span class="dot p0"></span>Must fix</button>
-          <button class="filter-chip" data-filter="p1"><span class="dot p1"></span>Should fix</button>
-          <button class="filter-chip" data-filter="p2"><span class="dot p2"></span>Nice to fix</button>
-        </div>
+    <!-- v17: design moves grid — replaces former findings-by-tier grid.
+         Cards are populated by renderMovesGrid() with the 5 TS design moves. -->
+    <div class="moves-grid always-on" id="moves-grid-ts">
+      <div class="moves-grid-intro">
+        <div class="moves-grid-eyebrow">Design moves on this screen</div>
+        <div class="moves-grid-sub">Each move is one specific change made in the redesign. Click a card to see what changed and which findings it resolves.</div>
       </div>
-      <div class="findings-grid-group" data-group="p0">
-        <div class="findings-grid-group-header"><span class="findings-grid-dot p0"></span>Must fix <span class="findings-grid-count" id="count-p0-ts"></span></div>
-        <div class="findings-grid-items" id="grid-p0-ts"></div>
-      </div>
-      <div class="findings-grid-group" data-group="p1">
-        <div class="findings-grid-group-header"><span class="findings-grid-dot p1"></span>Should fix <span class="findings-grid-count" id="count-p1-ts"></span></div>
-        <div class="findings-grid-items" id="grid-p1-ts"></div>
-      </div>
-      <div class="findings-grid-group" data-group="p2">
-        <div class="findings-grid-group-header"><span class="findings-grid-dot p2"></span>Nice to fix <span class="findings-grid-count" id="count-p2-ts"></span></div>
-        <div class="findings-grid-items" id="grid-p2-ts"></div>
-      </div>
+      <div class="moves-grid-items" id="moves-grid-items-ts"></div>
     </div>
 
   </section>
@@ -2596,103 +3084,7 @@ body {
       </div>
     </div>
 
-    <div class="umbrella-grid" id="umbrella-grid">
-      <!-- A1 -->
-      <article class="umb-card" data-umb="A1">
-        <div class="umb-card-head">
-          <div class="umb-card-chip">A1</div>
-          <div style="flex:1; display: flex; flex-direction: column; gap: 3px;">
-            <div class="umb-card-ref">Catalog G1 · Axis 1</div>
-            <div class="umb-card-title">Controls don't coordinate with each other</div>
-          </div>
-        </div>
-        <div class="umb-card-desc">
-          Template change doesn't update Field name. Format locks after two template switches. Translation's Property picker gets stuck on custom fields. Each control acts alone.
-        </div>
-        <div class="umb-card-expand">
-          Read more
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="umb-card-details">
-          <h4>Why it matters</h4>
-          <p>Header type picker handles form coordination correctly. Template dropdown doesn't. Format dropdown loses its binding after template switches. Translation's Property picker stops accepting new custom field selections. Users hit three different "stuck" moments in one sitting, with no error messaging to explain any of them.</p>
-          <h4>Suggestion</h4>
-          <p>Treat the panel as one coordinated form. All controls bind to a single form model. Template change cascades to Field name (unless user-edited), Format, Property, Language — each resets to the new template's default. No stuck controls, no stale values at submit.</p>
-          <h4>Findings</h4>
-          <ul class="nested">
-            <li>G3 — Field name doesn't update when Template changes</li>
-            <li>L1 — Format dropdown locks after two template switches</li>
-            <li>L3 — Translation Property picker gets stuck</li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- A2 -->
-      <article class="umb-card" data-umb="A2">
-        <div class="umb-card-head">
-          <div class="umb-card-chip">A2</div>
-          <div style="flex:1; display: flex; flex-direction: column; gap: 3px;">
-            <div class="umb-card-ref">Catalog G1 · Axis 2</div>
-            <div class="umb-card-title">Form doesn't coordinate with the path the user took</div>
-          </div>
-        </div>
-        <div class="umb-card-desc">
-          Two paths lead to AI mode. They produce different forms. Fill method switcher visible on one, hidden on the other. Progress Updates defaults split "Today" vs "Last 24 hours." Same template, different output.
-        </div>
-        <div class="umb-card-expand">
-          Read more
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="umb-card-details">
-          <h4>The two paths</h4>
-          <p><strong>manual→fillwithAI</strong>: open Manual, then flip to Fill with AI. Switcher visible, Field name empty, Progress Updates defaults to "Today," Create button disabled.</p>
-          <p><strong>AI-direct</strong>: pick an AI template (Summary, Custom Text, etc.) from the type selector. Switcher hidden, Field name pre-populated, Progress Updates defaults to "Last 24 hours," Create button in brand gradient.</p>
-          <h4>Why it matters</h4>
-          <p>The path is carrying state the form doesn't acknowledge. Two users configuring what they think is the same Progress Updates field pull from different time windows — Brain produces different output for the same task. This is the sharpest concrete example: not a visual inconsistency, a behavioral one.</p>
-          <h4>Suggestion</h4>
-          <p>Path should not determine form state. Fill method renders on every path. Field name pre-population follows one consistent rule. Progress Updates defaults to "Last 24 hours" everywhere.</p>
-          <h4>Findings</h4>
-          <ul class="nested">
-            <li>G4 — Fill method switcher missing on AI-direct</li>
-            <li>L2 — Progress Updates default splits on path</li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- A3 -->
-      <article class="umb-card" data-umb="A3">
-        <div class="umb-card-head">
-          <div class="umb-card-chip">A3</div>
-          <div style="flex:1; display: flex; flex-direction: column; gap: 3px;">
-            <div class="umb-card-ref">Catalog G2</div>
-            <div class="umb-card-title">Same form looks different depending on where you opened it</div>
-          </div>
-        </div>
-        <div class="umb-card-desc">
-          Three layouts depending on entry point. Permissions controls exist only in the View variant. Workspace admins using CFM have fewer controls than team members creating a field inline. Cross-type evidence confirms the pattern in non-AI field types too.
-        </div>
-        <div class="umb-card-expand">
-          Read more
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="umb-card-details">
-          <h4>The three entry-point layouts</h4>
-          <p><strong>View sidebar</strong> — header + back arrow, Description buried in More Settings, narrow single column, full permissions controls.</p>
-          <p><strong>Task popover</strong> — no header, Description on top with helper copy, Type picker at bottom, no permissions.</p>
-          <p><strong>CFM modal</strong> — "Create field" title, two-column layout, inline Settings section with only Pinned + Visible-to-Guests.</p>
-
-          <h4 style="margin-top: 14px;">Suggestion</h4>
-          <p>One component, three contexts. Variants differ only in width and density — never in controls or capabilities. Permissions are a field-level property, not a View-only capability.</p>
-          <h4>Findings</h4>
-          <ul class="nested">
-            <li>G5 — Permissions are View-only</li>
-            <li>G10 — Description treatment differs across variants</li>
-            <li>G14 — "Visible to Guests" casing differs across variants</li>
-            <li>G15 — "Pinned" toggle has three different treatments</li>
-          </ul>
-        </div>
-      </article>
-    </div>
+    <!-- v17c: Umbrella cards removed from L1 — they live on L0 now (overview at top of audit page) -->
 
     <!-- Matrix section — promoted out of A3, featured in Chapter 1 as evidence for all three umbrella findings -->
     <div class="matrix-section">
@@ -3138,50 +3530,32 @@ body {
           </div>
         </div>
 
+        <!-- v17 layout — center column: stepper on top, design-note rail card below -->
+        <div class="fix-center-col" id="fix-center-col-act2">
+          <span class="fix-stepper-eyebrow">Phase 1 · Eight moves</span>
+          <div class="fix-stepper" id="fix-stepper-act2" data-surface="settings"></div>
+          <div class="fix-rail-target" id="rail-body"></div>
+        </div>
 
       </div>
 
-      <!-- Right rail -->
-      <aside class="fix-workspace-rail">
+      <!-- v17: legacy rail aside hidden — rail card moved into the center column above. -->
+      <aside class="fix-workspace-rail" aria-hidden="true">
         <div class="rail">
-          <div class="rail-body" id="rail-body">
-            <div class="rail-empty" id="rail-empty">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-              <div>
-                <strong>Hover a pin</strong> to preview the finding here.<br><strong>Click</strong> to keep it open.
-              </div>
-            </div>
-          </div>
-          <div class="rail-helper-caption">Click any pin to change what's shown here.</div>
+          <div class="rail-empty"><div></div></div>
         </div>
       </aside>
 
     </div>
 
-    <!-- Act 2 grid — v10: always visible, filter chips at top -->
-    <div class="findings-grid always-on" id="findings-grid">
-      <div class="findings-grid-intro">
-        <div class="findings-grid-eyebrow">All findings on this screen</div>
-        <div class="findings-grid-sub">Click any card to expand. Hover a pin above to highlight the matching card.</div>
-        <div class="grid-filter-row" id="grid-filter-row">
-          <button class="filter-chip active" data-filter="all"><span class="dot all"></span>All</button>
-          <button class="filter-chip" data-filter="p0"><span class="dot p0"></span>Must fix</button>
-          <button class="filter-chip" data-filter="p1"><span class="dot p1"></span>Should fix</button>
-          <button class="filter-chip" data-filter="p2"><span class="dot p2"></span>Nice to fix</button>
-        </div>
+    <!-- v17: design moves grid — replaces former findings-by-tier grid.
+         Cards are populated by renderMovesGrid() with the 8 SS design moves. -->
+    <div class="moves-grid always-on" id="moves-grid">
+      <div class="moves-grid-intro">
+        <div class="moves-grid-eyebrow">Design moves on this screen</div>
+        <div class="moves-grid-sub">Each move is one specific change made in the redesign. Click a card to see what changed and which findings it resolves.</div>
       </div>
-      <div class="findings-grid-group" data-group="p0">
-        <div class="findings-grid-group-header"><span class="findings-grid-dot p0"></span>Must fix <span class="findings-grid-count" id="count-p0"></span></div>
-        <div class="findings-grid-items" id="grid-p0"></div>
-      </div>
-      <div class="findings-grid-group" data-group="p1">
-        <div class="findings-grid-group-header"><span class="findings-grid-dot p1"></span>Should fix <span class="findings-grid-count" id="count-p1"></span></div>
-        <div class="findings-grid-items" id="grid-p1"></div>
-      </div>
-      <div class="findings-grid-group" data-group="p2">
-        <div class="findings-grid-group-header"><span class="findings-grid-dot p2"></span>Nice to fix <span class="findings-grid-count" id="count-p2"></span></div>
-        <div class="findings-grid-items" id="grid-p2"></div>
-      </div>
+      <div class="moves-grid-items" id="moves-grid-items"></div>
     </div>
 
   </section>
@@ -3194,6 +3568,7 @@ body {
       <span class="chapter-num">3</span>
       The pattern
     </div>
+    <div class="chapter-kicker">Five patterns to preserve</div>
     <div class="chapter-title">Consistency, already earned.</div>
     <div class="chapter-lede">
       Five patterns across Field Type Selection <em>and</em> the Settings Screen already work the way they should — proof the team understands the problem. Level&nbsp;1 leaves them alone and builds the rest to match.
@@ -3264,7 +3639,7 @@ body {
     </p>
 
     <div class="close-footer">
-      <span>L1 prototype v11</span>
+      <span>L1 prototype v17</span>
       <span class="sep">·</span>
       <span>Current State + Level 1</span>
       <span class="sep">·</span>
@@ -3292,7 +3667,7 @@ const FINDINGS = [
   {
     id: 'A1', tier: 'umb',
     title: 'Controls don\'t coordinate with each other',
-    catalogRef: 'Catalog F1 · Axis 1',
+    catalogRef: 'Theme CC · Controls Coordinate',
     oneliner: 'Each control acts alone. Template changes don\'t update Field name. Format locks. Translation\'s Property picker gets stuck.',
     finding: 'Header picker updates dependent fields correctly; Template dropdown doesn\'t. Three different "stuck" moments in one sitting, no error messaging.',
     suggestion: 'Bind every control to one form model. Template change cascades to Field name, Format, Property, Language — each resets to the template\'s default.',
@@ -3302,7 +3677,7 @@ const FINDINGS = [
   {
     id: 'A2', tier: 'umb',
     title: 'Form doesn\'t coordinate with the path the user took',
-    catalogRef: 'Catalog F1 · Axis 2',
+    catalogRef: 'Theme CS · Path-driven divergence',
     oneliner: 'Same entry point, same template, different form depending on path.',
     finding: 'manual→fillwithAI shows the Fill method switcher and defaults Progress Updates to "Today." AI-direct hides the switcher and defaults to "Last 24 hours." Different AI output from what should be the same configuration.',
     suggestion: 'Path shouldn\'t determine form state. Fill method renders everywhere. Progress Updates defaults to "Last 24 hours" on every path.',
@@ -3312,7 +3687,7 @@ const FINDINGS = [
   {
     id: 'A3', tier: 'umb',
     title: 'Same form looks different depending on where you opened it',
-    catalogRef: 'Catalog F2',
+    catalogRef: 'Theme CS · Cross-entry-point divergence',
     oneliner: 'Three entry points, three layouts, three capability sets. CFM — the admin flow — has fewer controls than View.',
     finding: 'View gets full permissions. Task has no Settings section at all. CFM shows Pinned + Visible-to-Guests only. Same form, three execution paths.',
     suggestion: 'One component, three contexts. Variants differ in width and density, not controls. Full Settings + Permissions renders everywhere.',
@@ -3322,9 +3697,9 @@ const FINDINGS = [
 
   // ==== P0 SHIP-BLOCKERS (numbered top-to-bottom on Current panel) ====
   {
-    id: 'G3', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G3',
+    id: 'CC2', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'CC2',
     title: 'Field name doesn\'t update when Template changes',
-    catalogRef: 'G3',
+    catalogRef: 'CC2',
     oneliner: 'Switch Template from Summary to Action Items → Field name still says "Summary."',
     finding: 'The Header type picker updates Field name correctly when type changes. The Template dropdown doesn\'t. Fields end up mis-labeled and hard to trust.',
     suggestion: 'On Template change, update Field name to match — unless the user has edited it. Preserve user edits. Match the Header picker\'s behavior.',
@@ -3334,9 +3709,9 @@ const FINDINGS = [
     highlightProposed: { el: 'field-name' },
   },
   {
-    id: 'G4', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G4',
+    id: 'CS14', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'CS14',
     title: 'Fill method switcher is missing on AI-direct',
-    catalogRef: 'G4',
+    catalogRef: 'CS14',
     oneliner: 'Enter via an AI template and there\'s no way to switch to Manual without cancelling and starting over.',
     finding: 'The Manual / Fill with AI switcher only renders on the manual→fillwithAI path. AI-direct hides it. Users lose their work to change their mind.',
     suggestion: 'Render the switcher on every path. Users flip between Manual and AI without losing work.',
@@ -3345,9 +3720,9 @@ const FINDINGS = [
     highlightProposed: { el: 'fill-method-missing' },
   },
   {
-    id: 'L1', tier: 'p0', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'L1',
+    id: 'CC3', tier: 'p0', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'CC3',
     title: 'Format control locks after two template switches',
-    catalogRef: 'L1',
+    catalogRef: 'CC3',
     oneliner: 'On Summary or Progress Updates, Format stops responding after the second template switch. No error.',
     finding: 'Pick template, change Format, switch Template, change Format, switch again — Format is now locked for the rest of the session. Dropdown opens but selections don\'t stick.',
     suggestion: 'On Template change, reset Format to the new template\'s default and rebind it so it stays responsive.',
@@ -3357,9 +3732,9 @@ const FINDINGS = [
     highlightProposed: { el: 'template' },
   },
   {
-    id: 'L2', tier: 'p0', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'L2',
+    id: 'CS16', tier: 'p0', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'CS16',
     title: 'Progress Updates default splits on path',
-    catalogRef: 'L2',
+    catalogRef: 'CS16',
     oneliner: 'manual→fillwithAI defaults to "Today." AI-direct defaults to "Last 24 hours." Same template. Different AI output.',
     finding: 'Two users configuring what looks like the same field get different summaries because Brain pulls from different time windows. No indication to the user.',
     suggestion: 'Default to "Last 24 hours" everywhere. Stable across time zones, matches the intuitive meaning, already used on the more common path.',
@@ -3369,9 +3744,9 @@ const FINDINGS = [
     highlightProposed: { el: 'template' },
   },
   {
-    id: 'L3', tier: 'p1', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'L3',
+    id: 'CC4', tier: 'p1', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'CC4',
     title: 'Translation Property picker gets stuck',
-    catalogRef: 'L3',
+    catalogRef: 'CC4',
     oneliner: 'Pick a custom field as the source once, and the picker stops accepting new selections.',
     finding: 'The only way to switch to a different custom field is to pick Task Description or Task Name first, then pick the new one.',
     suggestion: 'Keep the Property picker responsive across selections, regardless of current value.',
@@ -3381,9 +3756,9 @@ const FINDINGS = [
     highlightProposed: { el: 'template' },
   },
   {
-    id: 'G6', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G6',
+    id: 'AQ6', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'AQ6',
     title: 'Automations are created silently, with no transparency',
-    catalogRef: 'G6',
+    catalogRef: 'AQ6',
     oneliner: 'Toggles silently create real automations that count against quota. "Autofill existing tasks" runs with no confirmation.',
     finding: 'Generic names like "Automation #6," no bidirectional links, no cost preview. "Autofill existing tasks" retroactively fills every task in scope. Badge reads "⚡AI" in Task, "⚡1" in View.',
     suggestion: 'Auto-name automations after the field. Show cost + remaining quota. Add a task-count confirmation for "Autofill existing tasks." Unify the badge to the numeric count.',
@@ -3393,9 +3768,9 @@ const FINDINGS = [
     highlightProposed: { el: 'automations' },
   },
   {
-    id: 'G5', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G5',
+    id: 'CS15', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'CS15',
     title: 'Permissions are a View-only capability',
-    catalogRef: 'G5',
+    catalogRef: 'CS15',
     oneliner: 'CFM — the bulk-admin flow — can\'t set permissions on field creation. Neither can Task.',
     finding: 'Baseline, Custom, Make Private, per-user roles — all View-only. Fields created from Task or CFM have to be reopened from View to set permissions. Two steps where one should do.',
     suggestion: 'Expose the full Settings + Permissions section in every entry point. Preserve each variant\'s layout; make the controls identical.',
@@ -3406,9 +3781,9 @@ const FINDINGS = [
 
   // ==== P1 SECONDARY ====
   {
-    id: 'G11', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G11',
+    id: 'CS12', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'CS12',
     title: 'Naming is inconsistent across templates and screens',
-    catalogRef: 'G11',
+    catalogRef: 'CS12',
     oneliner: 'Prompt label drifts between templates ("Tell AI..." vs "Prompt"). Template name drifts between screens ("Custom Instructions" here vs "Custom Text" on Type Selection).',
     finding: 'Two distinct naming drifts in one form. (1) The prompt control reads "Tell AI how to fill out this field" on some templates, "Prompt" on others — same control, two labels. (2) The Type Selection screen says "Custom Text"; this screen says "Custom Instructions" — same template, two names. Both undermine the sense that this is one coherent product.',
     suggestion: 'Use "Prompt" as the canonical label across every template. Adopt "Custom Instructions" as canonical across both screens. Copy-only fixes, zero engineering work.',
@@ -3417,9 +3792,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: 'G8', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G8',
+    id: 'FG1', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'FG1',
     title: 'No way to preview the prompt before saving',
-    catalogRef: 'G8',
+    catalogRef: 'FG1',
     oneliner: 'Users commit a prompt blind. Bad prompt = bad fills before they realize. Compounds with the "Autofill existing tasks" risk.',
     finding: 'No feedback loop until after the field is saved and tasks start getting filled.',
     suggestion: '"Preview output" button next to the prompt. One click, one sample against a chosen task. Show cost on the button. Cap per session.',
@@ -3429,9 +3804,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: 'G22', tier: 'p2', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G22',
+    id: 'CS13', tier: 'p2', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'CS13',
     title: 'Trigger copy doesn\'t match the Automations screen',
-    catalogRef: 'G22',
+    catalogRef: 'CS13',
     oneliner: 'This screen says "when tasks change." The Automations screen says "when task is updated." Same trigger, two phrasings.',
     finding: 'Cross-screen copy drift. Adds cognitive load for users reasoning about the same automation in two places.',
     suggestion: 'Align on "when task is updated" — match the canonical Automations screen.',
@@ -3440,9 +3815,9 @@ const FINDINGS = [
     highlightProposed: { el: 'autom-trigger' },
   },
   {
-    id: 'G7', tier: 'p0', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'G7',
+    id: 'AQ7', tier: 'p0', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'AQ7',
     title: 'Prompt variable picker has UX issues that hurt AI output',
-    catalogRef: 'G7',
+    catalogRef: 'AQ7',
     oneliner: 'Cursor drops after insertion. Accepts invalid fields. Output doesn\'t match the prompt — labels altered, fields reordered.',
     finding: '"Fields in Workspace" picker lets users pick fields not usable at the current location (silent runtime failure). Wrapping variable labels in quotes partially fixes the output drift — users shouldn\'t need the workaround.',
     suggestion: 'Preserve cursor position. Filter the picker to usable fields only. Trace what happens to the prompt between submission and the Brain call.',
@@ -3452,9 +3827,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: 'G9', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G9',
+    id: 'AD3', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'AD3',
     title: 'AI references don\'t use ClickUp Brain branding',
-    catalogRef: 'G9',
+    catalogRef: 'AD3',
     oneliner: 'Every AI reference says "AI." The Brain icon is already on the form. Inconsistent branding, missed product reinforcement.',
     finding: '"Fill with AI," "Tell AI how to fill out this field," "Automations ⚡AI." "ClickUp Brain" never appears in copy.',
     suggestion: 'Swap generic "AI" for "ClickUp Brain" where it reads well. Add the Brain icon wherever only the word appears.',
@@ -3463,9 +3838,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: 'L5', tier: 'p1', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'L5',
+    id: 'AQ10', tier: 'p1', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'AQ10',
     title: 'Format dropdown tooltips are wrong',
-    catalogRef: 'L5',
+    catalogRef: 'AQ10',
     oneliner: '"Bulleted list" tooltip says "one bullet per task" (wrong). "Traditional" says "tasks grouped by list" (factually wrong).',
     finding: 'Tooltips describe different features. "Traditional" outputs a paragraph, not a grouped list. "Short" is accurate but the label doesn\'t signal "paragraph."',
     suggestion: 'Rewrite all three. Rename Short → "Short Paragraph," Traditional → "Long Paragraph." Stop interpolating Field name into tooltip copy.',
@@ -3475,9 +3850,9 @@ const FINDINGS = [
     highlightProposed: { el: 'template' },
   },
   {
-    id: 'L4', tier: 'p1', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'L4',
+    id: 'AQ3', tier: 'p1', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'AQ3',
     title: 'Template prompts have hardcoded constraints',
-    catalogRef: 'L4',
+    catalogRef: 'AQ3',
     oneliner: '"Use up to 4 lines" and "up to 4 action points" are buried in default prompts. These should be controls.',
     finding: 'Summary and Progress Updates hide length control inside prompt copy. Action Items hardcodes a count users want to configure.',
     suggestion: 'Remove "Use up to 4 lines" from the defaults. Add a "Max items" control for Action Items.',
@@ -3487,9 +3862,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: 'G10', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G10',
+    id: 'CS2', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'CS2',
     title: 'Description field treatment differs across variants',
-    catalogRef: 'G10',
+    catalogRef: 'CS2',
     oneliner: 'View buries Description in More Settings. Task and CFM put it on top with different helper copy.',
     finding: 'Three treatments for one field. View has no helper; Task and CFM use "View descriptions when hovering..."',
     suggestion: 'Align on View\'s pattern with stronger placeholder: "Short description — appears when users hover this field."',
@@ -3500,9 +3875,9 @@ const FINDINGS = [
 
   // ==== P2 MINOR ====
   {
-    id: 'G23', tier: 'p2', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'G23',
+    id: 'AQ2', tier: 'p2', fieldTypes: ['longText'], surfaces: ['settings'], pinLabel: 'AQ2',
     title: 'Default prompts have copy quality issues',
-    catalogRef: 'G23',
+    catalogRef: 'AQ2',
     oneliner: 'Summary default is missing punctuation. Progress Updates default is ambiguously worded.',
     finding: 'These are the first AI outputs new users see. Summary runs sentences together. Progress Updates confuses "activity" with "task info."',
     suggestion: 'Copy pass. Summary → "Summarize this task\'s most important details and latest updates." Progress Updates → "Summarize only the recent activity on this task."',
@@ -3512,9 +3887,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: 'G12', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G12',
+    id: 'AQ1', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'AQ1',
     title: '"Tell AI…" tooltip is redundant',
-    catalogRef: 'G12',
+    catalogRef: 'AQ1',
     oneliner: 'The ⓘ tooltip content nearly duplicates the label it\'s attached to.',
     finding: 'Tooltip reads "Tell ClickUp Brain how you would like to fill in the values for this field" — restates the label.',
     suggestion: 'Remove the tooltip. Label does the work.',
@@ -3523,9 +3898,9 @@ const FINDINGS = [
     highlightProposed: { el: 'prompt' },
   },
   {
-    id: 'G13', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'G13',
+    id: 'CS3', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['settings'], pinLabel: 'CS3',
     title: 'Prompt textarea size differs across entry points',
-    catalogRef: 'G13',
+    catalogRef: 'CS3',
     oneliner: 'Task: 3 lines. View: 4–5. CFM: 5–6, wider. Progress Updates default cuts off mid-sentence in all three.',
     finding: 'The most important control on the form is three different sizes. Task users see the least; CFM users see the most.',
     suggestion: 'Standardize size. Add an expand affordance — "view full prompt" or fullscreen edit.',
@@ -3536,9 +3911,9 @@ const FINDINGS = [
 
   // ==== DROPDOWN-SPECIFIC FINDINGS (D1-D4) ====
   {
-    id: 'D1', tier: 'p0', fieldTypes: ['dropdown'], surfaces: ['settings'], pinLabel: 'D1',
+    id: 'CC5', tier: 'p0', fieldTypes: ['dropdown'], surfaces: ['settings'], pinLabel: 'CC5',
     title: 'Options don\'t update when the Template changes',
-    catalogRef: 'D1',
+    catalogRef: 'CC5',
     oneliner: 'Switch Sentiment → T-shirt Size and the options list stays stuck on Positive/Neutral/Negative. AI picks from the wrong set.',
     finding: 'The dropdown extension of P0 #1. Save the field and Brain is told to "pick the most appropriate option" from a list that doesn\'t match the template.',
     suggestion: 'Extend the Template-cascade fix to Dropdown options. On switch between preset-options templates, replace options with the new defaults. Warn before overwriting user edits.',
@@ -3548,9 +3923,9 @@ const FINDINGS = [
     highlightProposed: { el: 'dropdown-options' },
   },
   {
-    id: 'D2', tier: 'p1', fieldTypes: ['dropdown'], surfaces: ['settings'], pinLabel: 'D2',
+    id: 'AQ12', tier: 'p1', fieldTypes: ['dropdown'], surfaces: ['settings'], pinLabel: 'AQ12',
     title: 'Categorize is Custom in disguise — the template library needs to expand',
-    catalogRef: 'D2',
+    catalogRef: 'AQ12',
     oneliner: '4 dropdown templates, only 2 genuinely pre-configured. Categorize ships with Option 1/Option 2 just like Custom.',
     finding: 'Sentiment and T-shirt Size have real presets. Categorize doesn\'t. Dropdown has half the curated catalog of Long Text — the biggest strategic miss in the audit.',
     suggestion: 'Near-term: ship Categorize with example options (Bug / Feature / Chore / Question). Strategic: expand the library with Priority, Status category, Request type, Effort. One-click AI workflows, not generic prompts.',
@@ -3560,9 +3935,9 @@ const FINDINGS = [
     highlightProposed: { el: 'template' },
   },
   {
-    id: 'D3', tier: 'p1', fieldTypes: ['dropdown'], surfaces: ['settings'], pinLabel: 'D3',
+    id: 'AQ4', tier: 'p1', fieldTypes: ['dropdown'], surfaces: ['settings'], pinLabel: 'AQ4',
     title: 'Sort-order label says "Manual" — collides with Fill method',
-    catalogRef: 'D3',
+    catalogRef: 'AQ4',
     oneliner: 'The ⇅ sort control reads "Manual." The Fill method toggle reads "Manual fill." Same word, two meanings.',
     finding: '"Manual" doesn\'t read as a sort state either. Users don\'t know the control exists.',
     suggestion: 'Keep the ⇅ icon. Rewrite the label: "Sort: Custom / A–Z / Z–A."',
@@ -3571,9 +3946,9 @@ const FINDINGS = [
     highlightProposed: { el: 'dropdown-options' },
   },
   {
-    id: 'D4', tier: 'p2', fieldTypes: ['dropdown'], surfaces: ['settings'], pinLabel: 'D4',
+    id: 'CS11', tier: 'p2', fieldTypes: ['dropdown'], surfaces: ['settings'], pinLabel: 'CS11',
     title: 'Options list is in a different place in each entry point',
-    catalogRef: 'D4',
+    catalogRef: 'CS11',
     oneliner: 'Six paths, six positions for the same control. View AI-direct even puts options BEFORE Template.',
     finding: 'On View AI-direct, the user configures options before seeing the template those options should match.',
     suggestion: 'Standardize: Field name → Template → Prompt → Options → Automations → More. Options follow Template so users see "what kind" before "which options."',
@@ -3584,9 +3959,9 @@ const FINDINGS = [
 
   // ==== TYPE SELECTION FINDINGS (T1-T9) ====
   {
-    id: 'T1', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'T1',
+    id: 'CS6', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'CS6',
     title: 'The Task entry is a degraded variant of the View entry',
-    catalogRef: 'T1',
+    catalogRef: 'CS6',
     oneliner: 'Task is missing capabilities that View has. Same picker, three execution paths, uneven results.',
     finding: 'Missing Suggested section, broken Button field, no Create/Add-existing tabs (pre-step popup instead). Users creating fields inside a task get a weaker experience than users creating them from a view.',
     suggestion: 'Three variants, one shared component. View is the reference for most dimensions. Document narrow exceptions like CFM not needing Suggested.',
@@ -3595,9 +3970,9 @@ const FINDINGS = [
     highlightProposed: { el: '__panel__' },                                          /* v13: added — T1 is the umbrella, shade both sides */
   },
   {
-    id: 'T2', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'T2',
+    id: 'AD2', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'AD2',
     title: 'Duplicate field entries in the picker',
-    catalogRef: 'T2',
+    catalogRef: 'AD2',
     oneliner: 'Custom Text / Summary / Categorize / Custom Dropdown appear in both "AI fields" and "All." Tasks and Relationship are the same field under two names.',
     finding: 'AI is treated as a separate category instead of a capability of two field types. Creates phantom choices.',
     suggestion: 'Show each data type once. Remove the "AI fields" section — use the Brain icon inline on eligible rows. Dedup Tasks/Relationship. Rename Rollup → Relationship Rollup.',
@@ -3606,20 +3981,9 @@ const FINDINGS = [
     /* v13: highlightProposed removed — T2 is about a current-state problem (the duplicate "AI fields" block); the Proposed panel solves it by removal so there's nothing to shade. */
   },
   {
-    id: 'T3', tier: 'p0', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'T3',
-    title: 'Button field silently broken in Task entry',
-    catalogRef: 'T3',
-    oneliner: 'Pick Button, fill out config, Create stays disabled. No error. CFM handles this correctly with a grey-out + tooltip.',
-    finding: 'CFM greys Button at selection with "Buttons can be created at the Space, Folder, or List level." Task lets users configure it before silently failing.',
-    suggestion: 'Adopt CFM\'s pattern in Task. Extract into a shared component so all variants handle scope-limited types the same way.',
-    anchorCurrent: { el: 'header', anchor: 'top-left', offsetX: 10, offsetY: 760 }, /* v13.1: anchored to header with large offsetY → lands near bottom of left-margin track. Highlight remains on button-row (the actual broken element). */
-    highlightCurrent: { el: 'button-row' },
-    highlightProposed: { el: 'button-row' },
-  },
-  {
-    id: 'T4', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'T4',
+    id: 'CS4', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'CS4',
     title: 'Copy inconsistent across entry points',
-    catalogRef: 'T4',
+    catalogRef: 'CS4',
     oneliner: '"Add a column" / "Add or create fields" / "Add field from Workspace" / "Add existing" — 4 phrasings for the same action.',
     finding: 'View calls fields "columns" (spreadsheet metaphor). Task introduces a phrase used nowhere else ("Add field from Workspace"). View picker uses a fourth version.',
     suggestion: '"Add field" as canonical. Picker tabs use "Create new" / "Add existing." Drop the column metaphor — fields live on tasks, not columns.',
@@ -3628,9 +3992,9 @@ const FINDINGS = [
     highlightProposed: { el: 'header' },
   },
   {
-    id: 'T5', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'T5',
+    id: 'CS8', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'CS8',
     title: 'Suggested section absent from Task entry',
-    catalogRef: 'T5',
+    catalogRef: 'CS8',
     oneliner: 'Task has richer context than View. Yet Suggested only appears in View.',
     finding: 'Task has List, Space, task title, description, assignees, comments. Capability leak — not an information gap.',
     suggestion: 'Render Suggested in Task using View\'s logic, enriched with task-level signals. Attribute to ClickUp Brain (P1 #6).',
@@ -3639,9 +4003,9 @@ const FINDINGS = [
     highlightProposed: { el: 'suggested' },
   },
   {
-    id: 'T6', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'T6',
+    id: 'CS9', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'CS9',
     title: 'Field list has no functional grouping',
-    catalogRef: 'T6',
+    catalogRef: 'CS9',
     oneliner: '~33 field types in one scrollable flat list. Grouped by "AI vs. standard" — internal architecture, not user intent.',
     finding: 'New user scanning for "priority" has no navigational guidance. The grouping that exists describes the codebase, not the user\'s goal.',
     suggestion: 'Six functional groups: Text / Selection / Numbers &amp; Dates / Links &amp; Attachments / Relationships / Actions &amp; Tracking. Brain markers inline on Text area + Dropdown.',
@@ -3650,9 +4014,9 @@ const FINDINGS = [
     highlightProposed: { el: 'group-text' },
   },
   {
-    id: 'T7', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'T7',
+    id: 'CS10', tier: 'p1', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'CS10',
     title: '"Add existing" hidden behind pre-step in Task entry',
-    catalogRef: 'T7',
+    catalogRef: 'CS10',
     oneliner: 'Task shows a "Create / Add from Workspace" popup BEFORE the picker. Pick wrong, back out and restart.',
     finding: 'No way to switch modes inside the picker. Also the source of the worst copy string in the flow — "Add field from Workspace."',
     suggestion: 'Adopt View\'s Create new / Add existing tabs inside the picker. Kill the pre-step popup.',
@@ -3661,9 +4025,9 @@ const FINDINGS = [
     highlightProposed: { el: 'header' },
   },
   {
-    id: 'T8', tier: 'p2', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'T8',
+    id: 'CS4', tier: 'p2', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'CS4',
     title: '+ icon inconsistency between View and Task',
-    catalogRef: 'T8',
+    catalogRef: 'CS4',
     oneliner: 'View uses + in a circle. Task uses + with no circle. Same action, different affordance.',
     finding: 'Minor but noticeable to anyone who works across both screens.',
     suggestion: 'Align on the circle variant — stronger affordance. CFM\'s full "Create new" button is appropriate for its density.',
@@ -3671,16 +4035,158 @@ const FINDINGS = [
     highlightCurrent: { el: 'header' },
     highlightProposed: { el: 'header' },                                              /* v13: added — match T4's shading pattern */
   },
+
+  // ============================================================
+  // L1 DESIGN MOVES — 13 anchors for Phase 1 redesign (locked 2026-04-30)
+  // Each move = a specific change visible on the Proposed panel.
+  // tier 'move' is handled by buildRailCard with What/Why/Resolves layout.
+  // ============================================================
+  // ---- Type Selection (5 moves) ----
   {
-    id: 'T9', tier: 'p2', fieldTypes: ['longText', 'dropdown'], surfaces: ['typeSelection'], pinLabel: 'T9',
-    title: 'CFM uses different visual vocabulary than picker variants',
-    catalogRef: 'T9',
-    oneliner: 'CFM: teal button, filter chips, full-page. Pickers: compact dropdowns. Same domain, different product feel.',
-    finding: 'CFM is a management screen; pickers are creation screens. Arguably appropriate — flagged as a design-system observation.',
-    suggestion: 'Note for the design system team. Out of scope for this deliverable.',
-    anchorCurrent: { el: 'header', anchor: 'top-left', offsetX: 10, offsetY: 138 },  /* v13.1: pulled up to follow T8 — T3 left the stack */
-    highlightCurrent: { el: 'header' },                                               /* v13: was 'ai-fields' — match T4's shading pattern */
-    highlightProposed: { el: 'header' },                                              /* v13: added */
+    id: 'TS-1', tier: 'move', surfaces: ['typeSelection'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'TS-1',
+    title: 'Width unification',
+    catalogRef: 'Resolves CS6',
+    oneliner: "Task adopts View's full panel width (was 308px, now matches View at 380px).",
+    finding: "The narrower Task variant cropped Suggested + had less room for hierarchy. Unifying width = unifying capability.",
+    suggestion: "Treat Task as an instance of the same picker component View renders — same width, same affordances, same Suggested rail.",
+    resolves: ['CS6'],
+    anchorProposed: { el: 'header', anchor: 'top-left', offsetX: 10, offsetY: 30 },
+    highlightProposed: { el: 'header' },
+  },
+  {
+    id: 'TS-2', tier: 'move', surfaces: ['typeSelection'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'TS-2',
+    title: 'Functional grouping replaces flat scroll',
+    catalogRef: 'Resolves CS9',
+    oneliner: "~33 field types organized into 6 functional groups (Text · Selection · Numbers & Dates · Links & Attachments · Relationships · Actions & Tracking).",
+    finding: "Architecture-driven grouping (AI vs standard) reflects code, not user intent. New user scanning for 'priority' needs intent-driven groups.",
+    suggestion: "Group by what the user is trying to accomplish, not by which subsystem owns the field type.",
+    resolves: ['CS9'],
+    /* TS-2 anchored to 'search' to sit near top of panel, well above the rail-card popup zone. */
+    anchorProposed: { el: 'search', anchor: 'top-right', offsetX: -6, offsetY: 6 },
+    highlightProposed: { el: 'group-text' },
+  },
+  {
+    id: 'TS-3', tier: 'move', surfaces: ['typeSelection'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'TS-3',
+    title: 'Suggested section adopted in Task',
+    catalogRef: 'Resolves CS8',
+    oneliner: "Task entry gets a Suggested section using View's logic, enriched with task-level signals.",
+    finding: "Task has richer context than View (List, Space, task title, description, assignees, comments). Capability leak — fix is to render Suggested everywhere with appropriate signal source.",
+    suggestion: "Same Suggested component, different signal source per surface. View pulls from List metadata; Task pulls from task body + comments.",
+    resolves: ['CS8'],
+    anchorProposed: { el: 'suggested', anchor: 'top-right', offsetX: -6, offsetY: 6 },
+    highlightProposed: { el: 'suggested' },
+  },
+  {
+    id: 'TS-4', tier: 'move', surfaces: ['typeSelection'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'TS-4',
+    title: 'Inline tabs replace pre-step popup',
+    catalogRef: 'Resolves CS10',
+    oneliner: '"Create new" / "Add existing" tabs inside the picker. Task pre-step popup is killed.',
+    finding: "No way to switch modes inside picker today — pick wrong, back out, restart. Inline tabs put both options at the same level.",
+    suggestion: "Tabbed picker pattern — switch modes without leaving the picker. View already does this; Task adopts the same pattern.",
+    resolves: ['CS10'],
+    anchorProposed: { el: 'header', anchor: 'top-left', offsetX: 10, offsetY: 76 },
+    highlightProposed: { el: 'header' },
+  },
+  {
+    id: 'TS-5', tier: 'move', surfaces: ['typeSelection'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'TS-5',
+    title: 'Field deduplication + canonical naming',
+    catalogRef: 'Resolves AD2 · CS12',
+    oneliner: "One entry per field type. Canonical names match catalog, picker rows, preview cards, and config panels.",
+    finding: "Duplicates make the list look broken on first scan; cross-surface naming mismatches break trust.",
+    suggestion: "One name per field type, used everywhere. AI capability indicated inline (Brain icon on AI-capable rows), not via a separate 'AI fields' section.",
+    resolves: ['AD2', 'CS12'],
+    /* TS-5 anchored to header so it sits in line with TS-1 at the top of the right margin track. */
+    anchorProposed: { el: 'header', anchor: 'top-right', offsetX: -6, offsetY: 6 },
+    highlightProposed: { el: 'all-fields' },
+  },
+  // ---- Settings Screen (8 moves) ----
+  {
+    id: 'SS-1', tier: 'move', surfaces: ['settings'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'SS-1',
+    title: 'Form coordinates as one unit (Template cascade)',
+    catalogRef: 'Resolves CC1 · CC2 · CC3 · CC4 · CC5',
+    oneliner: "Template change cascades to dependent controls. Each resets to template default. User edits preserved.",
+    finding: "Header type picker handles cascade correctly; Template doesn't. Treating the panel as a coordinated form with one source of truth (Template) and one cascade rule fixes Field name, Format, Property, dropdown options together.",
+    suggestion: "Bind every dependent control to the active template. On template change, reset to new defaults unless the user has explicitly edited.",
+    resolves: ['CC1', 'CC2', 'CC3', 'CC4', 'CC5'],
+    anchorProposed: { el: 'template', anchor: 'top-right', offsetX: -6, offsetY: 6 },
+    highlightProposed: { el: 'template' },
+  },
+  {
+    id: 'SS-2', tier: 'move', surfaces: ['settings'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'SS-2',
+    title: 'Fill method switcher always visible',
+    catalogRef: 'Resolves CS14',
+    oneliner: "Manual / Fill with AI switcher renders on every entry path — manual→AI AND AI-direct.",
+    finding: "Path was carrying state the form didn't acknowledge. Two users on what they think is the same template pulled from different defaults.",
+    suggestion: "Form state binds to template, not to path. Fill method renders everywhere; defaults are uniform.",
+    resolves: ['CS14'],
+    anchorProposed: { el: 'fill-method-missing', anchor: 'top-right', offsetX: -6, offsetY: 6 },
+    highlightProposed: { el: 'fill-method-missing' },
+  },
+  {
+    id: 'SS-3', tier: 'move', surfaces: ['settings'], fieldTypes: ['longText'], pinLabel: 'SS-3',
+    title: 'Default unification across paths',
+    catalogRef: 'Resolves CS16',
+    oneliner: "Progress Updates defaults to 'Last 24 hours' everywhere. Field name pre-population follows one rule.",
+    finding: "Two users configuring the same template should get the same field. Brain output should not depend on which screen the user came from.",
+    suggestion: "One default per template. Path-specific behavior is a violation of form contract.",
+    resolves: ['CS16'],
+    anchorProposed: { el: 'template', anchor: 'bottom-right', offsetX: -6, offsetY: -6 },
+    highlightProposed: { el: 'template' },
+  },
+  {
+    id: 'SS-4', tier: 'move', surfaces: ['settings'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'SS-4',
+    title: 'Permissions become field-level',
+    catalogRef: 'Resolves CS15',
+    oneliner: "Permissions move out of 'View entry only' into More Settings on every variant.",
+    finding: "Workspace admins using CFM had fewer controls than team members creating a field inline. Permissions are a field property, not a View-only capability.",
+    suggestion: "Treat permissions as a property of the field itself, not a property of the path that created it.",
+    resolves: ['CS15'],
+    anchorProposed: { el: 'more', anchor: 'top-right', offsetX: -6, offsetY: 4 },
+    highlightProposed: { el: 'more' },
+  },
+  {
+    id: 'SS-5', tier: 'move', surfaces: ['settings'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'SS-5',
+    title: 'Description placement consistent',
+    catalogRef: 'Resolves CS2',
+    oneliner: "Description appears in the same position across all three entry-point variants.",
+    finding: "Description was buried in More Settings on View, on top with helper copy on Task, missing on CFM. Same field, three placements.",
+    suggestion: "Document the canonical layout once. Variants differ in width and density, not in field position.",
+    resolves: ['CS2'],
+    anchorProposed: { el: 'more', anchor: 'top-right', offsetX: -6, offsetY: 36 },
+    highlightProposed: { el: 'more' },
+  },
+  {
+    id: 'SS-6', tier: 'move', surfaces: ['settings'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'SS-6',
+    title: 'Eight micro-inconsistencies unified',
+    catalogRef: 'Resolves CS4 · CS3',
+    oneliner: "'Visible to Guests' casing, 'Pinned' toggle, prompt textarea size, and five other controls share one resolution rule across variants.",
+    finding: "Small inconsistencies compound. One pattern (cluster) needs one resolution.",
+    suggestion: "Adopt View's treatment as the baseline. CFM and Task variants render the same controls, same casing, same sizes.",
+    resolves: ['CS4', 'CS3'],
+    anchorProposed: { el: 'more', anchor: 'top-left', offsetX: 6, offsetY: 4 },
+    highlightProposed: { el: 'more' },
+  },
+  {
+    id: 'SS-7', tier: 'move', surfaces: ['settings'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'SS-7',
+    title: 'Prompt variable picker gets a real picker UI',
+    catalogRef: 'Resolves AQ7',
+    oneliner: "The prompt's variable insertion gets a proper picker affordance with previews + clear feedback on selection.",
+    finding: "Current variable picker has UX issues that cause friction; AI output unreliable when users can't trust the variable insertion.",
+    suggestion: "Variables render as visually distinct tokens. Picker shows what each returns. Cursor stays where it was after insertion.",
+    resolves: ['AQ7'],
+    anchorProposed: { el: 'prompt', anchor: 'bottom-left', offsetX: 6, offsetY: -8 },
+    highlightProposed: { el: 'prompt' },
+  },
+  {
+    id: 'SS-8', tier: 'move', surfaces: ['settings'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'SS-8',
+    title: 'Trigger copy + tooltips cleaned up',
+    catalogRef: 'Resolves CS13 · AQ1',
+    oneliner: "Auto-update trigger copy now matches Automations screen. Redundant 'Tell AI how to fill' tooltip dropped.",
+    finding: "Trigger copy mismatched the actual Automation that fires. Redundant tooltip duplicates label info.",
+    suggestion: "Single source of truth for copy: the Automations screen. Tooltips add information; they don't restate the label.",
+    resolves: ['CS13', 'AQ1'],
+    anchorProposed: { el: 'autom-trigger', anchor: 'top-right', offsetX: -6, offsetY: 2 },
+    highlightProposed: { el: 'autom-trigger' },
   },
 ];
 
@@ -3757,69 +4263,41 @@ function placePin(pin, panel, cfg) {
   if (!anchor) return;
   const panelRect = panel.getBoundingClientRect();
   const anchorRect = anchor.getBoundingClientRect();
-  const pinW = pin.offsetWidth || 30;
-  const pinH = pin.offsetHeight || 30;
+  const pinW = pin.offsetWidth || 50;
+  const pinH = pin.offsetHeight || 26;
 
-  const corner = cfg.anchor || 'top-left';
-  let baseTop = anchorRect.top - panelRect.top;
-  let baseLeft = anchorRect.left - panelRect.left;
-  switch (corner) {
-    case 'top-right':
-      baseLeft = anchorRect.right - panelRect.left - pinW; break;
-    case 'bottom-left':
-      baseTop = anchorRect.bottom - panelRect.top - pinH; break;
-    case 'bottom-right':
-      baseLeft = anchorRect.right - panelRect.left - pinW;
-      baseTop = anchorRect.bottom - panelRect.top - pinH; break;
-  }
-  let top  = baseTop  + (cfg.offsetY || 0);
-  let left = baseLeft + (cfg.offsetX || 0);
+  // Anchor's vertical center within panel-relative coords
+  const aCenterY = (anchorRect.top + anchorRect.bottom) / 2 - panelRect.top;
+  const aCenterX = (anchorRect.left + anchorRect.right) / 2 - panelRect.left;
 
-  // v11: pins sit FULLY outside the panel edge (not straddling) to avoid overlapping panel content.
-  // Snap pins that are near an edge to sit cleanly in the margin track.
-  // EXCEPTION: top edge — don't push pins above the panel, that space is occupied by the side-header.
+  const offsetY = cfg.offsetY || 0;
   const panelW = panelRect.width;
   const panelH = panelRect.height;
-  const edgeSnap = pinW + 4;             // v11: pin sits fully outside + 4px breathing room
-  const nearEdgeThreshold = 80;           // v11: bigger threshold → more pins snap to edges (off panel content)
 
-  // Snap to left/right edge if close — these go OUTSIDE the panel (clean margin track)
-  if (left < nearEdgeThreshold) left = -edgeSnap;
-  else if (left + pinW > panelW - nearEdgeThreshold) left = panelW + 4;
+  // v17 Patch R: ALWAYS place pins outside the panel in a clean margin track.
+  // Side decided by which half the anchor sits in.
+  const goRight = aCenterX > panelW / 2;
+  const trackOffset = 14;
 
-  // Bottom edge: snap below the panel only if the pin would actually overflow.
-  // v17 (Finding 5/10 fix): the previous rule (`top + pinH > panelH - nearEdgeThreshold`,
-  // i.e. within 80px of the bottom) was too aggressive — pins anchored to the
-  // "More settings" row (which legitimately sits near the bottom of the panel)
-  // got ejected below the panel and then collision-resolved into the area below
-  // it, instead of sitting next to the row they're anchored to. Tighter rule:
-  // only snap if the pin would extend off the panel bottom.
-  if (top + pinH > panelH) top = panelH + 4;
-  // Top edge: do NOT snap above the panel (the side-header lives there).
-  // If the pin would land in the negative zone, clamp to just inside the panel top instead.
-  if (top < 0) top = 4;
+  let left = goRight ? panelW + trackOffset : -pinW - trackOffset;
+  let top = aCenterY - (pinH / 2) + offsetY;
 
-  // Final safety clamp — left/right may be outside, top must stay >= 0
-  if (left < -edgeSnap) left = -edgeSnap;
-  if (left + pinW > panelW + edgeSnap) left = panelW + 4;
-  if (top < 0) top = 4;
-  if (top + pinH > panelH + edgeSnap) top = panelH + 4;
+  // Clamp top so pin stays within ~28px of panel top/bottom (allows slight overflow for header alignment)
+  top = Math.max(-28, Math.min(panelH - pinH + 28, top));
 
   pin.style.top = `${top}px`;
   pin.style.left = `${left}px`;
 }
 
-/* v11: After all pins are placed, sweep for overlaps and nudge colliding pins apart. */
+/* v17: After all pins are placed, sweep for overlaps and nudge colliding pins apart.
+   Pins now live in left/right margin tracks — push vertically only, never horizontally. */
 function resolvePinCollisions(panel) {
   if (!panel) return;
   const pins = Array.from(panel.querySelectorAll('.pin'));
   if (pins.length < 2) return;
-  const panelRect = panel.getBoundingClientRect();
-  const panelW = panelRect.width;
-  const panelH = panelRect.height;
 
-  const MAX_PASSES = 8;
-  const MIN_GAP = 4;       // minimum spacing between pin centers (beyond touching)
+  const MAX_PASSES = 12;
+  const MIN_GAP = 12;  // generous so the active-state ring (3px) doesn't kiss neighbors
 
   function rect(pin) {
     return {
@@ -3836,34 +4314,20 @@ function resolvePinCollisions(panel) {
       const a = rect(pins[i]);
       for (let j = i + 1; j < pins.length; j++) {
         const b = rect(pins[j]);
-        const overlapX = Math.min(a.left + a.w, b.left + b.w) - Math.max(a.left, b.left);
-        const overlapY = Math.min(a.top + a.h, b.top + b.h) - Math.max(a.top, b.top);
-        if (overlapX > -MIN_GAP && overlapY > -MIN_GAP) {
-          // Collision — nudge the second pin along the axis of lesser overlap
-          if (overlapX < overlapY) {
-            // Push horizontally
-            const push = (overlapX + MIN_GAP) / 2 + 1;
-            const aCx = a.left + a.w / 2;
-            const bCx = b.left + b.w / 2;
-            if (bCx >= aCx) {
-              pins[j].style.left = `${b.left + push}px`;
-              pins[i].style.left = `${a.left - push}px`;
-            } else {
-              pins[j].style.left = `${b.left - push}px`;
-              pins[i].style.left = `${a.left + push}px`;
-            }
+        // Inflate bounds by MIN_GAP so neighbors can't kiss
+        const overlapX = Math.min(a.left + a.w, b.left + b.w) - Math.max(a.left, b.left) + MIN_GAP;
+        const overlapY = Math.min(a.top + a.h, b.top + b.h) - Math.max(a.top, b.top) + MIN_GAP;
+        if (overlapX > 0 && overlapY > 0) {
+          // Push vertically only — pins live in fixed margin tracks
+          const push = (overlapY + 2) / 2;
+          const aCy = a.top + a.h / 2;
+          const bCy = b.top + b.h / 2;
+          if (bCy >= aCy) {
+            pins[j].style.top = `${b.top + push}px`;
+            pins[i].style.top = `${a.top - push}px`;
           } else {
-            // Push vertically
-            const push = (overlapY + MIN_GAP) / 2 + 1;
-            const aCy = a.top + a.h / 2;
-            const bCy = b.top + b.h / 2;
-            if (bCy >= aCy) {
-              pins[j].style.top = `${b.top + push}px`;
-              pins[i].style.top = `${a.top - push}px`;
-            } else {
-              pins[j].style.top = `${b.top - push}px`;
-              pins[i].style.top = `${a.top + push}px`;
-            }
+            pins[j].style.top = `${b.top - push}px`;
+            pins[i].style.top = `${a.top + push}px`;
           }
           moved = true;
         }
@@ -3943,28 +4407,35 @@ function applicableFindingsFor(surface, fieldType) {
 function mountArtifacts() {
   clearArtifacts();
   if (!panelCurrent || !panelProposed) return;
+  // Also clear any move pins on the proposed panel (clearArtifacts only clears current's pins)
+  panelProposed.querySelectorAll('.pin').forEach(el => el.remove());
   [panelCurrent, panelProposed].forEach(p => { p.style.position = 'relative'; });
 
+  // v17c: Move pins on Proposed panel removed — the stepper in the center column
+  // is the navigation. Highlights still render so the user sees WHICH element a
+  // move affects when they pick a stepper node.
   applicableFindings().forEach(f => {
-    if (f.anchorCurrent) {
-      const pin = createPin(f);
-      panelCurrent.appendChild(pin);
-      placePin(pin, panelCurrent, f.anchorCurrent);
-    }
-    if (f.highlightCurrent) {
+    // Umbrella highlights (whole-panel shading) — both panels
+    if (f.tier === 'umb' && f.highlightCurrent) {
       const hl = createHighlight(f, 'current');
       panelCurrent.appendChild(hl);
       placeHighlight(hl, panelCurrent, f.highlightCurrent);
     }
-    if (f.highlightProposed) {
+    // Move highlights — proposed panel only
+    if (f.tier === 'move' && f.highlightProposed) {
+      const hl = createHighlight(f, 'proposed');
+      panelProposed.appendChild(hl);
+      placeHighlight(hl, panelProposed, f.highlightProposed);
+    }
+    if (f.tier === 'umb' && f.highlightProposed) {
       const hl = createHighlight(f, 'proposed');
       panelProposed.appendChild(hl);
       placeHighlight(hl, panelProposed, f.highlightProposed);
     }
   });
 
-  // v11: after all pins placed, sweep for overlaps.
-  resolvePinCollisions(panelCurrent);
+  // v17: collisions on the Proposed panel (where moves now live)
+  resolvePinCollisions(panelProposed);
 
   wirePinEvents();
   applyFilter();
@@ -3974,32 +4445,31 @@ function mountArtifacts() {
    Filter
 ==================================================================== */
 
+// v17: extract theme prefix from a theme-prefixed finding ID
+function findingTheme(f) {
+  if (!f || !f.id) return null;
+  const m = f.id.match(/^(CC|CS|AQ|AD|FG)/);
+  return m ? m[1] : null;
+}
+
 function applyFilter() {
-  // v10: Filter affects BOTH pins on Current panel AND grid cards below.
-  const cp = getCurrentPanel();
-  if (cp) {
-    cp.querySelectorAll('.pin').forEach(p => {
-      const f = findingById(p.dataset.findingId);
-      if (!f) return;
-      if (filter === 'all' || filter === f.tier) {
-        p.classList.remove('dimmed');
-      } else {
-        p.classList.add('dimmed');
-      }
-    });
+  // v17 Patch R: filter is now THEME-based (CC/CS/AQ/AD/FG/all), not priority.
+  // Move pins always visible — filter only acts on grid cards.
+  const pp = getProposedPanel();
+  if (pp) {
+    pp.querySelectorAll('.pin').forEach(p => p.classList.remove('dimmed'));
   }
-  // Hide/show grid cards
+  // Hide/show grid cards by theme prefix
   document.querySelectorAll('#findings-grid .grid-card').forEach(card => {
     const f = findingById(card.dataset.findingId);
     if (!f) return;
-    const matches = (filter === 'all' || filter === f.tier);
+    const matches = (filter === 'all' || findingTheme(f) === filter);
     card.classList.toggle('filter-hidden', !matches);
   });
-  // Hide/show grid group headers (hide group if no cards shown)
+  // Hide group headers if all their cards are hidden
   document.querySelectorAll('#findings-grid .findings-grid-group').forEach(group => {
-    const tier = group.dataset.group;
-    const matches = (filter === 'all' || filter === tier);
-    group.classList.toggle('filter-hidden', !matches);
+    const visibleCards = group.querySelectorAll('.grid-card:not(.filter-hidden)');
+    group.classList.toggle('filter-hidden', visibleCards.length === 0);
   });
 }
 
@@ -4023,12 +4493,47 @@ function buildRailCard(f) {
   card.className = 'finding-card ' + f.tier + ' always-expanded';
   card.dataset.findingId = f.id;
 
-  // v10: no tier pill, no behavioral/phase badges — color bar + pin number carry identity.
-  const numberNode = f.tier === 'umb'
-    ? `<div class="finding-card-num" style="background: var(--umb); border-radius: var(--radius-sm);">${f.id}</div>`
+  // v17 Patch R: three card flavors — umbrella (narrative), move (design judgment), finding (legacy)
+  let numberStyle = '';
+  if (f.tier === 'umb') {
+    numberStyle = 'background: var(--umb); border-radius: var(--radius-sm);';
+  } else if (f.tier === 'move') {
+    // Move pin uses brand-purple to signal design judgment, distinct from theme colors
+    numberStyle = 'background: var(--cu-brand-purple, #6647F0); border-radius: var(--radius-sm); min-width: 44px; padding: 0 8px;';
+  }
+  const numberNode = numberStyle
+    ? `<div class="finding-card-num" style="${numberStyle}">${f.id}</div>`
     : `<div class="finding-card-num">${f.pinLabel}</div>`;
 
+  // Section labels by tier
+  const detailLabel = f.tier === 'umb' ? 'Pattern detail'
+                    : f.tier === 'move' ? 'What changed'
+                    : 'The finding';
+  const fixLabel = f.tier === 'move' ? 'Why' : 'Recommendation';
+
+  // For moves: render a "Resolves" footer with finding-ID pills
+  let resolvesHtml = '';
+  if (f.tier === 'move' && Array.isArray(f.resolves) && f.resolves.length) {
+    const pills = f.resolves.map(id => `<span class="resolves-pill" data-resolves-id="${id}">${id}</span>`).join('');
+    resolvesHtml = `
+      <div class="finding-card-section">
+        <div class="finding-card-section-label">Resolves on L0</div>
+        <div class="finding-card-resolves">${pills}</div>
+      </div>`;
+  }
+
+  // v18b: For move-tier cards (the design moves on the stepper), render a
+  // "Back to all moves" pill above the card. Clicking it deactivates and
+  // restores the stepper in the same column.
+  const backBtnHtml = (f.tier === 'move')
+    ? `<button class="fix-rail-back" type="button" aria-label="Back to all moves">
+         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4l-4 4 4 4"/></svg>
+         Back to all moves
+       </button>`
+    : '';
+
   card.innerHTML = `
+    ${backBtnHtml}
     <div class="finding-card-head">
       ${numberNode}
       <div class="finding-card-title">${f.title}</div>
@@ -4036,16 +4541,49 @@ function buildRailCard(f) {
     <div class="finding-card-oneliner">${f.oneliner}</div>
     <div class="finding-card-body expanded">
       <div class="finding-card-section">
-        <div class="finding-card-section-label">${f.tier === 'umb' ? 'Pattern detail' : 'The finding'}</div>
+        <div class="finding-card-section-label">${detailLabel}</div>
         <div class="finding-card-section-body finding">${f.finding}</div>
       </div>
       <div class="finding-card-section">
-        <div class="finding-card-section-label">Recommendation</div>
+        <div class="finding-card-section-label">${fixLabel}</div>
         <div class="finding-card-section-body">${f.suggestion}</div>
       </div>
+      ${resolvesHtml}
       <div class="finding-card-ref">${f.catalogRef || ''}</div>
     </div>
   `;
+
+  // Wire the back button — detect which rail this card lives in and call the right deactivate.
+  const backBtn = card.querySelector('.fix-rail-back');
+  if (backBtn) {
+    backBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Detect parent rail-body to know which Act we're in
+      requestAnimationFrame(() => {
+        const inTsRail = card.closest('#rail-body-ts');
+        const inAct2Rail = card.closest('#rail-body');
+        if (inTsRail) {
+          if (typeof TS_CTX !== 'undefined') TS_CTX.pinnedFindingId = null;
+          if (typeof deactivateFindingTs === 'function') deactivateFindingTs();
+        } else if (inAct2Rail) {
+          pinnedFindingId = null;
+          if (typeof deactivateFinding === 'function') deactivateFinding();
+        }
+      });
+    });
+  }
+
+  // Hook up resolve pills → deep-link to L0 with the finding ID anchor
+  if (f.tier === 'move') {
+    card.querySelectorAll('.resolves-pill').forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = pill.dataset.resolvesId;
+        // Open L0 in same tab with hash
+        window.location.href = `l0.html#finding-${id}`;
+      });
+    });
+  }
 
   return card;
 }
@@ -4059,11 +4597,21 @@ function activateFinding(id) {
   if (!f) return;
   activeFinding = id;
 
-  railEmpty.style.display = 'none';
-  const oldCard = railBody.querySelector('.finding-card');
+  if (railEmpty) railEmpty.style.display = 'none';
+  const oldCard = railBody && railBody.querySelector('.finding-card');
   if (oldCard) oldCard.remove();
   const card = buildRailCard(f);
-  railBody.appendChild(card);
+  if (railBody) railBody.appendChild(card);
+
+  // v17: mark center column as active + sync stepper highlight + grid card highlight
+  const centerCol = document.getElementById('fix-center-col-act2');
+  if (centerCol) {
+    centerCol.classList.add('is-active');
+    // v18b: pin → hide stepper, card replaces stepper space; hover → keep stepper, card under
+    centerCol.classList.toggle('is-pinned', !!pinnedFindingId);
+  }
+  updateStepperActive('fix-stepper-act2', id);
+  updateMoveCardActive('moves-grid-items', id);
 
   // Scope to Act II panels only — Act I has its own state (TS_CTX)
   const cp = getCurrentPanel(), pp = getProposedPanel();
@@ -4111,9 +4659,16 @@ function activateFinding(id) {
 
 function deactivateFinding() {
   activeFinding = null;
-  const oldCard = railBody.querySelector('.finding-card');
+  const oldCard = railBody && railBody.querySelector('.finding-card');
   if (oldCard) oldCard.remove();
-  railEmpty.style.display = '';
+  if (railEmpty) railEmpty.style.display = '';
+
+  // v17: revert center column to brand-arrow default
+  const centerCol = document.getElementById('fix-center-col-act2');
+  if (centerCol) {
+    centerCol.classList.remove('is-active');
+    centerCol.classList.remove('is-pinned');     // v18b: restore stepper visibility
+  }
 
   // Scope to Act II panels only
   const cp = getCurrentPanel(), pp = getProposedPanel();
@@ -4137,9 +4692,10 @@ function deactivateFinding() {
 ==================================================================== */
 
 function wirePinEvents() {
-  const currentPanel = getCurrentPanel();
-  if (!currentPanel) return;
-  currentPanel.querySelectorAll('.pin').forEach(pin => {
+  // v17 Patch R: pins live on Proposed panel now (design moves), not Current.
+  const proposedPanel = getProposedPanel();
+  if (!proposedPanel) return;
+  proposedPanel.querySelectorAll('.pin').forEach(pin => {
     const id = pin.dataset.findingId;
     pin.addEventListener('mouseenter', () => {
       if (pinnedFindingId && pinnedFindingId !== id) return;
@@ -4217,7 +4773,12 @@ function wireGlobalEvents() {
     const inPin = e.target.closest('.pin');
     const inChip = e.target.closest('.umb-chip');
     const inCard = e.target.closest('.finding-card') || e.target.closest('.grid-card');
-    if (inPin || inChip || inCard) return;
+    // v18b: stepper buttons + move-card grid items also pin/activate findings —
+    // without this whitelist, the global handler clears pinnedFindingId immediately
+    // after a stepper click and the rail card is yanked back out before the user sees it.
+    const inMove = e.target.closest('.fix-step') || e.target.closest('.move-card');
+    const inBack = e.target.closest('.fix-rail-back');
+    if (inPin || inChip || inCard || inMove || inBack) return;
 
     if (pinnedFindingId) {
       pinnedFindingId = null;
@@ -4697,8 +5258,17 @@ function renderMatrix() {
   const cells = MATRIX_DATA[fieldType].cells;
   const cols = config.cols;
 
-  // Update grid-template-columns for variable col count (6 for longText, 5 for dropdown)
-  grid.style.gridTemplateColumns = `70px repeat(${cols.length}, 1fr)`;
+  // v18b: lock cell size to the Long Text 6-col baseline so LT and Dropdown matrices
+  // render with identical cell width/height (aspect-ratio 1/1). 5-col dropdown was
+  // ~20% larger before because 1fr stretched its cells to fill the same 840px frame.
+  const BASELINE_COLS = 6;
+  // Match the matrix-section max-width (840px) minus the row-label gutter (70px) → 770px split across 6 cells.
+  const CELL_PX = (840 - 70) / BASELINE_COLS;        // ≈128.3px
+  grid.style.gridTemplateColumns = `70px repeat(${cols.length}, ${CELL_PX}px)`;
+  // Pull the matrix flush so the Dropdown variant doesn't sit on a 770-px frame with empty space on the right.
+  grid.style.width = `${70 + cols.length * CELL_PX}px`;
+  grid.style.marginLeft = 'auto';
+  grid.style.marginRight = 'auto';
 
   // Header row: empty corner + N column labels (may contain <br>)
   const corner = document.createElement('div');
@@ -4826,30 +5396,10 @@ function buildGridCard(f, skipWiring) {
   return card;
 }
 
-function renderShowAllGrid() {
-  const findings = applicableFindings();
-  const p0List = findings.filter(f => f.tier === 'p0');
-  const p1List = findings.filter(f => f.tier === 'p1');
-  const p2List = findings.filter(f => f.tier === 'p2');
-
-  document.getElementById('count-p0').textContent = `· ${p0List.length}`;
-  document.getElementById('count-p1').textContent = `· ${p1List.length}`;
-  document.getElementById('count-p2').textContent = `· ${p2List.length}`;
-
-  const fillGroup = (containerId, list) => {
-    const el = document.getElementById(containerId);
-    el.innerHTML = '';
-    list.forEach(f => el.appendChild(buildGridCard(f)));
-  };
-  fillGroup('grid-p0', p0List);
-  fillGroup('grid-p1', p1List);
-  fillGroup('grid-p2', p2List);
-}
-
-function wireShowAllToggle() {
-  // v10: no toggle button. Grid is always visible. Just populate it.
-  renderShowAllGrid();
-}
+// v17b: Legacy tier-based grid retired. The DOM elements (count-p0, grid-p0, ...)
+// no longer exist. Grid is now populated by renderMovesGrid('moves-grid-items', 'settings').
+function renderShowAllGrid() { /* no-op — replaced by renderMovesGrid */ }
+function wireShowAllToggle() { /* no-op — replaced by renderMovesGrid in init block */ }
 
 // When activating a finding, also highlight its card in the grid if visible
 function highlightGridCard(findingId) {
@@ -4937,6 +5487,11 @@ function hideFinding() {
   if (railEmpty) railEmpty.style.display = '';
   const oldCard = railBody && railBody.querySelector('.finding-card');
   if (oldCard) oldCard.remove();
+
+  // v17: revert center column to brand-arrow default
+  const centerCol = document.getElementById('fix-center-col-act2');
+  if (centerCol) centerCol.classList.remove('is-active');
+
   // Only clear pins in Act II panels (Settings) — Act I pins have separate state
   const cp = getCurrentPanel(); const pp = getProposedPanel();
   [cp, pp].forEach(panel => {
@@ -4971,7 +5526,7 @@ function applicableFindingsTs() {
 function clearArtifactsTs() {
   const cp = TS_CTX.currentPanel, pp = TS_CTX.proposedPanel;
   if (cp) cp.querySelectorAll('.pin, .highlight').forEach(el => el.remove());
-  if (pp) pp.querySelectorAll('.highlight').forEach(el => el.remove());
+  if (pp) pp.querySelectorAll('.pin, .highlight').forEach(el => el.remove());
 }
 
 function mountArtifactsTs() {
@@ -4980,56 +5535,49 @@ function mountArtifactsTs() {
   if (!cp || !pp) return;
   [cp, pp].forEach(p => { p.style.position = 'relative'; });
 
+  // v17c: pins removed — stepper handles selection. Highlights only.
   applicableFindingsTs().forEach(f => {
-    if (f.anchorCurrent) {
-      const pin = createPin(f);
-      cp.appendChild(pin);
-      placePin(pin, cp, f.anchorCurrent);
-    }
-    if (f.highlightCurrent) {
+    if (f.tier === 'umb' && f.highlightCurrent) {
       const hl = createHighlight(f, 'current');
       cp.appendChild(hl);
       placeHighlight(hl, cp, f.highlightCurrent);
     }
-    if (f.highlightProposed) {
+    if (f.tier === 'move' && f.highlightProposed) {
+      const hl = createHighlight(f, 'proposed');
+      pp.appendChild(hl);
+      placeHighlight(hl, pp, f.highlightProposed);
+    }
+    if (f.tier === 'umb' && f.highlightProposed) {
       const hl = createHighlight(f, 'proposed');
       pp.appendChild(hl);
       placeHighlight(hl, pp, f.highlightProposed);
     }
   });
 
-  // v11: after all pins placed, sweep for overlaps.
-  resolvePinCollisions(TS_CTX.currentPanel);
+  // v17: pins now live on Proposed panel (design moves)
+  resolvePinCollisions(TS_CTX.proposedPanel);
 
   wirePinEventsTs();
   applyFilterTs();
 }
 
 function applyFilterTs() {
-  // v10: Filter affects BOTH Act 1 pins on Current panel AND Act 1 grid cards below.
-  const cp = TS_CTX.currentPanel;
-  if (cp) {
-    cp.querySelectorAll('.pin').forEach(p => {
-      const f = findingById(p.dataset.findingId);
-      if (!f) return;
-      if (TS_CTX.filter === 'all' || TS_CTX.filter === f.tier) {
-        p.classList.remove('dimmed');
-      } else {
-        p.classList.add('dimmed');
-      }
-    });
+  // v17 Patch R: theme-based filter for Act I grid cards.
+  const pp = TS_CTX.proposedPanel;
+  if (pp) {
+    pp.querySelectorAll('.pin').forEach(p => p.classList.remove('dimmed'));
   }
-  // Hide/show Act 1 grid cards + group headers
+  // Hide/show Act 1 grid cards by theme prefix
   document.querySelectorAll('#findings-grid-ts .grid-card').forEach(card => {
     const f = findingById(card.dataset.findingId);
     if (!f) return;
-    const matches = (TS_CTX.filter === 'all' || TS_CTX.filter === f.tier);
+    const matches = (TS_CTX.filter === 'all' || findingTheme(f) === TS_CTX.filter);
     card.classList.toggle('filter-hidden', !matches);
   });
+  // Hide group headers if all their cards are hidden
   document.querySelectorAll('#findings-grid-ts .findings-grid-group').forEach(group => {
-    const tier = group.dataset.group;
-    const matches = (TS_CTX.filter === 'all' || TS_CTX.filter === tier);
-    group.classList.toggle('filter-hidden', !matches);
+    const visibleCards = group.querySelectorAll('.grid-card:not(.filter-hidden)');
+    group.classList.toggle('filter-hidden', visibleCards.length === 0);
   });
 }
 
@@ -5054,6 +5602,15 @@ function activateFindingTs(id) {
   if (oldCard) oldCard.remove();
   const card = buildRailCard(f);
   if (TS_CTX.railBody) TS_CTX.railBody.appendChild(card);
+
+  // v17: mark Act I center column active + sync stepper highlight + grid card highlight
+  const centerColTs = document.getElementById('fix-center-col-ts');
+  if (centerColTs) {
+    centerColTs.classList.add('is-active');
+    centerColTs.classList.toggle('is-pinned', !!TS_CTX.pinnedFindingId);   // v18b
+  }
+  updateStepperActive('fix-stepper-ts', id);
+  updateMoveCardActive('moves-grid-items-ts', id);
 
   // Pin + highlight active state on Act I panels
   const cp = TS_CTX.currentPanel, pp = TS_CTX.proposedPanel;
@@ -5123,6 +5680,13 @@ function deactivateFindingTs() {
   if (oldCard) oldCard.remove();
   if (TS_CTX.railEmpty) TS_CTX.railEmpty.style.display = '';
 
+  // v17: revert Act I center column to brand-arrow default
+  const centerColTs = document.getElementById('fix-center-col-ts');
+  if (centerColTs) {
+    centerColTs.classList.remove('is-active');
+    centerColTs.classList.remove('is-pinned');                              // v18b: restore stepper
+  }
+
   const cp = TS_CTX.currentPanel, pp = TS_CTX.proposedPanel;
   [cp, pp].forEach(panel => {
     if (!panel) return;
@@ -5134,9 +5698,10 @@ function deactivateFindingTs() {
 }
 
 function wirePinEventsTs() {
-  const cp = TS_CTX.currentPanel;
-  if (!cp) return;
-  cp.querySelectorAll('.pin').forEach(pin => {
+  // v17 Patch R: design-move pins live on Proposed panel, not Current
+  const pp = TS_CTX.proposedPanel;
+  if (!pp) return;
+  pp.querySelectorAll('.pin').forEach(pin => {
     const id = pin.dataset.findingId;
     pin.addEventListener('mouseenter', () => {
       if (TS_CTX.pinnedFindingId && TS_CTX.pinnedFindingId !== id) return;
@@ -5233,7 +5798,9 @@ function renderShowAllGridTs() {
 }
 
 function wireShowAllToggleTs() {
-  // v10: no toggle button in Act 1 either. Grid is always visible.
+  // v17b: legacy tier grid retired — moves grid is populated separately by renderMovesGrid.
+  // Old elements (count-p0-ts/grid-p0-ts/etc.) no longer exist; the inner null-checks
+  // make renderShowAllGridTs safe but it's effectively a no-op now.
   renderShowAllGridTs();
 }
 
@@ -5415,13 +5982,13 @@ function renderTsPanelProposed() {
   const root = document.getElementById('panel-proposed-typeSelection');
   if (!root) return;
 
-  // Suggestions (4 from Figma spec: Project Objective, Key Deliverables, Stakeholder Feedback, Completion Date)
-  // Note: only the AI-typed suggestions show the Brain sparkle. Completion Date is a non-AI Date field.
+  // v17c: Suggestions render with the actual field-type icon (purple-tinted for AI capability)
+  // and a Brain pill on AI-typed rows — replaces the previous flower-icon + gray type pill pattern.
   const suggestions = [
-    { name: 'Project Objective',   typePill: 'LONG TEXT', iconAi: true },
-    { name: 'Key Deliverables',    typePill: 'LONG TEXT', iconAi: true },
-    { name: 'Stakeholder Feedback', typePill: 'LONG TEXT', iconAi: true },
-    { name: 'Completion Date',     typePill: 'DATE',     iconAi: false },
+    { name: 'Project Objective',    icon: 'ic-textarea', iconAi: true },
+    { name: 'Key Deliverables',     icon: 'ic-textarea', iconAi: true },
+    { name: 'Stakeholder Feedback', icon: 'ic-textarea', iconAi: true },
+    { name: 'Completion Date',      icon: 'ic-date',     iconAi: false },
   ];
 
   // Six functional groups per the Decision #5 / Figma spec
@@ -5500,13 +6067,15 @@ function renderTsPanelProposed() {
         ${right}
       </div>`;
   };
+  // v18: Suggested rows now route through fieldIconSvg → loads the same Figma PNG
+  // (text-area.png, date.png) the Current panel uses. Was inline-SVG-only before.
   const renderSuggestion = (s) => `
     <div class="fig-suggestion-row">
       <div class="fig-suggestion-left">
-        ${s.iconAi ? brainSparkleSvg(14) : '<span class="fig-brain-icon" style="width:14px;height:14px;visibility:hidden"></span>'}
+        ${fieldIconSvg(s.icon, s.iconAi)}
         <span class="fig-suggestion-name">${s.name}</span>
       </div>
-      <span class="fig-type-pill">${s.typePill}</span>
+      ${s.iconAi ? `<span class="fig-brain-pill">${brainSparkleSvg(11)}<span>Brain</span></span>` : ''}
     </div>`;
   const renderGroup = (g) => `
     <div data-el="${g.dataEl}">
@@ -5780,9 +6349,173 @@ requestAnimationFrame(() => {
       railBody.appendChild(card);
     } catch (e) { /* no-op */ }
   }
-  try { softPreload('3'); } catch (e) { /* no-op */ }
-  try { softPreload('T1', TS_CTX); } catch (e) { /* no-op */ }
+  // v17: Build the stepper navigation in each center column,
+  // then auto-activate the first move so the rail card lands on first paint.
+  buildStepper(document.getElementById('fix-stepper-ts'), 'typeSelection');
+  buildStepper(document.getElementById('fix-stepper-act2'), 'settings');
+  // v17b: Build the design-moves grid below each workspace
+  renderMovesGrid('moves-grid-items-ts', 'typeSelection');
+  renderMovesGrid('moves-grid-items', 'settings');
+
+  // v17b: Inject close buttons into each center col (active only on narrow viewports as floating modal).
+  // Backdrop click + Escape key also dismiss.
+  ['fix-center-col-ts', 'fix-center-col-act2'].forEach(id => {
+    const col = document.getElementById(id);
+    if (!col) return;
+    if (col.querySelector('.fix-card-close')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'fix-card-close';
+    btn.setAttribute('aria-label', 'Close design note');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (id === 'fix-center-col-ts' && typeof deactivateFindingTs === 'function') {
+        TS_CTX.pinnedFindingId = null;
+        deactivateFindingTs();
+      } else if (typeof deactivateFinding === 'function') {
+        pinnedFindingId = null;
+        deactivateFinding();
+      }
+    });
+    col.insertBefore(btn, col.firstChild);
+  });
+  // Backdrop click on the ::before pseudo isn't directly clickable — we attach a click handler
+  // on the col itself that fires when clicked OUTSIDE its content (target === col).
+  ['fix-center-col-ts', 'fix-center-col-act2'].forEach(id => {
+    const col = document.getElementById(id);
+    if (!col) return;
+    col.addEventListener('click', (e) => {
+      if (e.target !== col) return;  // only fire when clicking the panel itself, not its children
+      if (id === 'fix-center-col-ts' && typeof deactivateFindingTs === 'function') {
+        TS_CTX.pinnedFindingId = null;
+        deactivateFindingTs();
+      } else if (typeof deactivateFinding === 'function') {
+        pinnedFindingId = null;
+        deactivateFinding();
+      }
+    });
+  });
+  // Escape closes any active move card
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const tsCol = document.getElementById('fix-center-col-ts');
+    const a2Col = document.getElementById('fix-center-col-act2');
+    if (tsCol && tsCol.classList.contains('is-active')) {
+      TS_CTX.pinnedFindingId = null;
+      if (typeof deactivateFindingTs === 'function') deactivateFindingTs();
+    }
+    if (a2Col && a2Col.classList.contains('is-active')) {
+      pinnedFindingId = null;
+      if (typeof deactivateFinding === 'function') deactivateFinding();
+    }
+  });
+  // Auto-activate first move per surface (Act I + Act II)
+  try {
+    const firstTs = FINDINGS.find(f => f.tier === 'move' && (f.surfaces || []).includes('typeSelection'));
+    if (firstTs) {
+      TS_CTX.pinnedFindingId = firstTs.id;
+      activateFindingTs(firstTs.id);
+    }
+  } catch (e) { /* no-op */ }
+  try {
+    const firstSs = FINDINGS.find(f => f.tier === 'move' && (f.surfaces || []).includes('settings'));
+    if (firstSs) {
+      pinnedFindingId = firstSs.id;
+      activateFinding(firstSs.id);
+    }
+  } catch (e) { /* no-op */ }
 });
+
+/* ====================================================================
+   v17: Stepper navigation builder
+   Populates the vertical clickable stepper in each chapter's center column.
+==================================================================== */
+/* v17b: Design-moves grid (replaces tier-grouped findings grid) */
+function renderMovesGrid(containerId, surface) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const moves = FINDINGS.filter(f => f.tier === 'move' && (f.surfaces || []).includes(surface));
+  container.innerHTML = '';
+  moves.forEach((m, idx) => {
+    const num = String(idx + 1).padStart(2, '0');
+    const card = document.createElement('article');
+    card.className = 'move-card';
+    card.dataset.moveId = m.id;
+    const resolvesPills = (m.resolves || []).map(id => `<span class="move-resolves-pill">${id}</span>`).join('');
+    card.innerHTML = `
+      <div class="move-card-head">
+        <span class="move-card-num">${m.id}</span>
+        <div class="move-card-title">${m.title}</div>
+      </div>
+      <p class="move-card-what">${m.oneliner || m.finding || ''}</p>
+      ${resolvesPills ? `<div class="move-card-resolves"><strong>Resolves</strong> ${resolvesPills}</div>` : ''}
+    `;
+    card.addEventListener('click', () => {
+      if (surface === 'typeSelection') {
+        TS_CTX.pinnedFindingId = m.id;
+        activateFindingTs(m.id);
+      } else {
+        pinnedFindingId = m.id;
+        activateFinding(m.id);
+      }
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+    container.appendChild(card);
+  });
+}
+
+function updateMoveCardActive(containerId, moveId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.querySelectorAll('.move-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.moveId === moveId);
+  });
+}
+
+function buildStepper(stepperEl, surface) {
+  if (!stepperEl) return;
+  const moves = FINDINGS.filter(f => f.tier === 'move' && (f.surfaces || []).includes(surface));
+  stepperEl.innerHTML = '';
+  moves.forEach((m, idx) => {
+    const num = String(idx + 1).padStart(2, '0');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'fix-step';
+    btn.dataset.moveId = m.id;
+    btn.innerHTML = `
+      <span class="fix-step-num">${num}</span>
+      <span class="fix-step-title">${m.title}</span>
+    `;
+    btn.addEventListener('click', () => {
+      if (surface === 'typeSelection') {
+        TS_CTX.pinnedFindingId = m.id;
+        activateFindingTs(m.id);
+      } else {
+        pinnedFindingId = m.id;
+        activateFinding(m.id);
+      }
+      // v18: Make the popup card visible — scroll the new card into view if it's offscreen
+      const railId = surface === 'typeSelection' ? 'rail-body-ts' : 'rail-body';
+      const card = document.getElementById(railId)?.querySelector('.finding-card');
+      if (card) {
+        const r = card.getBoundingClientRect();
+        if (r.bottom > window.innerHeight - 40 || r.top < 80) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    });
+    stepperEl.appendChild(btn);
+  });
+}
+
+function updateStepperActive(stepperId, moveId) {
+  const stepperEl = document.getElementById(stepperId);
+  if (!stepperEl) return;
+  stepperEl.querySelectorAll('.fix-step').forEach(s => {
+    s.classList.toggle('is-current', s.dataset.moveId === moveId);
+  });
+}
 
 
 

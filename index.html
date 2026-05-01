@@ -37,9 +37,9 @@
   }
   a { color: inherit; text-decoration: none; }
   .stage {
-    max-width: 1320px;
+    max-width: 1440px;
     margin: 0 auto;
-    padding: 60px 40px 80px;
+    padding: 60px 56px 80px;     /* unified with L0/L1/L2 + nav-inner */
   }
   .kicker {
     font-family: var(--font-mono);
@@ -121,7 +121,7 @@
   .how a:hover { border-bottom-color: var(--accent); }
   .cards {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
     margin-top: 48px;
   }
@@ -274,49 +274,76 @@
 <body>
 
 <!-- ============================================================
-     Sticky top nav — three-tab page switcher
+     UNIFIED NAV — identical to L0/L1/L2. Single source of truth.
 ============================================================ -->
 <style>
   .proto-nav {
     position: sticky;
     top: 0;
-    z-index: 9999;
+    z-index: 50;
     background: rgba(248, 246, 242, 0.92);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: saturate(180%) blur(8px);
+    backdrop-filter: saturate(180%) blur(8px);
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-    padding: 11px 32px;
+  }
+  .proto-nav-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 12px 56px;
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 28px;
     font-family: 'Sometype Mono', ui-monospace, SFMono-Regular, monospace;
-    font-size: 11.5px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.04em;
   }
-  .proto-nav a { text-decoration: none; }
-  .proto-nav-tab {
-    color: #94a3b8;
-    transition: color 0.15s;
-  }
-  .proto-nav-tab:hover { color: #6647F0; }
-  .proto-nav-tab.is-current {
+  .proto-nav-brand {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0;
+    text-transform: none;
     color: #0f172a;
+    margin-right: auto;
+    display: inline-flex;
+    align-items: center;
+  }
+  .proto-nav-brand .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6647F0 0%, #0091FF 100%);
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  .proto-nav a {
+    color: #475569;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 140ms ease, color 140ms ease;
+  }
+  .proto-nav a:hover { background: rgba(15, 23, 42, 0.05); color: #0f172a; }
+  .proto-nav a.is-current {
+    background: #0f172a;
+    color: #fff;
     font-weight: 600;
   }
-  .proto-nav-spacer { flex: 1; min-width: 0; }
-  .proto-nav { flex-wrap: wrap; }
-  @media (max-width: 600px) {
-    .proto-nav { padding: 10px 16px; gap: 16px; font-size: 10.5px; }
+  @media (max-width: 720px) {
+    .proto-nav-inner { padding: 10px 24px; gap: 16px; font-size: 10.5px; }
+    .proto-nav-brand { font-size: 13px; }
   }
 </style>
-<nav class="proto-nav">
-  <a class="proto-nav-tab is-current" href="index.html">Overview</a>
-  <a class="proto-nav-tab" href="l1.html">Level 1 · Present</a>
-  <a class="proto-nav-tab" href="l2.html">Level 2 · Future</a>
-  <span class="proto-nav-spacer"></span>
-  <a class="proto-nav-tab" href="https://link.consultsdw.com/ai-custom-fields-doc" target="_blank" rel="noopener">ClickUp Doc ↗</a>
-  <a class="proto-nav-tab" href="https://link.consultsdw.com/ai-custom-fields-figma2" target="_blank" rel="noopener">Figma ↗</a>
+<nav class="proto-nav" aria-label="Prototype navigation">
+  <div class="proto-nav-inner">
+    <span class="proto-nav-brand"><span class="dot"></span>AI Custom Fields</span>
+    <a href="index.html" class="is-current" aria-current="page">Overview</a>
+    <a href="l0.html">L0 — Audit</a>
+    <a href="l1.html">L1 — Integration</a>
+    <a href="l2.html">L2 — Direction</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-doc" target="_blank" rel="noopener">Doc ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-figma2" target="_blank" rel="noopener">Figma ↗</a>
+  </div>
 </nav>
 
 <div class="stage">
@@ -347,19 +374,36 @@
 
   <div class="cards">
 
-    <a class="card" href="l1.html">
-      <div class="card-eyebrow"><span class="num">L1</span> Present, unified</div>
-      <h3 class="card-title">Every Settings Screen, every entry point, every <em>finding</em>.</h3>
+    <a class="card" href="l0.html">
+      <div class="card-eyebrow"><span class="num">L0</span> Audit, mapped</div>
+      <h3 class="card-title">54 findings across <em>5 themes</em>, on the screens they live on.</h3>
       <p class="card-desc">
-        The audit, made visible. One unified Settings Screen with the three entry-point variants (View / Task / Custom Field Manager) shown side by side. Every finding is pinned to where it shows up — click a pin to preview the finding card. The matrix in Act 2 maps the findings across path, control, and screen.
+        The audit. Five sections — Type Selection, Settings · Long Text, Settings · Dropdown, Custom Field Manager, and the new user onboarding journey. Every finding pinned to the panel where it shows up. Filter by theme (Coordination / Consistency / Quality / Discovery / Gaps) to read by pattern.
       </p>
       <div class="card-meta">
-        <span><strong>Acts</strong> 3</span>
-        <span><strong>Findings</strong> pinned</span>
+        <span><strong>Sections</strong> 5</span>
+        <span><strong>Findings</strong> 54</span>
+        <span><strong>Read time</strong> ~5 min</span>
+      </div>
+      <span class="card-cta">
+        Open L0 audit
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
+
+    <a class="card" href="l1.html">
+      <div class="card-eyebrow"><span class="num">L1</span> Integration</div>
+      <h3 class="card-title">Phase 1 moves to <em>resolve</em> the audit.</h3>
+      <p class="card-desc">
+        The redesign. 13 design moves — 5 on Type Selection and 8 on the Settings Screen — that resolve most of the Coordination and Consistency findings. Click each move to see what changed, why, and which findings it addresses on L0.
+      </p>
+      <div class="card-meta">
+        <span><strong>Moves</strong> 13</span>
+        <span><strong>Phase</strong> 1</span>
         <span><strong>Read time</strong> ~6 min</span>
       </div>
       <span class="card-cta">
-        Open Level 1 prototype
+        Open L1 redesign
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </span>
     </a>
@@ -388,7 +432,7 @@
     <p>The audit findings, strategic reframe, and roadmap above are triangulated against direct evidence from ClickUp's own customer voice — Canny feature requests and public sentiment across G2, Capterra, Reddit, and Medium.</p>
     <ul>
       <li><a href="https://link.consultsdw.com/ai-custom-fields-research-canny" target="_blank" rel="noopener">Canny signal extraction →</a> &nbsp;121 posts about Custom Fields from ClickUp's own feedback board, 20 AI-tagged. Validates every audit finding with vote-count evidence.</li>
-      <li><a href="https://link.consultsdw.com/ai-custom-fields-research-public" target="_blank" rel="noopener">Public sentiment analysis →</a> &nbsp;G2, Capterra, Reddit, Medium, blogs. Surfaces the new-user vs. power-user friction split and the silent billing-anxiety theme.</li>
+      <li><a href="https://link.consultsdw.com/ai-custom-fields-research-public" target="_blank" rel="noopener">Public sentiment analysis →</a> &nbsp;G2, Capterra, Reddit, Medium, blogs. Maps the new user vs. power user friction split and the silent billing-anxiety theme.</li>
     </ul>
   </div>
 

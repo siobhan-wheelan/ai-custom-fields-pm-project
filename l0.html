@@ -1,0 +1,2899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>L0 — AI Custom Fields · Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Sometype+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================================
+   Design tokens — light brand stack (matches L1 + L2)
+============================================================================ */
+:root {
+  /* Surfaces */
+  --proto-bg: #f8f6f2;
+  --proto-surface: #ffffff;
+  --proto-surface-soft: #fbf9f5;
+  --proto-ink: #0f172a;
+  --proto-ink-soft: #475569;
+  --proto-ink-mute: #64748b;
+  --proto-muted: #94a3b8;          /* v18: unify with index/L1/L2 (eyebrow / kicker default) */
+  --proto-rule: #e7e4dc;
+  --proto-rule-strong: #d6d2c8;
+
+  /* ClickUp brand */
+  --cu-purple: #6647F0;
+  --cu-pink: #FF02F0;
+  --cu-blue: #0091FF;
+  --cu-orange: #FC6D2D;
+  --cu-green: #22C55E;
+
+  /* Theme colors (CC/CS/AQ/AD/FG) — pin body + chip dot */
+  --theme-cc: #6647F0;
+  --theme-cs: #0091FF;
+  --theme-aq: #FF02F0;
+  --theme-ad: #FC6D2D;
+  --theme-fg: #22C55E;
+
+  /* Theme tints (subtle backgrounds for chips, rail accents) */
+  --theme-cc-tint: rgba(102, 71, 240, 0.10);
+  --theme-cs-tint: rgba(0, 145, 255, 0.10);
+  --theme-aq-tint: rgba(255, 2, 240, 0.08);
+  --theme-ad-tint: rgba(252, 109, 45, 0.10);
+  --theme-fg-tint: rgba(34, 197, 94, 0.10);
+
+  /* Severity dots — industry-standard severity colors per DECISIONS_LOG #63 */
+  --sev-p0: #DC2626;
+  --sev-p1: #F97316;
+  --sev-p2: #EAB308;
+
+  /* Hero gradient (book-end moments) */
+  --cu-gradient-hero: linear-gradient(135deg, #FF02F0 0%, #FC6D2D 100%);
+  --cu-gradient-ai:   linear-gradient(135deg, #6647F0 0%, #0091FF 100%);
+
+  /* Type */
+  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Sometype Mono', ui-monospace, monospace;
+
+  /* Spacing scale (4/8/12/16/24/32/48/64/96) */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.08);
+
+  /* Radii */
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 20px;
+
+  /* Settings-panel tokens (cu-*) — from hosting/l1.html for migrated panels */
+  --cu-text-primary: #292d34;
+  --cu-text-secondary: #6f7590;
+  --cu-text-tertiary: #a5a8b4;
+  --cu-text-placeholder: #b8bcc8;
+  --cu-border: #e8e9ed;
+  --cu-border-strong: #d5d6db;
+  --cu-border-focus: #3FC1A4;
+  --cu-border-required-soft: #f5b5ca;
+  --cu-surface: #ffffff;
+  --cu-surface-alt: #f7f8fa;
+  --cu-surface-hover: #f1f2f4;
+  --cu-primary: #3FC1A4;
+  --cu-primary-disabled: #56B7AE;
+  --cu-required: #e91a5f;
+  --cu-ai-badge-bg: #f6edff;
+  --cu-ai-badge-fg: #8c52ff;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 14px;
+  --panel-width: 380px;
+  --font-body-cu: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --proto-card-shadow-strong: 0 4px 12px rgba(47, 36, 20, 0.06), 0 20px 48px rgba(47, 36, 20, 0.10);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--proto-bg);
+  color: var(--proto-ink);
+  font-family: var(--font-body);
+  font-size: 16px;            /* unified with index/L1/L2 */
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: var(--cu-purple); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+img { max-width: 100%; height: auto; display: block; }
+
+/* ============================================================================
+   Sticky nav (top of page)
+============================================================================ */
+/* ============================================================
+   UNIFIED NAV — identical to L1. Single source of truth. */
+.proto-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(248, 246, 242, 0.92);
+  -webkit-backdrop-filter: saturate(180%) blur(8px);
+  backdrop-filter: saturate(180%) blur(8px);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+.proto-nav-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 12px 56px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-family: 'Sometype Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+.proto-nav-brand {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #0f172a;
+  margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+}
+.proto-nav-brand .dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6647F0 0%, #0091FF 100%);
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.proto-nav a {
+  color: #475569;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 140ms ease, color 140ms ease;
+}
+.proto-nav a:hover { background: rgba(15, 23, 42, 0.05); color: #0f172a; }
+.proto-nav a.is-current {
+  background: #0f172a;
+  color: #fff;
+  font-weight: 600;
+}
+@media (max-width: 720px) {
+  .proto-nav-inner { padding: 10px 24px; gap: 16px; font-size: 10.5px; }
+  .proto-nav-brand { font-size: 13px; }
+}
+
+/* ============================================================================
+   Hero
+============================================================================ */
+.hero {
+  position: relative;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 64px 56px 32px;
+  overflow: hidden;
+}
+/* v18: unified with index/L1/L2 .top-eyebrow + .kicker — same size, tracking, color, margin. */
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--proto-muted, #64748b);
+  margin: 0 0 28px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 72px;                /* v17b: unified with L1/L2 hero typography */
+  line-height: 1.02;
+  letter-spacing: -0.032em;
+  margin: 0 0 36px;
+  max-width: 980px;
+}
+.hero h1 em {
+  font-style: normal;
+  background: var(--cu-gradient-ai);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-lede {
+  max-width: 760px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--proto-ink-soft);
+  margin: 0 0 24px;
+}
+.hero-meta {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--proto-ink-mute);
+  letter-spacing: 0.04em;
+}
+.hero-meta strong {
+  color: var(--proto-ink);
+  font-weight: 500;
+  margin-right: 6px;
+}
+
+/* ============================================================================
+   Umbrella overview — 3 pattern cards at top of L0
+============================================================================ */
+.umbrella-overview {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 56px 56px;
+}
+.umbrella-overview-head {
+  margin-bottom: 18px;
+}
+.umbrella-overview-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cu-purple);
+  margin-bottom: 6px;
+}
+.umbrella-overview-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--proto-ink);
+  margin: 0 0 6px;
+}
+.umbrella-overview-sub {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--proto-ink-soft);
+  margin: 0;
+  max-width: 720px;
+}
+.umbrella-grid-l0 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 22px;
+}
+@media (max-width: 920px) {
+  .umbrella-grid-l0 { grid-template-columns: minmax(0, 1fr); }
+}
+.umb-card-l0 {
+  background: var(--proto-surface);
+  border: 1px solid var(--proto-rule);
+  border-radius: var(--r-lg);
+  padding: 22px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+.umb-card-l0:hover {
+  transform: translateY(-2px);
+  border-color: rgba(102, 71, 240, 0.35);
+  box-shadow: var(--shadow-md);
+}
+.umb-card-head-l0 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.umb-chip-l0 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #7d61f3 0%, var(--cu-purple) 60%, #5538dd 100%);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px -2px rgba(102, 71, 240, 0.32);
+}
+.umb-card-ref-l0 {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--proto-ink-mute);
+}
+.umb-card-title-l0 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--proto-ink);
+  margin: 0;
+}
+.umb-card-oneliner-l0 {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--proto-ink-soft);
+  margin: 0;
+}
+.umb-card-expand-l0 {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--cu-purple);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  align-self: flex-start;
+}
+.umb-card-expand-l0 svg {
+  width: 12px; height: 12px;
+  transition: transform 200ms ease;
+}
+.umb-card-l0.is-expanded .umb-card-expand-l0 svg { transform: rotate(180deg); }
+.umb-card-details-l0 {
+  display: none;
+  margin-top: 14px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--proto-rule);
+}
+.umb-card-l0.is-expanded .umb-card-details-l0 { display: block; }
+.umb-card-details-l0 h4 {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--proto-ink-mute);
+  margin: 0 0 6px;
+  font-weight: 500;
+}
+.umb-card-details-l0 h4:not(:first-child) { margin-top: 14px; }
+.umb-card-details-l0 p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--proto-ink);
+}
+.umb-card-details-l0 .nested {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--proto-ink-soft);
+}
+.umb-card-details-l0 .nested li { margin-bottom: 3px; }
+
+/* ============================================================================
+   Sticky filter row — theme chips
+============================================================================ */
+.filter-row {
+  position: sticky;
+  top: 49px;  /* below nav */
+  z-index: 40;
+  background: rgba(248, 246, 242, 0.92);
+  backdrop-filter: saturate(180%) blur(8px);
+  -webkit-backdrop-filter: saturate(180%) blur(8px);
+  border-bottom: 1px solid var(--proto-rule);
+  padding: 14px 0;
+}
+.filter-row-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 56px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.filter-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--proto-ink-mute);
+  margin-right: 4px;
+}
+.theme-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--proto-surface);
+  border: 1px solid var(--proto-rule-strong);
+  color: var(--proto-ink-soft);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 80ms ease;
+  user-select: none;
+}
+.theme-chip:hover { transform: translateY(-1px); border-color: var(--proto-ink-mute); }
+.theme-chip .chip-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.theme-chip .chip-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--proto-ink-mute);
+  margin-left: 2px;
+}
+
+/* Active state — chip background fills with theme tint, dot stays */
+.theme-chip.is-active {
+  color: var(--proto-ink);
+  border-color: var(--proto-ink);
+  background: var(--proto-ink);
+  color: #fff;
+}
+.theme-chip.is-active .chip-count { color: rgba(255,255,255,0.7); }
+
+/* Active state for theme-specific chips uses theme tint */
+.theme-chip[data-theme="CC"].is-active { background: var(--theme-cc); border-color: var(--theme-cc); color: #fff; }
+.theme-chip[data-theme="CS"].is-active { background: var(--theme-cs); border-color: var(--theme-cs); color: #fff; }
+.theme-chip[data-theme="AQ"].is-active { background: var(--theme-aq); border-color: var(--theme-aq); color: #fff; }
+.theme-chip[data-theme="AD"].is-active { background: var(--theme-ad); border-color: var(--theme-ad); color: #fff; }
+.theme-chip[data-theme="FG"].is-active { background: var(--theme-fg); border-color: var(--theme-fg); color: #fff; }
+.theme-chip.is-active .chip-count { color: rgba(255,255,255,0.85); }
+
+/* Theme dot colors */
+.chip-dot[data-theme="CC"] { background: var(--theme-cc); }
+.chip-dot[data-theme="CS"] { background: var(--theme-cs); }
+.chip-dot[data-theme="AQ"] { background: var(--theme-aq); }
+.chip-dot[data-theme="AD"] { background: var(--theme-ad); }
+.chip-dot[data-theme="FG"] { background: var(--theme-fg); }
+.chip-dot[data-theme="all"] {
+  background: var(--cu-gradient-ai);
+}
+
+/* ============================================================================
+   Sections
+============================================================================ */
+.l0-section {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 64px 56px 32px;
+  scroll-margin-top: 110px;
+}
+.l0-section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--proto-ink-mute);
+  margin: 0 0 8px;
+}
+.l0-section-title {
+  font-family: var(--font-display);
+  font-weight: 800;                 /* v17b: unified with L1 chapter-title weight */
+  font-size: 42px;
+  line-height: 1.22;
+  letter-spacing: -0.028em;
+  margin: 0 0 24px;
+  max-width: 920px;
+}
+.l0-section-themes {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--proto-ink-mute);
+  margin: 0 0 28px;
+}
+.l0-section-themes .theme-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  margin-right: 6px;
+  background: var(--proto-surface);
+  border: 1px solid var(--proto-rule);
+}
+.l0-section-themes .theme-tag .chip-dot {
+  width: 7px; height: 7px;
+}
+
+/* Two-column section layout: canvas + right rail */
+.l0-section-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 32px;
+  align-items: start;
+}
+
+/* Canvas wrapper — holds the panel + its pins/highlights */
+.canvas-wrap {
+  position: relative;
+  background: var(--proto-surface);
+  border: 1px solid var(--proto-rule);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  min-height: 200px;
+}
+
+.canvas-placeholder {
+  border: 2px dashed var(--proto-rule-strong);
+  border-radius: var(--r-md);
+  padding: 64px 24px;
+  text-align: center;
+  color: var(--proto-ink-mute);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  background: var(--proto-surface-soft);
+}
+.canvas-placeholder strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 16px;
+  letter-spacing: 0;
+  color: var(--proto-ink);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+/* ============================================================================
+   Migrated Figma-style panels (Type Selection + Settings)
+   Adapted from hosting/l1.html lines 1144–1460. Only "Current" variants used
+   on L0 (audit = current state); Proposed lives on L1.
+============================================================================ */
+.fig-panel {
+  box-sizing: border-box;
+  background: #FFFFFF;
+  border: 1px solid #E8E9ED;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', -apple-system, sans-serif;
+  position: relative;
+  margin: 0 auto;
+}
+.fig-panel.fig-current {
+  width: 308px;  /* Task variant — narrow popover */
+  box-shadow: 0px 4px 24px rgba(0,0,0,0.10), 0px 1px 4px rgba(0,0,0,0.06);
+  border: none;
+}
+
+.fig-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  height: 59px;
+  border-bottom: none;
+}
+.fig-header-title {
+  font-weight: 700;
+  font-size: 15.8px;
+  letter-spacing: -0.16px;
+  color: #1A1A1A;
+}
+.fig-close-btn {
+  background: transparent;
+  width: 14px;
+  height: 14px;
+  border-radius: 0;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.fig-close-btn svg { width: 14px; height: 14px; color: #6B6B6B; }
+
+.fig-search-wrap { padding: 14px 16px 0; }
+.fig-search {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  height: 36px;
+  background: #FFFFFF;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+}
+.fig-search svg { width: 14px; height: 14px; color: #9E9E9E; flex-shrink: 0; }
+.fig-search-placeholder {
+  font-weight: 400;
+  font-size: 12.6px;
+  color: #B0B0B0;
+  flex: 1;
+}
+
+.fig-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 920px;
+  overflow-y: auto;
+}
+.fig-divider { height: 1px; background: #F0F0F0; margin: 0; }
+
+.fig-section-head {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 20px 6px;
+  height: 33px;
+  box-sizing: border-box;
+}
+.fig-section-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 10.6px;
+  line-height: 1;
+  color: #9E9E9E;
+}
+
+.fig-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px 0 22px;
+  height: 34px;
+  gap: 13px;
+  cursor: pointer;
+  position: relative;
+}
+.fig-row:hover { background: #F7F8FA; }
+.fig-row-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  flex: 1;
+  min-width: 0;
+}
+.fig-row-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: #6F7590;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.fig-row-icon img { width: 16px; height: 16px; display: block; }
+.fig-row-name {
+  font-weight: 400;
+  font-size: 12.6px;
+  letter-spacing: -0.135px;
+  color: #1A1A1A;
+}
+.fig-bottom-pad { height: 12px; flex-shrink: 0; }
+.fig-suggested-missing-marker {
+  /* Invisible anchor for CS8 (Suggested section absent in Task) */
+  height: 1px;
+  width: 100%;
+}
+
+/* CFM canvas — screenshot of the live Custom Field Manager modal */
+.cfm-canvas-frame {
+  position: relative;
+  background: var(--proto-surface-soft);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--proto-rule);
+  padding: 36px;                /* v17b: bumped from 18 → 36 for nicer breathing room */
+  margin: 0 auto;
+  max-width: 640px;             /* v17b: tighter — 720 was too large */
+  box-shadow: var(--shadow-sm);
+}
+.cfm-screenshot-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--proto-ink-mute);
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--proto-rule);
+}
+.cfm-screenshot {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--r-md);
+  border: 1px solid var(--proto-rule);
+  background: #fff;
+  object-fit: contain;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+/* ============================================================================
+   Settings panel (cu-panel) — from hosting/l1.html lines 842–1138, 1679–1707
+   Full Long Text + Dropdown current-state markup re-uses these classes.
+============================================================================ */
+.cu-panel {
+  width: var(--panel-width);
+  background: var(--cu-surface);
+  border: 1px solid var(--cu-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--proto-card-shadow-strong);
+  overflow: visible;
+  font-size: 14px;
+  font-family: var(--font-body-cu);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin: 0 auto;
+  color: var(--cu-text-primary);
+}
+.cu-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 10px 10px 6px;
+  border-bottom: 1px solid var(--cu-border);
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+}
+.cu-iconbtn {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cu-text-secondary);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.cu-iconbtn.close { background: var(--cu-surface-alt); margin-left: auto; }
+.cu-iconbtn svg { width: 16px; height: 16px; }
+.cu-type-picker {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: var(--radius-md);
+  font-weight: 400;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--cu-text-primary);
+}
+.cu-type-picker:hover { background: var(--cu-surface-hover); }
+.cu-type-picker svg.chev { width: 14px; height: 14px; color: var(--cu-text-secondary); margin-left: 2px; }
+
+.cu-panel-body {
+  padding: 16px 20px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cu-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cu-text-secondary);
+  margin-bottom: 6px;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.cu-label .req { color: var(--cu-required); font-size: 11px; position: relative; top: -1px; }
+.cu-label .info {
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: var(--cu-text-tertiary);
+  color: white;
+  font-size: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.cu-name-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--cu-border-required-soft);
+  border-radius: var(--radius-md);
+  padding: 0 8px 0 10px;
+  height: 36px;
+  background: var(--cu-surface);
+  gap: 6px;
+}
+.cu-name-input .emoji-picker { color: var(--cu-text-tertiary); display: inline-flex; align-items: center; }
+.cu-name-input .emoji-picker svg { width: 16px; height: 16px; }
+.cu-name-input input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-family: var(--font-body-cu);
+  color: var(--cu-text-primary);
+  height: 100%;
+}
+.cu-name-input input::placeholder { color: var(--cu-text-placeholder); }
+
+.cu-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--cu-border);
+  border-radius: var(--radius-md);
+  padding: 0 10px;
+  height: 36px;
+  background: var(--cu-surface);
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.cu-select:hover { border-color: var(--cu-border-strong); }
+.cu-select svg.chev { width: 14px; height: 14px; color: var(--cu-text-secondary); }
+
+.cu-prompt {
+  position: relative;
+  border: 1.5px solid var(--cu-border-focus);
+  border-radius: var(--radius-md);
+  background: var(--cu-surface);
+  padding: 10px 12px 40px;
+  min-height: 92px;
+}
+.cu-prompt .prompt-editor { font-size: 14px; color: var(--cu-text-placeholder); line-height: 1.45; }
+.cu-prompt .prompt-editor::before {
+  content: "|";
+  color: var(--cu-text-primary);
+  font-weight: 300;
+  margin-right: 2px;
+}
+.cu-prompt .context-row {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--cu-text-secondary);
+}
+.cu-prompt .context-row .add-btn {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--cu-border);
+  background: var(--cu-surface);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cu-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.cu-autom-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.cu-autom-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--cu-ai-badge-bg);
+  color: var(--cu-ai-badge-fg);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+.cu-autom-badge svg { width: 10px; height: 10px; }
+
+.cu-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: 14px;
+}
+.cu-toggle-row.off { color: var(--cu-text-secondary); }
+.cu-toggle {
+  width: 28px; height: 16px;
+  background: #c8cbd4;
+  border-radius: 10px;
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.cu-toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 12px; height: 12px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  transition: transform 0.15s;
+}
+.cu-toggle.on { background: #8c52ff; }
+.cu-toggle.on::after { transform: translateX(12px); }
+
+.cu-sep { height: 1px; background: var(--cu-border); margin: 4px 0; }
+.cu-more {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-weight: 600;
+  color: var(--cu-text-primary);
+  font-size: 14px;
+  cursor: pointer;
+}
+.cu-more svg.chev { width: 14px; height: 14px; color: var(--cu-text-secondary); }
+
+/* Dropdown options list */
+.dd-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border: 1px solid var(--cu-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 4px;
+  background: white;
+  font-size: 13px;
+  color: var(--cu-text-primary);
+}
+.dd-grip {
+  color: var(--cu-text-tertiary);
+  font-size: 10px;
+  letter-spacing: -1px;
+  cursor: grab;
+}
+.dd-swatch {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dd-text { flex: 1; }
+.dd-add {
+  background: none;
+  border: 1px dashed var(--cu-border-strong);
+  color: var(--cu-text-secondary);
+  padding: 7px 10px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 12.5px;
+  width: 100%;
+  margin-top: 2px;
+  font-family: inherit;
+}
+.dd-sort {
+  font-size: 11.5px;
+  color: var(--cu-text-secondary);
+  background: var(--cu-surface);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.cu-panel-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--cu-border);
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+.cu-btn {
+  font: inherit;
+  font-family: var(--font-body-cu);
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+.cu-btn.cancel {
+  background: var(--cu-surface);
+  border: 1px solid var(--cu-border-strong);
+  color: var(--cu-text-primary);
+}
+.cu-btn.primary { background: var(--cu-primary); color: white; }
+.cu-btn.primary:disabled,
+.cu-btn.primary.is-disabled {
+  background: var(--cu-primary-disabled);
+  cursor: not-allowed;
+  color: white;
+}
+
+/* ============================================================================
+   Pins — refined v2: gradient body, polished shadow, brand-aligned typography
+============================================================================ */
+.pin {
+  position: absolute;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 38px;
+  padding: 0 11px;
+  border-radius: 7px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  border: none;
+  /* Multi-stop shadow for refined depth, plus subtle inner highlight */
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.14) inset,
+    0 0 0 1px rgba(15, 23, 42, 0.04),
+    0 1px 2px rgba(15, 23, 42, 0.10),
+    0 4px 10px -2px rgba(15, 23, 42, 0.18);
+  transition:
+    transform 160ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 160ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    filter 160ms ease;
+}
+.pin:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+    0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 2px 4px rgba(15, 23, 42, 0.12),
+    0 10px 20px -4px rgba(15, 23, 42, 0.22);
+}
+.pin:active { transform: translateY(0); }
+.pin.is-active {
+  box-shadow:
+    0 0 0 2px #fff inset,
+    0 0 0 3px var(--theme-color, var(--theme-cc)),
+    0 6px 14px -2px rgba(15, 23, 42, 0.25);
+}
+
+/* Theme-tinted gradient body — subtle 135deg gradient deepens toward bottom-right */
+.pin[data-theme="CC"] {
+  --theme-color: var(--theme-cc);
+  background: linear-gradient(135deg, #7d61f3 0%, var(--theme-cc) 60%, #5538dd 100%);
+}
+.pin[data-theme="CS"] {
+  --theme-color: var(--theme-cs);
+  background: linear-gradient(135deg, #2aa6ff 0%, var(--theme-cs) 60%, #007ad8 100%);
+}
+.pin[data-theme="AQ"] {
+  --theme-color: var(--theme-aq);
+  background: linear-gradient(135deg, #ff3df3 0%, var(--theme-aq) 60%, #d100c4 100%);
+}
+.pin[data-theme="AD"] {
+  --theme-color: var(--theme-ad);
+  background: linear-gradient(135deg, #ff8a4f 0%, var(--theme-ad) 60%, #e0531c 100%);
+}
+.pin[data-theme="FG"] {
+  --theme-color: var(--theme-fg);
+  background: linear-gradient(135deg, #38d168 0%, var(--theme-fg) 60%, #15a347 100%);
+}
+
+/* Global / panel-level pins (anchor el === '__panel__') sit in a top-row track */
+.pin.is-global {
+  position: relative;
+  display: inline-flex;
+}
+.panel-global-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 0 14px;
+  margin-bottom: 4px;
+  border-bottom: 1px dashed var(--proto-rule);
+}
+.panel-global-row::before {
+  content: 'Global findings on this screen';
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--proto-ink-mute);
+  margin-right: 4px;
+}
+
+.pin.is-hidden { display: none; }
+
+/* Severity indicator — used at card level (rail / carousel / matrix), not on pin */
+.severity-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--proto-ink-soft);
+}
+.severity-dot::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.severity-dot[data-sev="p0"]::before { background: var(--sev-p0); }
+.severity-dot[data-sev="p1"]::before { background: var(--sev-p1); }
+.severity-dot[data-sev="p2"]::before { background: var(--sev-p2); }
+.severity-dot[data-sev="p0"] { color: var(--sev-p0); }
+.severity-dot[data-sev="p1"] { color: var(--sev-p1); }
+.severity-dot[data-sev="p2"] { color: #b45309; }  /* darker yellow for legibility */
+
+/* ============================================================================
+   Highlights (translucent rect over anchor element)
+============================================================================ */
+.highlight {
+  position: absolute;
+  z-index: 4;
+  border-radius: 4px;
+  pointer-events: none;
+  background: rgba(102, 71, 240, 0.08);
+  border: 1px solid rgba(102, 71, 240, 0.35);
+  transition: opacity 120ms ease, background 120ms ease;
+  opacity: 0;
+}
+.highlight.is-visible { opacity: 1; }
+.highlight[data-theme="CC"] { background: rgba(102, 71, 240, 0.10); border-color: rgba(102, 71, 240, 0.45); }
+.highlight[data-theme="CS"] { background: rgba(0, 145, 255, 0.10);  border-color: rgba(0, 145, 255, 0.45); }
+.highlight[data-theme="AQ"] { background: rgba(255, 2, 240, 0.08);  border-color: rgba(255, 2, 240, 0.40); }
+.highlight[data-theme="AD"] { background: rgba(252, 109, 45, 0.10); border-color: rgba(252, 109, 45, 0.45); }
+.highlight[data-theme="FG"] { background: rgba(34, 197, 94, 0.10);  border-color: rgba(34, 197, 94, 0.45); }
+
+/* ============================================================================
+   Right rail — finding detail card
+============================================================================ */
+.rail {
+  position: sticky;
+  top: 110px;
+  background: var(--proto-surface);
+  border: 1px solid var(--proto-rule);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
+}
+.rail-empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--proto-ink-mute);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+.rail-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.rail-card-pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  min-width: 32px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: #fff;
+}
+.rail-card-pin[data-theme="CC"] { background: var(--theme-cc); }
+.rail-card-pin[data-theme="CS"] { background: var(--theme-cs); }
+.rail-card-pin[data-theme="AQ"] { background: var(--theme-aq); }
+.rail-card-pin[data-theme="AD"] { background: var(--theme-ad); }
+.rail-card-pin[data-theme="FG"] { background: var(--theme-fg); }
+.rail-card-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--proto-ink-mute);
+}
+.rail-card-meta strong { color: var(--proto-ink-soft); font-weight: 500; }
+.rail-card-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.3;
+  margin: 0 0 12px;
+  color: var(--proto-ink);
+}
+.rail-card-oneliner {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--proto-ink-soft);
+  margin: 0 0 16px;
+  font-weight: 500;
+}
+.rail-card-section {
+  margin: 16px 0;
+}
+.rail-card-section h4 {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--proto-ink-mute);
+  margin: 0 0 6px;
+  font-weight: 500;
+}
+.rail-card-section p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--proto-ink);
+}
+.rail-card-evidence {
+  margin-top: 16px;
+  border-top: 1px solid var(--proto-rule);
+  padding-top: 16px;
+}
+.rail-card-evidence-thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: var(--r-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.95);
+  text-align: center;
+  padding: 16px;
+  cursor: pointer;
+  transition: opacity 120ms ease;
+}
+.rail-card-evidence-thumb:hover { opacity: 0.9; }
+.rail-card-evidence-thumb[data-theme="CC"] { background: var(--theme-cc); }
+.rail-card-evidence-thumb[data-theme="CS"] { background: var(--theme-cs); }
+.rail-card-evidence-thumb[data-theme="AQ"] { background: var(--theme-aq); }
+.rail-card-evidence-thumb[data-theme="AD"] { background: var(--theme-ad); }
+.rail-card-evidence-thumb[data-theme="FG"] { background: var(--theme-fg); }
+.rail-card-evidence-thumb .ev-id {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.rail-card-evidence-thumb .ev-pending {
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.rail-card-links {
+  margin-top: 16px;
+  font-size: 12px;
+}
+.rail-card-links .link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--proto-bg);
+  border: 1px solid var(--proto-rule);
+  margin-right: 4px;
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--proto-ink-soft);
+  cursor: pointer;
+}
+.rail-card-links .link-pill:hover { background: var(--proto-rule); color: var(--proto-ink); }
+
+/* ============================================================================
+   Section 5 — Onboarding carousel
+============================================================================ */
+.carousel-shell {
+  background: var(--proto-surface);
+  border: 1px solid var(--proto-rule);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+}
+
+.milestone-bar {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--proto-rule);
+}
+.milestone-track {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-bottom: 14px;
+}
+.milestone-step {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 14px 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 140ms ease;
+  text-align: left;
+  white-space: nowrap;
+}
+.milestone-step:hover {
+  background: rgba(252, 109, 45, 0.04);
+}
+.milestone-step:hover .milestone-label { color: var(--proto-ink); }
+.milestone-num {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--proto-ink-mute);
+  line-height: 1;
+}
+.milestone-label {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--proto-ink-soft);
+  letter-spacing: -0.005em;
+  line-height: 1.25;
+  transition: color 140ms ease;
+}
+.milestone-step.is-current::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--theme-ad) 0%, var(--cu-pink) 100%);
+  border-radius: 1px;
+}
+.milestone-step.is-current .milestone-num { color: var(--theme-ad); font-weight: 600; }
+.milestone-step.is-current .milestone-label { color: var(--proto-ink); font-weight: 600; }
+
+/* Subtle progress rail beneath the steps */
+.milestone-progress {
+  position: relative;
+  height: 2px;
+  background: var(--proto-rule);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.milestone-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, var(--theme-ad) 0%, var(--cu-pink) 100%);
+  border-radius: 1px;
+  transition: width 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.carousel-frame-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
+  gap: 24px;
+  min-height: 460px;
+}
+
+.carousel-screenshot {
+  background: var(--proto-surface-soft);
+  border: 1px solid var(--proto-rule);
+  border-radius: var(--r-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+  color: var(--proto-ink-mute);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.carousel-screenshot strong {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0;
+  color: var(--proto-ink);
+  margin-bottom: 6px;
+}
+.carousel-screenshot-meta {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--proto-ink-mute);
+  margin-top: 8px;
+}
+
+.carousel-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-content: start;
+  overflow-y: auto;
+  max-height: 460px;
+  padding-right: 4px;
+}
+
+.carousel-finding-card {
+  border: 1px solid var(--proto-rule);
+  border-radius: var(--r-md);
+  background: var(--proto-bg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 100ms ease, box-shadow 100ms ease;
+}
+.carousel-finding-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.carousel-finding-stripe {
+  height: 3px;
+}
+.carousel-finding-stripe[data-theme="AD"] { background: var(--theme-ad); }
+.carousel-finding-stripe[data-theme="AQ"] { background: var(--theme-aq); }
+.carousel-finding-stripe[data-theme="CS"] { background: var(--theme-cs); }
+.carousel-finding-stripe[data-theme="CC"] { background: var(--theme-cc); }
+.carousel-finding-stripe[data-theme="FG"] { background: var(--theme-fg); }
+.carousel-finding-body {
+  padding: 12px 14px;
+}
+.carousel-finding-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.carousel-finding-pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  min-width: 30px;
+  padding: 0 7px;
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  color: #fff;
+}
+.carousel-finding-pin[data-theme="AD"] { background: var(--theme-ad); }
+.carousel-finding-pin[data-theme="AQ"] { background: var(--theme-aq); }
+.carousel-finding-pin[data-theme="CS"] { background: var(--theme-cs); }
+.carousel-finding-pin[data-theme="CC"] { background: var(--theme-cc); }
+.carousel-finding-pin[data-theme="FG"] { background: var(--theme-fg); }
+.carousel-finding-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--proto-ink);
+}
+.carousel-finding-oneliner {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--proto-ink-soft);
+  margin: 0;
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--proto-rule);
+}
+.carousel-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--proto-ink-mute);
+}
+.carousel-btn {
+  background: var(--proto-surface);
+  border: 1px solid var(--proto-rule-strong);
+  color: var(--proto-ink-soft);
+  padding: 8px 16px;
+  border-radius: var(--r-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.carousel-btn:hover { background: var(--proto-ink); color: #fff; border-color: var(--proto-ink); }
+.carousel-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.carousel-btn:disabled:hover { background: var(--proto-surface); color: var(--proto-ink-soft); border-color: var(--proto-rule-strong); }
+
+.carousel-empty {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--proto-ink-mute);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 40px;
+}
+
+/* ============================================================================
+   Modal lightbox (evidence visual)
+============================================================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+.modal-backdrop.is-open { opacity: 1; pointer-events: auto; }
+.modal-content {
+  background: var(--proto-surface);
+  border-radius: var(--r-lg);
+  max-width: 900px;
+  width: calc(100% - 64px);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: var(--proto-bg);
+  border: 1px solid var(--proto-rule);
+  border-radius: var(--r-sm);
+  padding: 6px 10px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* ============================================================================
+   Footer
+============================================================================ */
+.proto-footer {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 48px 56px;
+  border-top: 1px solid var(--proto-rule);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--proto-ink-mute);
+  letter-spacing: 0.04em;
+}
+
+/* ============================================================================
+   Empty state per filter
+============================================================================ */
+.section-empty {
+  background: var(--proto-surface-soft);
+  border: 1px dashed var(--proto-rule-strong);
+  border-radius: var(--r-md);
+  padding: 24px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--proto-ink-mute);
+  text-align: center;
+}
+
+/* Responsive — collapse rail on narrow widths */
+@media (max-width: 1100px) {
+  .l0-section-grid { grid-template-columns: minmax(0, 1fr); }
+  .rail { position: static; max-height: none; }
+  .carousel-frame-wrap { grid-template-columns: minmax(0, 1fr); }
+  .carousel-cards { max-height: none; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============================================================================
+     Sticky nav
+============================================================================ -->
+<nav class="proto-nav" aria-label="Prototype navigation">
+  <div class="proto-nav-inner">
+    <span class="proto-nav-brand"><span class="dot"></span>AI Custom Fields</span>
+    <a href="index.html">Overview</a>
+    <a href="l0.html" class="is-current" aria-current="page">L0 — Audit</a>
+    <a href="l1.html">L1 — Integration</a>
+    <a href="l2.html">L2 — Direction</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-doc" target="_blank" rel="noopener">Doc ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-figma2" target="_blank" rel="noopener">Figma ↗</a>
+  </div>
+</nav>
+
+<!-- ============================================================================
+     Hero
+============================================================================ -->
+<section class="hero">
+  <p class="hero-eyebrow">L0 · Audit · what's broken</p>
+  <h1>54 findings across <em>5 themes,</em> mapped onto the screens they live on.</h1>
+  <p class="hero-lede">L0 is the visual companion to the Doc's Findings Catalog. Filter by theme, scan the screens, click any pin to open its detail. L1 is the integration-level redesign with rationale. L2 is direction.</p>
+  <div class="hero-meta">
+    <span><strong>Author</strong> Siobhan Wheelan</span>
+    <span><strong>Companion</strong> ClickUp Doc · L1 redesign · L2 direction · Figma</span>
+    <span><strong>Read sequence</strong> L0 → L1 → L2</span>
+  </div>
+</section>
+
+<!-- ============================================================================
+     Umbrella overview — three patterns the audit found
+============================================================================ -->
+<section class="umbrella-overview">
+  <div class="umbrella-overview-head">
+    <div class="umbrella-overview-eyebrow">Three patterns to know</div>
+    <h2 class="umbrella-overview-title">What the audit found at pattern level.</h2>
+    <p class="umbrella-overview-sub">Three umbrellas that account for nearly every finding below. The catalog of 54 individual findings is the inventory; these are the shapes the inventory takes.</p>
+  </div>
+  <div class="umbrella-grid-l0">
+    <article class="umb-card-l0" data-umb="A1">
+      <div class="umb-card-head-l0">
+        <span class="umb-chip-l0">A1</span>
+        <div>
+          <div class="umb-card-ref-l0">Theme CC · Controls Coordinate</div>
+        </div>
+      </div>
+      <h3 class="umb-card-title-l0">Controls don't coordinate with each other</h3>
+      <p class="umb-card-oneliner-l0">Each control acts alone. Template changes don't update Field name. Format locks. Translation's Property picker gets stuck.</p>
+      <button type="button" class="umb-card-expand-l0">Read more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="umb-card-details-l0">
+        <h4>Why it matters</h4>
+        <p>Header type picker handles form coordination correctly. Template dropdown doesn't. Format dropdown loses its binding after template switches. Translation's Property picker stops accepting new custom field selections. Users hit three different "stuck" moments in one sitting, with no error messaging to explain any of them.</p>
+        <h4>Suggestion</h4>
+        <p>Treat the panel as one coordinated form. All controls bind to a single form model. Template change cascades to Field name (unless user-edited), Format, Property, Language — each resets to the new template's default.</p>
+        <h4>Findings</h4>
+        <ul class="nested">
+          <li>CC2 — Field name doesn't update when Template changes</li>
+          <li>CC3 — Format dropdown locks after two template switches</li>
+          <li>CC4 — Translation Property picker gets stuck</li>
+          <li>CC5 — Template change strands the dropdown options list</li>
+        </ul>
+      </div>
+    </article>
+    <article class="umb-card-l0" data-umb="A2">
+      <div class="umb-card-head-l0">
+        <span class="umb-chip-l0">A2</span>
+        <div>
+          <div class="umb-card-ref-l0">Theme CS · Path-driven divergence</div>
+        </div>
+      </div>
+      <h3 class="umb-card-title-l0">Form doesn't coordinate with the path</h3>
+      <p class="umb-card-oneliner-l0">Same entry point, same template, different form depending on path. Two users get different AI output from what should be the same configuration.</p>
+      <button type="button" class="umb-card-expand-l0">Read more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="umb-card-details-l0">
+        <h4>Why it matters</h4>
+        <p>manual→fillwithAI shows the Fill method switcher and defaults Progress Updates to "Today." AI-direct hides the switcher and defaults to "Last 24 hours." Different AI output from what should be the same configuration. The path (where the user came from) is silently carrying form state.</p>
+        <h4>Suggestion</h4>
+        <p>Path shouldn't determine form state. Fill method renders everywhere. Progress Updates defaults to "Last 24 hours" on every path. Defaults bind to template, not to entry point.</p>
+        <h4>Findings</h4>
+        <ul class="nested">
+          <li>CS14 — Fill method switcher missing on AI-direct</li>
+          <li>CS16 — Progress Updates default splits on path</li>
+        </ul>
+      </div>
+    </article>
+    <article class="umb-card-l0" data-umb="A3">
+      <div class="umb-card-head-l0">
+        <span class="umb-chip-l0">A3</span>
+        <div>
+          <div class="umb-card-ref-l0">Theme CS · Cross-entry-point divergence</div>
+        </div>
+      </div>
+      <h3 class="umb-card-title-l0">Same form looks different depending on entry</h3>
+      <p class="umb-card-oneliner-l0">Three entry points (View / Task / CFM), three layouts, three capability sets. CFM — the admin flow — has fewer controls than View.</p>
+      <button type="button" class="umb-card-expand-l0">Read more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="umb-card-details-l0">
+        <h4>Why it matters</h4>
+        <p>View gets full permissions. Task has no Settings section at all. CFM shows Pinned + Visible-to-Guests only. Same form, three execution paths. Workspace admins using CFM — the most senior users — have the fewest controls.</p>
+        <h4>Suggestion</h4>
+        <p>One component, three contexts. Variants differ in width and density, not in controls. Full Settings + Permissions render everywhere; the admin flow gets the same field-level controls a team member gets in View.</p>
+        <h4>Findings</h4>
+        <ul class="nested">
+          <li>CS15 — Permissions are View-only</li>
+          <li>CS2 — Description treatment differs across variants</li>
+          <li>CS4 — Eight Settings Screen controls treated differently across variants</li>
+          <li>CS5 — CFM uses two-column layout while others single-column</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============================================================================
+     Sticky filter row
+============================================================================ -->
+<div class="filter-row" role="region" aria-label="Theme filter">
+  <div class="filter-row-inner">
+    <span class="filter-label">Filter</span>
+    <button class="theme-chip is-active" data-theme="all" type="button">
+      <span class="chip-dot" data-theme="all"></span>
+      All
+      <span class="chip-count" id="count-all">54</span>
+    </button>
+    <button class="theme-chip" data-theme="CC" type="button">
+      <span class="chip-dot" data-theme="CC"></span>
+      Coordination
+      <span class="chip-count" id="count-CC">5</span>
+    </button>
+    <button class="theme-chip" data-theme="CS" type="button">
+      <span class="chip-dot" data-theme="CS"></span>
+      Consistency
+      <span class="chip-count" id="count-CS">15</span>
+    </button>
+    <button class="theme-chip" data-theme="AQ" type="button">
+      <span class="chip-dot" data-theme="AQ"></span>
+      Quality
+      <span class="chip-count" id="count-AQ">12</span>
+    </button>
+    <button class="theme-chip" data-theme="AD" type="button">
+      <span class="chip-dot" data-theme="AD"></span>
+      Discovery
+      <span class="chip-count" id="count-AD">18</span>
+    </button>
+    <button class="theme-chip" data-theme="FG" type="button">
+      <span class="chip-dot" data-theme="FG"></span>
+      Gaps
+      <span class="chip-count" id="count-FG">4</span>
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================================
+     Section 1 — Type Selection picker
+============================================================================ -->
+<section class="l0-section" id="section-typeSelection" data-screen="typeSelection">
+  <p class="l0-section-eyebrow">Section 1 · Type Selection picker</p>
+  <h2 class="l0-section-title">Where users pick a custom field type.</h2>
+  <p class="l0-section-themes">
+    Themes here:
+    <span class="theme-tag"><span class="chip-dot" data-theme="CS"></span>Consistency</span>
+    <span class="theme-tag"><span class="chip-dot" data-theme="AD"></span>Discovery</span>
+  </p>
+
+  <div class="l0-section-grid">
+    <div class="canvas-wrap" data-canvas="typeSelection" id="canvas-typeSelection">
+      <div class="fig-panel fig-current" id="panel-current-typeSelection"></div>
+    </div>
+    <aside class="rail" data-rail="typeSelection" aria-label="Finding detail">
+      <div class="rail-empty">Click a pin on the canvas to see finding detail.</div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============================================================================
+     Section 2 — Settings · Long Text
+============================================================================ -->
+<section class="l0-section" id="section-settings-longText" data-screen="settings-longText">
+  <p class="l0-section-eyebrow">Section 2 · Settings Screen · Long Text</p>
+  <h2 class="l0-section-title">Where the AI prompt is configured (Long Text variant).</h2>
+  <p class="l0-section-themes">
+    Themes here:
+    <span class="theme-tag"><span class="chip-dot" data-theme="CC"></span>Coordination</span>
+    <span class="theme-tag"><span class="chip-dot" data-theme="CS"></span>Consistency</span>
+    <span class="theme-tag"><span class="chip-dot" data-theme="AQ"></span>Quality</span>
+    <span class="theme-tag"><span class="chip-dot" data-theme="FG"></span>Gaps</span>
+  </p>
+
+  <div class="l0-section-grid">
+    <div class="canvas-wrap" data-canvas="settings-longText" id="canvas-settings-longText">
+      <div class="cu-panel" id="panel-current-settings-longText">
+        <div class="cu-panel-header" data-el="header">
+          <button class="cu-iconbtn" aria-label="Back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <div class="cu-type-picker">
+            Text area (Long Text)
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <button class="cu-iconbtn close" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="cu-panel-body">
+          <div data-el="field-name">
+            <div class="cu-label">Field name<span class="req">*</span></div>
+            <div class="cu-name-input">
+              <span class="emoji-picker">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              </span>
+              <input type="text" placeholder="Enter name..." value="">
+            </div>
+          </div>
+          <div data-el="fill-method-missing" style="position: relative;">
+            <!-- Gap where Fill method would be on AI-direct path (CS14) -->
+          </div>
+          <div data-el="template">
+            <div class="cu-label">Template</div>
+            <div class="cu-select">
+              <span>Custom Instructions</span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+          <div data-el="prompt">
+            <div class="cu-label">Tell AI how to fill out this field<span class="req">*</span><span class="info">i</span></div>
+            <div class="cu-prompt">
+              <div class="prompt-editor">Enter instructions using task data</div>
+              <div class="context-row">
+                <span>Add more context to your prompt</span>
+                <button class="add-btn" aria-label="Add context">+</button>
+              </div>
+            </div>
+          </div>
+          <div data-el="automations">
+            <div class="cu-autom-header">
+              <div class="cu-label" style="margin: 0;">Automations</div>
+              <span class="cu-autom-badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+                1
+              </span>
+            </div>
+            <div class="cu-toggle-row"><div class="cu-toggle on"></div><span>Autofill when tasks are created</span></div>
+            <div class="cu-toggle-row off" data-el="autom-trigger"><div class="cu-toggle"></div><span>Auto update when tasks change</span></div>
+            <div class="cu-toggle-row off"><div class="cu-toggle"></div><span>Autofill existing tasks</span></div>
+          </div>
+          <div class="cu-sep"></div>
+          <div class="cu-more" data-el="more">
+            <span>More settings and permissions</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </div>
+        </div>
+        <div class="cu-panel-footer">
+          <button class="cu-btn cancel">Cancel</button>
+          <button class="cu-btn primary is-disabled" disabled>Create</button>
+        </div>
+      </div>
+    </div>
+    <aside class="rail" data-rail="settings-longText" aria-label="Finding detail">
+      <div class="rail-empty">Click a pin on the canvas to see finding detail.</div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============================================================================
+     Section 3 — Settings · Dropdown
+============================================================================ -->
+<section class="l0-section" id="section-settings-dropdown" data-screen="settings-dropdown">
+  <p class="l0-section-eyebrow">Section 3 · Settings Screen · Dropdown</p>
+  <h2 class="l0-section-title">Where the AI prompt is configured (Dropdown variant).</h2>
+  <p class="l0-section-themes">
+    Themes here:
+    <span class="theme-tag"><span class="chip-dot" data-theme="CC"></span>Coordination</span>
+    <span class="theme-tag"><span class="chip-dot" data-theme="CS"></span>Consistency</span>
+    <span class="theme-tag"><span class="chip-dot" data-theme="AQ"></span>Quality</span>
+    <span class="theme-tag"><span class="chip-dot" data-theme="FG"></span>Gaps</span>
+  </p>
+
+  <div class="l0-section-grid">
+    <div class="canvas-wrap" data-canvas="settings-dropdown" id="canvas-settings-dropdown">
+      <div class="cu-panel" id="panel-current-settings-dropdown">
+        <div class="cu-panel-header" data-el="header">
+          <button class="cu-iconbtn" aria-label="Back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <div class="cu-type-picker">
+            Dropdown
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <button class="cu-iconbtn close" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="cu-panel-body">
+          <div data-el="field-name">
+            <div class="cu-label">Field name<span class="req">*</span></div>
+            <div class="cu-name-input">
+              <span class="emoji-picker">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              </span>
+              <input type="text" placeholder="Enter name..." value="Sentiment">
+            </div>
+          </div>
+          <div data-el="fill-method-missing" style="position: relative;">
+            <!-- Gap where Fill method would be on AI-direct path (CS14) -->
+          </div>
+          <div data-el="template">
+            <div class="cu-label">Template</div>
+            <div class="cu-select">
+              <span>Sentiment</span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+          </div>
+          <div data-el="prompt">
+            <div class="cu-label">Prompt<span class="req">*</span><span class="info">i</span></div>
+            <div class="cu-prompt">
+              <div class="prompt-editor">Given information about a task, your role is to analyze the sentiment expressed in the task's content and the comments left by users, and to choose the most appropriate custom field option.</div>
+              <div class="context-row">
+                <span>Add more context to your prompt</span>
+                <button class="add-btn" aria-label="Add context">+</button>
+              </div>
+            </div>
+          </div>
+          <div data-el="dropdown-options">
+            <div class="cu-autom-header">
+              <div class="cu-label" style="margin: 0;">Dropdown options<span class="req">*</span></div>
+              <span class="dd-sort">⇅ Manual</span>
+            </div>
+            <div class="dd-option"><span class="dd-grip">⋮⋮</span><span class="dd-swatch" style="background:#34d399;"></span><span class="dd-text">Positive</span></div>
+            <div class="dd-option"><span class="dd-grip">⋮⋮</span><span class="dd-swatch" style="background:#94a3b8;"></span><span class="dd-text">Neutral</span></div>
+            <div class="dd-option"><span class="dd-grip">⋮⋮</span><span class="dd-swatch" style="background:#f87171;"></span><span class="dd-text">Negative</span></div>
+            <button class="dd-add">+ Add option</button>
+          </div>
+          <div data-el="automations">
+            <div class="cu-autom-header">
+              <div class="cu-label" style="margin: 0;">Automations</div>
+              <span class="cu-autom-badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+                1
+              </span>
+            </div>
+            <div class="cu-toggle-row"><div class="cu-toggle on"></div><span>Autofill when tasks are created</span></div>
+            <div class="cu-toggle-row off" data-el="autom-trigger"><div class="cu-toggle"></div><span>Auto update when tasks change</span></div>
+            <div class="cu-toggle-row off"><div class="cu-toggle"></div><span>Autofill existing tasks</span></div>
+          </div>
+          <div class="cu-sep"></div>
+          <div class="cu-more" data-el="more">
+            <span>More settings and permissions</span>
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+          </div>
+        </div>
+        <div class="cu-panel-footer">
+          <button class="cu-btn cancel">Cancel</button>
+          <button class="cu-btn primary">Create</button>
+        </div>
+      </div>
+    </div>
+    <aside class="rail" data-rail="settings-dropdown" aria-label="Finding detail">
+      <div class="rail-empty">Click a pin on the canvas to see finding detail.</div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============================================================================
+     Section 4 — CFM
+============================================================================ -->
+<section class="l0-section" id="section-cfm" data-screen="cfm">
+  <p class="l0-section-eyebrow">Section 4 · Custom Field Manager</p>
+  <h2 class="l0-section-title">Where workspace admins manage all custom fields.</h2>
+  <p class="l0-section-themes">
+    Themes here:
+    <span class="theme-tag"><span class="chip-dot" data-theme="CS"></span>Consistency</span>
+    <span class="theme-tag"><span class="chip-dot" data-theme="FG"></span>Gaps</span>
+  </p>
+
+  <div class="l0-section-grid">
+    <div class="canvas-wrap" data-canvas="cfm" id="canvas-cfm">
+      <div class="cfm-canvas-frame">
+        <div class="cfm-screenshot-label">Custom Field Manager — AI field shown identically to manual Text field (FG2)</div>
+        <img src="images/CFM-CS-Screen.jpg" alt="Custom Field Manager modal showing an AI field grouped under 'Text area (Long Text)' with generic text icon — visually identical to manual fields" class="cfm-screenshot" />
+      </div>
+    </div>
+    <aside class="rail" data-rail="cfm" aria-label="Finding detail">
+      <div class="rail-empty">Click a pin on the canvas to see finding detail.</div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============================================================================
+     Section 5 — New user onboarding journey (carousel)
+============================================================================ -->
+<section class="l0-section" id="section-onboarding" data-screen="onboarding">
+  <p class="l0-section-eyebrow">Section 5 · New user onboarding journey</p>
+  <h2 class="l0-section-title">Where new users meet (or miss) AI Custom Fields.</h2>
+  <p class="l0-section-themes">
+    Themes here:
+    <span class="theme-tag"><span class="chip-dot" data-theme="AD"></span>Discovery</span>
+    <span class="theme-tag"><span class="chip-dot" data-theme="AQ"></span>Quality</span>
+  </p>
+
+  <div class="carousel-shell" id="carousel-shell">
+    <div class="milestone-bar">
+      <div class="milestone-track" id="milestone-bar"></div>
+      <div class="milestone-progress">
+        <div class="milestone-progress-fill" id="milestone-progress-fill"></div>
+      </div>
+    </div>
+    <div class="carousel-frame-wrap" id="carousel-frame-wrap">
+      <div class="carousel-screenshot" id="carousel-screenshot">
+        <strong>Stage screenshot</strong>
+        Carousel populated by Task #6 — frame screenshots will land here per stage.
+      </div>
+      <div class="carousel-cards" id="carousel-cards">
+        <div class="carousel-empty">Findings on this stage stack here.</div>
+      </div>
+    </div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" id="carousel-prev" type="button">← Previous</button>
+      <span class="carousel-counter" id="carousel-counter">Stage 1 of 10</span>
+      <button class="carousel-btn" id="carousel-next" type="button">Next →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     Footer
+============================================================================ -->
+<footer class="proto-footer">
+  <span>L0 prototype · v0 (in build)</span>
+  <span>Theme catalog · CC · CS · AQ · AD · FG</span>
+</footer>
+
+<!-- ============================================================================
+     Modal lightbox (evidence visual)
+============================================================================ -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-label="Evidence visual">
+    <button class="modal-close" type="button" id="modal-close">Close ✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ============================================================================
+     Catalog data + renderer
+============================================================================ -->
+<script src="findings.js"></script>
+<script>
+/* ============================================================================
+   Field-icon mapping (Figma PNG asset names) — from hosting/l1.html
+============================================================================ */
+const FIELD_ICON_PNG = {
+  'ic-text':          'text',
+  'ic-textarea':      'text-area',
+  'ic-dropdown':      'dropdown',
+  'ic-number':        'number',
+  'ic-money':         'money',
+  'ic-formula':       'formula',
+  'ic-date':          'date',
+  'ic-labels':        'labels',
+  'ic-checkbox':      'checkbox',
+  'ic-website':       'website',
+  'ic-files':         'files',
+  'ic-relationship':  'relationship',
+  'ic-rollup':        'rollup',
+  'ic-people':        'people',
+  'ic-progress':      'progress',
+  'ic-progress-auto': 'progress',
+  'ic-email':         'email',
+  'ic-phone':         'phone',
+  'ic-tasks':         'relationship',
+  'ic-location':      'location',
+  'ic-rating':        'rating',
+  'ic-voting':        'voting',
+  'ic-signature':     'signature',
+  'ic-button':        'button',
+};
+const ICON_BASE = 'images/figma-icons/';
+function fieldIconHtml(id) {
+  const png = FIELD_ICON_PNG[id];
+  if (!png) return `<span class="fig-row-icon"></span>`;
+  return `<span class="fig-row-icon"><img src="${ICON_BASE}${png}.png" alt="" width="16" height="16" /></span>`;
+}
+
+/* ============================================================================
+   Type Selection panel — Current state (Task entry variant)
+   Migrated from hosting/l1.html lines 5314–5412 (renderTsPanelCurrent).
+   Includes deliberate duplications (AD2) and flat list (CS9).
+============================================================================ */
+function renderTsPanelCurrent() {
+  const root = document.getElementById('panel-current-typeSelection');
+  if (!root) return;
+
+  const aiFields = [
+    { name: 'Summary',         icon: 'ic-textarea' },
+    { name: 'Custom Text',     icon: 'ic-textarea' },
+    { name: 'Custom Dropdown', icon: 'ic-dropdown' },
+  ];
+  const all = [
+    { name: 'Dropdown',           icon: 'ic-dropdown', dataEl: 'dropdown-row' },
+    { name: 'Text',               icon: 'ic-text' },
+    { name: 'Date',               icon: 'ic-date' },
+    { name: 'Text area (Long Text)', icon: 'ic-textarea', dataEl: 'text-area-row' },
+    { name: 'Number',             icon: 'ic-number' },
+    { name: 'Labels',             icon: 'ic-labels' },
+    { name: 'Checkbox',           icon: 'ic-checkbox' },
+    { name: 'Money',              icon: 'ic-money' },
+    { name: 'Website',            icon: 'ic-website' },
+    { name: 'Formula',            icon: 'ic-formula' },
+    { name: 'Custom Text',        icon: 'ic-textarea' },           // duplicate of AI fields
+    { name: 'Summary',            icon: 'ic-textarea' },           // duplicate
+    { name: 'Progress Updates',   icon: 'ic-textarea' },
+    { name: 'Files',              icon: 'ic-files' },
+    { name: 'Relationship',       icon: 'ic-relationship', dataEl: 'relationship-row' },
+    { name: 'People',             icon: 'ic-people' },
+    { name: 'Progress (Auto)',    icon: 'ic-progress-auto' },
+    { name: 'Email',              icon: 'ic-email' },
+    { name: 'Phone',              icon: 'ic-phone' },
+    { name: 'Categorize',         icon: 'ic-dropdown' },
+    { name: 'Custom Dropdown',    icon: 'ic-dropdown' },           // duplicate
+    { name: 'Translation',        icon: 'ic-textarea' },
+    { name: 'Sentiment',          icon: 'ic-dropdown' },
+    { name: 'Tasks',              icon: 'ic-tasks', dataEl: 'tasks-row' },  // duplicate of Relationship
+    { name: 'Location',           icon: 'ic-location' },
+    { name: 'Progress (Manual)',  icon: 'ic-progress' },
+    { name: 'Rating',             icon: 'ic-rating' },
+    { name: 'Voting',             icon: 'ic-voting' },
+    { name: 'Signature',          icon: 'ic-signature' },
+    { name: 'Rollup',             icon: 'ic-rollup' },
+    { name: 'Button',             icon: 'ic-button', dataEl: 'button-row' },
+    { name: 'Action Items',       icon: 'ic-textarea' },
+    { name: 'T-shirt Size',       icon: 'ic-dropdown' },
+  ];
+
+  const renderRow = (f) => {
+    const dataElAttr = f.dataEl ? ` data-el="${f.dataEl}"` : '';
+    return `
+      <div class="fig-row"${dataElAttr}>
+        <div class="fig-row-left">
+          ${fieldIconHtml(f.icon)}
+          <span class="fig-row-name">${f.name}</span>
+        </div>
+      </div>`;
+  };
+
+  root.innerHTML = `
+    <div class="fig-header" data-el="header">
+      <div class="fig-header-title">Fields</div>
+      <button class="fig-close-btn" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="fig-search-wrap" data-el="search">
+      <div class="fig-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span class="fig-search-placeholder">Search...</span>
+      </div>
+    </div>
+    <div class="fig-body">
+      <!-- Task variant — narrow popover, no Suggested section.
+           CS8 anchors to this invisible marker (the absence). -->
+      <div data-el="suggested-missing" class="fig-suggested-missing-marker"></div>
+      <div data-el="ai-fields">
+        <div class="fig-section-head"><div class="fig-section-label">AI Fields</div></div>
+        ${aiFields.map(renderRow).join('')}
+      </div>
+      <div class="fig-divider"></div>
+      <div data-el="all-fields">
+        <div class="fig-section-head"><div class="fig-section-label">All</div></div>
+        ${all.map(renderRow).join('')}
+      </div>
+      <div class="fig-bottom-pad"></div>
+    </div>
+  `;
+}
+
+/* ============================================================================
+   State
+============================================================================ */
+const STATE = {
+  filter: 'all',           // 'all' | 'CC' | 'CS' | 'AQ' | 'AD' | 'FG'
+  activeFinding: null,     // currently-pinned finding ID
+  activeRailScreen: null,  // which screen's rail is showing the active finding
+  carouselIndex: 0,        // 0..9
+};
+
+const CAT = window.CATALOG;
+const SCREENS_CANVAS = ['typeSelection', 'settings-longText', 'settings-dropdown', 'cfm'];
+
+/* ============================================================================
+   Pin placement — adapted from L1's algorithm with anchors[] support
+============================================================================ */
+const PIN_OUTSIDE_PAD = 4;
+const PIN_EDGE_THRESH = 80;
+const MIN_GAP = 4;
+
+function placePin(pinEl, anchorEl, panel, cfg, forceSide) {
+  if (!anchorEl || !panel) return;
+
+  const panelRect = panel.getBoundingClientRect();
+  const aRect = anchorEl.getBoundingClientRect();
+
+  // Anchor center Y (for vertical alignment)
+  const aCenterY = (aRect.top + aRect.bottom) / 2 - panelRect.top;
+
+  const offsetY = (cfg && cfg.offsetY) || 0;
+
+  const pinW = pinEl.offsetWidth || 38;
+  const pinH = pinEl.offsetHeight || 26;
+  const panelW = panel.clientWidth;
+  const panelH = panel.clientHeight;
+
+  // Pins go OUTSIDE the panel in clean margin tracks. Side is determined by
+  // forceSide if provided (caller balances left/right) — otherwise fall back
+  // to anchor's center X.
+  let goRight;
+  if (forceSide === 'right') goRight = true;
+  else if (forceSide === 'left') goRight = false;
+  else {
+    const aCenterX = (aRect.left + aRect.right) / 2 - panelRect.left;
+    goRight = aCenterX > panelW / 2;
+  }
+  const trackOffset = 14;
+
+  let pinX = goRight
+    ? panelW + trackOffset
+    : -pinW - trackOffset;
+
+  let pinY = aCenterY - (pinH / 2) + offsetY;
+  pinY = Math.max(-28, Math.min(panelH - pinH + 28, pinY));
+
+  pinEl.style.left = pinX + 'px';
+  pinEl.style.top = pinY + 'px';
+  pinEl.dataset.side = goRight ? 'right' : 'left';
+}
+
+function resolveCollisions(panel) {
+  // Globals (top-row track) flow as inline elements — skip those.
+  // Only resolve absolute-positioned, panel-anchored pins.
+  const pins = Array.from(panel.querySelectorAll('.pin:not(.is-hidden):not(.is-global)'));
+  if (pins.length < 2) return;
+  // Generous gap so the active-state ring (3px) doesn't overlap a neighbor
+  const PIN_GAP = 12;
+
+  for (let pass = 0; pass < 12; pass++) {
+    let moved = false;
+    for (let i = 0; i < pins.length; i++) {
+      for (let j = i + 1; j < pins.length; j++) {
+        const a = pins[i], b = pins[j];
+        const ar = a.getBoundingClientRect();
+        const br = b.getBoundingClientRect();
+        // Inflate bounds by half the gap on each side so neighbors can't kiss
+        const overlapX = Math.min(ar.right, br.right) - Math.max(ar.left, br.left) + PIN_GAP;
+        const overlapY = Math.min(ar.bottom, br.bottom) - Math.max(ar.top, br.top) + PIN_GAP;
+        if (overlapX > 0 && overlapY > 0) {
+          // Pins live in left/right margin tracks. Always push vertically — never
+          // shove a pin off its margin track sideways.
+          const push = (overlapY + 2) / 2;
+          const aTop = parseFloat(a.style.top || 0);
+          const bTop = parseFloat(b.style.top || 0);
+          if (aTop < bTop) {
+            a.style.top = (aTop - push) + 'px';
+            b.style.top = (bTop + push) + 'px';
+          } else {
+            a.style.top = (aTop + push) + 'px';
+            b.style.top = (bTop - push) + 'px';
+          }
+          moved = true;
+        }
+      }
+    }
+    if (!moved) break;
+  }
+}
+
+function placeHighlight(hlEl, anchorEl, panel) {
+  if (!anchorEl || !panel) { hlEl.classList.remove('is-visible'); return; }
+  if (anchorEl === panel) {
+    hlEl.style.left = '0px';
+    hlEl.style.top = '0px';
+    hlEl.style.width = panel.clientWidth + 'px';
+    hlEl.style.height = panel.clientHeight + 'px';
+    hlEl.classList.add('is-visible');
+    return;
+  }
+  const panelRect = panel.getBoundingClientRect();
+  const aRect = anchorEl.getBoundingClientRect();
+  const left = Math.max(0, aRect.left - panelRect.left - 4);
+  const top = Math.max(0, aRect.top - panelRect.top - 4);
+  const right = Math.min(panel.clientWidth, aRect.right - panelRect.left + 4);
+  const bottom = Math.min(panel.clientHeight, aRect.bottom - panelRect.top + 4);
+  hlEl.style.left = left + 'px';
+  hlEl.style.top = top + 'px';
+  hlEl.style.width = (right - left) + 'px';
+  hlEl.style.height = (bottom - top) + 'px';
+  hlEl.classList.add('is-visible');
+}
+
+/* ============================================================================
+   Render — pins per canvas screen
+============================================================================ */
+function clearCanvasPins(panel) {
+  panel.querySelectorAll('.pin, .highlight').forEach(el => el.remove());
+}
+
+function renderPinsForScreen(screen) {
+  const canvasWrap = document.querySelector(`[data-canvas="${screen}"]`);
+  if (!canvasWrap) return;
+
+  // Find the actual ClickUp UI panel inside the canvas-wrap. Pins position relative to THIS,
+  // not the outer wrap, so "just outside the screen panel" reads correctly.
+  const innerPanel = canvasWrap.querySelector('.cu-panel, .fig-panel, .cfm-canvas-frame') || canvasWrap;
+  // Make innerPanel a positioning context so absolute pins anchor to it
+  innerPanel.style.position = innerPanel.style.position || 'relative';
+
+  // Clear pins/highlights from inner panel + canvas wrap
+  clearCanvasPins(innerPanel);
+  clearCanvasPins(canvasWrap);
+
+  // Also clear any pre-existing global-pins row (rebuilt fresh each render)
+  const wrap = canvasWrap.closest('.l0-section-grid') || canvasWrap.parentElement;
+  if (wrap) {
+    const existingGlobal = wrap.querySelector(`.panel-global-row[data-screen="${screen}"]`);
+    if (existingGlobal) existingGlobal.remove();
+  }
+  const panel = innerPanel;
+
+  const findings = CAT.findingsForScreen(screen);
+  const filtered = STATE.filter === 'all'
+    ? findings
+    : findings.filter(f => f.theme === STATE.filter);
+
+  if (filtered.length === 0) return;
+
+  // Split anchors into two groups: panel-level globals vs element-anchored
+  const elementAnchored = [];   // {finding, anchorCfg, idx}
+  const panelGlobals = [];       // {finding, anchorCfg, idx}
+
+  filtered.forEach(finding => {
+    finding.anchors.forEach((anchorCfg, idx) => {
+      if (anchorCfg.screen !== screen) return;
+      if (!anchorCfg.el || anchorCfg.el === '__panel__') {
+        panelGlobals.push({ finding, anchorCfg, idx });
+      } else {
+        elementAnchored.push({ finding, anchorCfg, idx });
+      }
+    });
+  });
+
+  // 1. Build the global-pins top-row track — sits ABOVE the canvas-wrap
+  if (panelGlobals.length) {
+    const canvasWrapEl = panel; // canvas-wrap IS the data-canvas element
+    const globalRow = document.createElement('div');
+    globalRow.className = 'panel-global-row';
+    globalRow.dataset.screen = screen;
+    panelGlobals.forEach(({ finding, anchorCfg, idx }) => {
+      const pinEl = document.createElement('button');
+      pinEl.type = 'button';
+      pinEl.className = 'pin is-global';
+      pinEl.dataset.theme = finding.theme;
+      pinEl.dataset.findingId = finding.id;
+      pinEl.dataset.screen = screen;
+      pinEl.dataset.anchorIdx = String(idx);
+      pinEl.setAttribute('aria-label', `${finding.id} — ${finding.title}`);
+      pinEl.textContent = finding.id;
+      pinEl.addEventListener('click', (e) => { e.stopPropagation(); openFinding(finding.id, screen); });
+      globalRow.appendChild(pinEl);
+
+      // Hidden whole-panel highlight (visible only when this finding is active)
+      const hlEl = document.createElement('div');
+      hlEl.className = 'highlight';
+      hlEl.dataset.theme = finding.theme;
+      hlEl.dataset.findingId = finding.id;
+      hlEl.dataset.screen = screen;
+      hlEl.dataset.anchorIdx = String(idx);
+      panel.appendChild(hlEl);
+    });
+    // Insert the global row BEFORE the canvas-wrap inside its parent grid
+    canvasWrapEl.parentNode.insertBefore(globalRow, canvasWrapEl);
+  }
+
+  // 2. Element-anchored pins — placed in left/right margin tracks
+  elementAnchored.forEach(({ finding, anchorCfg, idx }) => {
+    const pinEl = document.createElement('button');
+    pinEl.type = 'button';
+    pinEl.className = 'pin';
+    pinEl.dataset.theme = finding.theme;
+    pinEl.dataset.findingId = finding.id;
+    pinEl.dataset.screen = screen;
+    pinEl.dataset.anchorIdx = String(idx);
+    pinEl.setAttribute('aria-label', `${finding.id} — ${finding.title}`);
+    pinEl.textContent = finding.id;
+    pinEl.addEventListener('click', (e) => { e.stopPropagation(); openFinding(finding.id, screen); });
+    panel.appendChild(pinEl);
+
+    const hlEl = document.createElement('div');
+    hlEl.className = 'highlight';
+    hlEl.dataset.theme = finding.theme;
+    hlEl.dataset.findingId = finding.id;
+    hlEl.dataset.screen = screen;
+    hlEl.dataset.anchorIdx = String(idx);
+    panel.appendChild(hlEl);
+  });
+
+  // Place element-anchored pins (after they're in DOM so widths are known).
+  // Balance: sort by anchor Y, then alternate sides — even-idx pins go RIGHT,
+  // odd go LEFT — so a panel with many controls clustered on one side doesn't
+  // pile every pin onto the same track.
+  const placements = elementAnchored.map(({ finding, anchorCfg, idx }) => {
+    const pinEl = panel.querySelector(`.pin:not(.is-global)[data-finding-id="${finding.id}"][data-anchor-idx="${idx}"]`);
+    const anchorEl = anchorCfg.el ? panel.querySelector(`[data-el="${anchorCfg.el}"]`) : null;
+    let aCenterY = 0;
+    if (anchorEl && pinEl) {
+      const panelRect = panel.getBoundingClientRect();
+      const aRect = anchorEl.getBoundingClientRect();
+      aCenterY = (aRect.top + aRect.bottom) / 2 - panelRect.top;
+    }
+    return { finding, anchorCfg, idx, pinEl, anchorEl, aCenterY };
+  });
+  placements.sort((a, b) => a.aCenterY - b.aCenterY);
+  placements.forEach((p, sortedIdx) => {
+    if (!p.pinEl) return;
+    if (!p.anchorEl) {
+      p.pinEl.classList.add('is-hidden');
+      return;
+    }
+    const side = sortedIdx % 2 === 0 ? 'right' : 'left';
+    placePin(p.pinEl, p.anchorEl, panel, p.anchorCfg, side);
+  });
+
+  resolveCollisions(panel);
+}
+
+function renderAllCanvases() {
+  SCREENS_CANVAS.forEach(renderPinsForScreen);
+}
+
+/* ============================================================================
+   Rail card rendering
+============================================================================ */
+function renderRailCard(railEl, finding, contextScreen) {
+  const t = CAT.THEMES[finding.theme];
+  const phaseLabel = finding.phase === 1.5 ? 'Phase 1.5' : `Phase ${finding.phase}`;
+  const screensList = [...new Set(finding.anchors.map(a => CAT.SCREENS[a.screen] && CAT.SCREENS[a.screen].label).filter(Boolean))];
+  const linkedHtml = (finding.linkedFindings || [])
+    .map(id => `<span class="link-pill" data-link="${id}">${id}</span>`)
+    .join('');
+
+  railEl.innerHTML = `
+    <div class="rail-card-head">
+      <span class="rail-card-pin" data-theme="${finding.theme}">${finding.id}</span>
+      <span class="severity-dot" data-sev="${finding.severity}">${finding.severity.toUpperCase()}</span>
+      <div class="rail-card-meta" style="margin-left:auto;">
+        <strong>${t.name}</strong> · ${phaseLabel}
+      </div>
+    </div>
+    <h3 class="rail-card-title">${escapeHtml(finding.title)}</h3>
+    <p class="rail-card-oneliner">${escapeHtml(finding.oneliner)}</p>
+    <div class="rail-card-meta" style="margin-bottom:14px;">
+      ${screensList.length ? screensList.join(' · ') : ''}
+    </div>
+    <div class="rail-card-section">
+      <h4>The bug</h4>
+      <p>${escapeHtml(finding.problem)}</p>
+    </div>
+    <div class="rail-card-section">
+      <h4>Suggested fix</h4>
+      <p>${escapeHtml(finding.fix)}</p>
+    </div>
+    ${finding.variantsAffected ? `
+    <div class="rail-card-section">
+      <h4>Variants affected</h4>
+      <p>${escapeHtml(finding.variantsAffected)}</p>
+    </div>` : ''}
+    <div class="rail-card-evidence">
+      <div class="rail-card-evidence-thumb" data-theme="${finding.theme}" data-evidence-id="${finding.id}">
+        <span class="ev-id">${finding.id}</span>
+        <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.04em;text-align:center;line-height:1.4;">${escapeHtml(finding.evidenceHeadline || finding.title)}</span>
+        <span class="ev-pending">Visual proof — pending sign-off</span>
+      </div>
+    </div>
+    ${linkedHtml ? `
+    <div class="rail-card-section">
+      <h4>Linked findings</h4>
+      <div class="rail-card-links">${linkedHtml}</div>
+    </div>` : ''}
+  `;
+
+  // Hook up linked-finding pills
+  railEl.querySelectorAll('.link-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const id = pill.dataset.link;
+      const linked = CAT.findingById(id);
+      if (linked) openFinding(id, contextScreen);
+    });
+  });
+
+  // Hook up evidence thumb → modal
+  const thumb = railEl.querySelector('.rail-card-evidence-thumb');
+  if (thumb) {
+    thumb.addEventListener('click', () => openModal(finding));
+  }
+}
+
+function clearRailCard(railEl) {
+  railEl.innerHTML = '<div class="rail-empty">Click a pin on the canvas to see finding detail.</div>';
+}
+
+/* ============================================================================
+   Open / close finding (pin click handler)
+============================================================================ */
+function openFinding(id, screen) {
+  const finding = CAT.findingById(id);
+  if (!finding) return;
+
+  STATE.activeFinding = id;
+  STATE.activeRailScreen = screen;
+
+  // Update active pin styling across all canvases
+  document.querySelectorAll('.pin').forEach(p => {
+    p.classList.toggle('is-active', p.dataset.findingId === id && p.dataset.screen === screen);
+  });
+
+  // Show highlight on the matching anchor on this screen
+  document.querySelectorAll('.highlight').forEach(h => h.classList.remove('is-visible'));
+  const canvasWrap = document.querySelector(`[data-canvas="${screen}"]`);
+  if (canvasWrap) {
+    // Highlights are appended to the INNER panel (cu-panel/fig-panel/cfm-canvas-frame),
+    // so position must be computed relative to that — not the outer canvas-wrap.
+    const innerPanel = canvasWrap.querySelector('.cu-panel, .fig-panel, .cfm-canvas-frame') || canvasWrap;
+    const matchingAnchors = finding.anchors.filter(a => a.screen === screen);
+    matchingAnchors.forEach((anchorCfg, idx) => {
+      const hlEl = innerPanel.querySelector(`.highlight[data-finding-id="${id}"][data-anchor-idx="${idx}"]`);
+      if (!hlEl) return;
+      const anchorEl = (!anchorCfg.el || anchorCfg.el === '__panel__')
+        ? innerPanel
+        : innerPanel.querySelector(`[data-el="${anchorCfg.el}"]`);
+      placeHighlight(hlEl, anchorEl, innerPanel);
+    });
+  }
+
+  // Render rail card (in this screen's rail; clear others)
+  document.querySelectorAll('.rail').forEach(r => clearRailCard(r));
+  const rail = document.querySelector(`[data-rail="${screen}"]`);
+  if (rail) renderRailCard(rail, finding, screen);
+}
+
+/* ============================================================================
+   Filter chip handler
+============================================================================ */
+function applyFilter(theme) {
+  STATE.filter = theme;
+  document.querySelectorAll('.theme-chip').forEach(c => {
+    c.classList.toggle('is-active', c.dataset.theme === theme);
+  });
+
+  // Re-render canvas pins
+  renderAllCanvases();
+
+  // Update section visibility per filter
+  SCREENS_CANVAS.forEach(screen => {
+    const section = document.querySelector(`#section-${screen.replace('-', '\\-')}`)
+                  || document.getElementById('section-' + screen);
+    if (!section) return;
+    const findings = CAT.findingsForScreen(screen);
+    const filtered = theme === 'all' ? findings : findings.filter(f => f.theme === theme);
+    let empty = section.querySelector('.section-empty');
+    if (filtered.length === 0) {
+      if (!empty) {
+        empty = document.createElement('div');
+        empty.className = 'section-empty';
+        empty.textContent = `No ${getThemeName(theme)} findings on this screen.`;
+        section.querySelector('.canvas-wrap').after(empty);
+      } else {
+        empty.textContent = `No ${getThemeName(theme)} findings on this screen.`;
+      }
+    } else if (empty) {
+      empty.remove();
+    }
+  });
+
+  // Update onboarding carousel
+  renderCarousel();
+
+  // Clear active finding if it's filtered out
+  if (STATE.activeFinding) {
+    const f = CAT.findingById(STATE.activeFinding);
+    if (f && theme !== 'all' && f.theme !== theme) {
+      STATE.activeFinding = null;
+      STATE.activeRailScreen = null;
+      document.querySelectorAll('.rail').forEach(r => clearRailCard(r));
+      document.querySelectorAll('.highlight').forEach(h => h.classList.remove('is-visible'));
+    }
+  }
+}
+
+function getThemeName(theme) {
+  if (theme === 'all') return '';
+  return CAT.THEMES[theme] ? CAT.THEMES[theme].name : theme;
+}
+
+/* ============================================================================
+   Section 5 — Carousel
+============================================================================ */
+function buildMilestoneBar() {
+  const bar = document.getElementById('milestone-bar');
+  bar.innerHTML = '';
+  CAT.ONBOARDING_STAGES.forEach((stage, idx) => {
+    const step = document.createElement('button');
+    step.type = 'button';
+    step.className = 'milestone-step' + (idx === STATE.carouselIndex ? ' is-current' : '');
+    const num = String(idx + 1).padStart(2, '0');
+    step.innerHTML = `
+      <span class="milestone-num">${num}</span>
+      <span class="milestone-label">${escapeHtml(stage.label)}</span>
+    `;
+    step.addEventListener('click', () => goToStage(idx));
+    bar.appendChild(step);
+  });
+  updateMilestoneProgress();
+}
+
+function updateMilestoneProgress() {
+  const fill = document.getElementById('milestone-progress-fill');
+  if (!fill) return;
+  const total = CAT.ONBOARDING_STAGES.length;
+  const pct = ((STATE.carouselIndex + 1) / total) * 100;
+  fill.style.width = pct + '%';
+}
+
+function renderCarousel() {
+  const stage = CAT.ONBOARDING_STAGES[STATE.carouselIndex];
+  if (!stage) return;
+
+  // Update milestone bar active state
+  document.querySelectorAll('.milestone-step').forEach((step, idx) => {
+    step.classList.toggle('is-current', idx === STATE.carouselIndex);
+  });
+  updateMilestoneProgress();
+
+  // Update screenshot placeholder. Per build spec — stage screenshots stay as
+  // placeholders during build; visual swap-in is the final step after Siobhan
+  // proofs the source captures.
+  const sc = document.getElementById('carousel-screenshot');
+  sc.innerHTML = `<strong>${stage.label}</strong><span class="carousel-screenshot-meta">Stage screenshot — pending sign-off</span>`;
+
+  // Filter findings for this stage + apply filter
+  const allForStage = CAT.findingsForScreen(stage.id);
+  const findingsForStage = STATE.filter === 'all'
+    ? allForStage
+    : allForStage.filter(f => f.theme === STATE.filter);
+
+  const cardsContainer = document.getElementById('carousel-cards');
+  cardsContainer.innerHTML = '';
+  if (findingsForStage.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'carousel-empty';
+    empty.textContent = STATE.filter === 'all'
+      ? 'No findings on this stage.'
+      : `No ${getThemeName(STATE.filter)} findings on this stage.`;
+    cardsContainer.appendChild(empty);
+  } else {
+    findingsForStage.forEach(finding => {
+      const card = document.createElement('div');
+      card.className = 'carousel-finding-card';
+      card.innerHTML = `
+        <div class="carousel-finding-stripe" data-theme="${finding.theme}"></div>
+        <div class="carousel-finding-body">
+          <div class="carousel-finding-head">
+            <span class="carousel-finding-pin" data-theme="${finding.theme}">${finding.id}</span>
+            <span class="severity-dot" data-sev="${finding.severity}">${finding.severity.toUpperCase()}</span>
+          </div>
+          <div class="carousel-finding-title">${escapeHtml(finding.title.replace(/^Onboarding - [^—]+ — /, ''))}</div>
+          <p class="carousel-finding-oneliner">${escapeHtml(finding.oneliner)}</p>
+        </div>
+      `;
+      card.addEventListener('click', () => openModalForFinding(finding));
+      cardsContainer.appendChild(card);
+    });
+  }
+
+  // Update counter + buttons
+  document.getElementById('carousel-counter').textContent = `Stage ${STATE.carouselIndex + 1} of ${CAT.ONBOARDING_STAGES.length}`;
+  document.getElementById('carousel-prev').disabled = STATE.carouselIndex === 0;
+  document.getElementById('carousel-next').disabled = STATE.carouselIndex === CAT.ONBOARDING_STAGES.length - 1;
+}
+
+function goToStage(idx) {
+  if (idx < 0 || idx >= CAT.ONBOARDING_STAGES.length) return;
+  STATE.carouselIndex = idx;
+  renderCarousel();
+}
+
+/* ============================================================================
+   Modal (evidence visual lightbox)
+============================================================================ */
+function openModal(finding) {
+  const body = document.getElementById('modal-body');
+  body.innerHTML = `
+    <div class="rail-card-head">
+      <span class="rail-card-pin" data-theme="${finding.theme}">${finding.id}</span>
+      <span class="severity-dot" data-sev="${finding.severity}">${finding.severity.toUpperCase()}</span>
+      <div class="rail-card-meta" style="margin-left:auto;"><strong>${CAT.THEMES[finding.theme].name}</strong></div>
+    </div>
+    <h3 class="rail-card-title" style="font-size:24px;">${escapeHtml(finding.title)}</h3>
+    <div class="rail-card-evidence-thumb" data-theme="${finding.theme}" style="aspect-ratio:16/9;max-width:100%;">
+      <span class="ev-id" style="font-size:48px;">${finding.id}</span>
+      <span style="font-family:var(--font-mono);font-size:13px;letter-spacing:0.04em;text-align:center;line-height:1.5;margin-top:8px;">${escapeHtml(finding.evidenceHeadline || finding.title)}</span>
+      <span class="ev-pending" style="margin-top:12px;">Visual proof — pending sign-off · placeholder</span>
+    </div>
+    <p style="margin-top:20px;color:var(--proto-ink-soft);">${escapeHtml(finding.problem)}</p>
+  `;
+  document.getElementById('modal-backdrop').classList.add('is-open');
+}
+
+function openModalForFinding(finding) {
+  openModal(finding);
+}
+
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('is-open');
+}
+
+/* ============================================================================
+   Utils
+============================================================================ */
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/* ============================================================================
+   Wire up
+============================================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  // Filter chips
+  document.querySelectorAll('.theme-chip').forEach(chip => {
+    chip.addEventListener('click', () => applyFilter(chip.dataset.theme));
+  });
+
+  // Carousel buttons
+  document.getElementById('carousel-prev').addEventListener('click', () => goToStage(STATE.carouselIndex - 1));
+  document.getElementById('carousel-next').addEventListener('click', () => goToStage(STATE.carouselIndex + 1));
+
+  // Keyboard nav for carousel (only when carousel section is in viewport)
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    const carouselSection = document.getElementById('section-onboarding');
+    const rect = carouselSection.getBoundingClientRect();
+    const inView = rect.top < window.innerHeight && rect.bottom > 0;
+    if (!inView) return;
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goToStage(STATE.carouselIndex - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); goToStage(STATE.carouselIndex + 1); }
+  });
+
+  // Modal
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('modal-backdrop').addEventListener('click', (e) => {
+    if (e.target.id === 'modal-backdrop') closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Initial render — panels first (anchors must exist before pins try to find them)
+  renderTsPanelCurrent();
+  buildMilestoneBar();
+  renderAllCanvases();
+  renderCarousel();
+
+  // v17c: Umbrella cards expand/collapse in SYNC — clicking any "Read more"
+  // toggles all three at once (grid row expands anyway, so they should match).
+  document.querySelectorAll('.umb-card-l0 .umb-card-expand-l0').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const allCards = document.querySelectorAll('.umb-card-l0');
+      const anyOpen = Array.from(allCards).some(c => c.classList.contains('is-expanded'));
+      const nextState = !anyOpen;
+      allCards.forEach(c => c.classList.toggle('is-expanded', nextState));
+      document.querySelectorAll('.umb-card-l0 .umb-card-expand-l0').forEach(b => {
+        b.firstChild.textContent = nextState ? 'Show less ' : 'Read more ';
+      });
+    });
+  });
+
+  // v18: Hash routing — L1's "Resolves on L0" pills push #finding-CC2 etc.
+  // Scroll to the screen that owns the finding, then activate the pin.
+  handleHashLink();
+});
+
+window.addEventListener('hashchange', handleHashLink);
+
+/* ============================================================================
+   Hash routing — l0.html#finding-CC2 cross-prototype deep-link from L1
+============================================================================ */
+const ONBOARDING_SCREEN_IDS = new Set(CAT.ONBOARDING_STAGES.map(s => s.id));
+
+function handleHashLink() {
+  const hash = (window.location.hash || '').trim();
+  if (!hash) return;
+
+  const m = hash.match(/^#finding-([A-Za-z]+\d+)$/);
+  if (!m) return;
+
+  const findingId = m[1].toUpperCase();
+  const finding = CAT.findingById(findingId);
+  if (!finding) return;
+
+  // Anchor[0] is the canonical primary surface for the finding
+  const anchorScreen = (finding.anchors && finding.anchors[0] && finding.anchors[0].screen) || null;
+  if (!anchorScreen) return;
+
+  const isOnboarding = ONBOARDING_SCREEN_IDS.has(anchorScreen);
+  const sectionId = isOnboarding ? 'section-onboarding' : 'section-' + anchorScreen;
+  const section = document.getElementById(sectionId);
+  if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // After scroll completes: activate the pin OR drive the carousel to the right stage
+  setTimeout(() => {
+    if (isOnboarding) {
+      const idx = CAT.ONBOARDING_STAGES.findIndex(s => s.id === anchorScreen);
+      if (idx >= 0) goToStage(idx);
+    } else {
+      openFinding(findingId, anchorScreen);
+    }
+  }, 380);
+}
+
+// Re-place pins on resize (anchors shift)
+window.addEventListener('resize', () => {
+  renderAllCanvases();
+});
+</script>
+
+</body>
+</html>
