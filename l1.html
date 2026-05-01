@@ -1078,25 +1078,21 @@ body {
 }
 
 /* Rail target inside center col — design-note card for the active move.
-   v18b: When the column is active, the stepper is REPLACED by the card —
-   no stacking, no overlap with side panels. When not active, this slot is empty. */
+   v18c: Stepper stays visible above the card so the user can see the active
+   step + the card simultaneously. Card lives in the rail-target below the
+   stepper; a dashed rule separates them. */
 .fix-rail-target {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
-
-/* v18b: When a move is PINNED (clicked, not just hovered), hide the stepper + eyebrow
-   so the card occupies the same vertical space they did. Hovers still preview the
-   card below — only clicks trigger the stepper-replace pop. */
-.fix-center-col.is-pinned .fix-stepper,
-.fix-center-col.is-pinned .fix-stepper-eyebrow {
-  display: none;
-}
-.fix-center-col.is-pinned .fix-rail-target {
-  border-top: none;
-  padding-top: 0;
+/* When a card is showing, the rail-target gets a dashed top rule + breathing room
+   so the stepper and the card read as related-but-distinct. Empty otherwise. */
+.fix-center-col.is-active .fix-rail-target:not(:empty) {
+  border-top: 1px dashed var(--proto-rule);
+  padding-top: 18px;
+  margin-top: 8px;
 }
 
 /* v18: Pop the rail card when it appears so the click → card connection is visible.
@@ -4522,9 +4518,8 @@ function buildRailCard(f) {
       </div>`;
   }
 
-  // v18b: For move-tier cards (the design moves on the stepper), render a
-  // "Back to all moves" pill above the card. Clicking it deactivates and
-  // restores the stepper in the same column.
+  // v18c: For move-tier cards, render a "Close" pill above the card.
+  // Stepper remains visible above the card; this pill clears the active card.
   const backBtnHtml = (f.tier === 'move')
     ? `<button class="fix-rail-back" type="button" aria-label="Back to all moves">
          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4l-4 4 4 4"/></svg>
