@@ -1292,6 +1292,70 @@ function resolveLinks(linksArr) {
 }
 
 /* ============================================================================
+   EVIDENCE manifest — finding ID → static PNG (always) + MP4 (motion-bug findings).
+   Paths relative; both drafts/ and hosting/ mirror images/evidence/<id>/.
+   AQ11 + CS7 absent: AQ11 still TO CAPTURE; CS7 hard-removed per DECISIONS_LOG #65.
+   Generated 2026-05-01 from evidence/annotated/<id>/v1__*.png + .mp4 inventory.
+============================================================================ */
+const EVIDENCE = {
+  AD1: { png: 'images/evidence/AD1/v1__template-selector-no-descriptions__2026-05-01.png', mp4: null },
+  AD10: { png: 'images/evidence/AD10/v1__planner-says-clickup-ai__2026-05-01.png', mp4: null },
+  AD11: { png: 'images/evidence/AD11/v1__brain-answers-in-chat-not-cards__2026-05-01.png', mp4: 'images/evidence/AD11/v1__brain-answers-in-chat-not-cards__2026-05-01.mp4' },
+  AD12: { png: 'images/evidence/AD12/v1__brain-quick-prompts-no-intro__2026-05-01.png', mp4: null },
+  AD13: { png: 'images/evidence/AD13/v1__get-started-ai-task-last__2026-05-01.png', mp4: null },
+  AD14: { png: 'images/evidence/AD14/v1__ai-task-4-usecases-no-cfs__2026-05-01.png', mp4: null },
+  AD15: { png: 'images/evidence/AD15/v1__cf-checklist-no-ai-variant__2026-05-01.png', mp4: 'images/evidence/AD15/v1__cf-checklist-no-ai-variant__2026-05-01.mp4' },
+  AD16: { png: 'images/evidence/AD16/v1__5-hop-discovery-path__2026-05-01.png', mp4: null },
+  AD17: { png: 'images/evidence/AD17/v1__global-search-no-help-docs__2026-05-01.png', mp4: 'images/evidence/AD17/v1__global-search-no-help-docs__2026-05-01.mp4' },
+  AD18: { png: 'images/evidence/AD18/v1__workspace-setup-opaque__2026-05-01.png', mp4: 'images/evidence/AD18/v1__workspace-setup-opaque__2026-05-01.mp4' },
+  AD2: { png: 'images/evidence/AD2/v1__picker-duplicates__2026-05-01.png', mp4: null },
+  AD3: { png: 'images/evidence/AD3/v1__brain-branding-drift__2026-05-01.png', mp4: null },
+  AD4: { png: 'images/evidence/AD4/v1__field-type-tooltips-copy-pass__2026-05-01.png', mp4: null },
+  AD5: { png: 'images/evidence/AD5/v1__step5-no-personalization__2026-05-01.png', mp4: 'images/evidence/AD5/v1__step5-no-personalization__2026-05-01.mp4' },
+  AD6: { png: 'images/evidence/AD6/v1__step3-vs-step5-ai-tools__2026-05-01.png', mp4: null },
+  AD7: { png: 'images/evidence/AD7/v1__brain-pmo-no-aicf-mention__2026-05-01.png', mp4: 'images/evidence/AD7/v1__brain-pmo-no-aicf-mention__2026-05-01.mp4' },
+  AD8: { png: 'images/evidence/AD8/v1__sidebar-vs-right-panel__2026-05-01.png', mp4: null },
+  AD9: { png: 'images/evidence/AD9/v1__sidebar-pages-no-ai-intro__2026-05-01.png', mp4: null },
+  AQ1: { png: 'images/evidence/AQ1/v1__tellai-tooltip-redundant__2026-05-01.png', mp4: null },
+  AQ10: { png: 'images/evidence/AQ10/v1__default-prompts-format-conflict__2026-05-01.png', mp4: null },
+  AQ12: { png: 'images/evidence/AQ12/v1__categorize-vs-custom-same-template__2026-05-01.png', mp4: null },
+  AQ2: { png: 'images/evidence/AQ2/v1__default-prompts-copy-issues__2026-05-01.png', mp4: null },
+  AQ3: { png: 'images/evidence/AQ3/v1__format-tooltips-wrong__2026-05-01.png', mp4: null },
+  AQ4: { png: 'images/evidence/AQ4/v1__manual-sort-collision__2026-05-01.png', mp4: null },
+  AQ5: { png: 'images/evidence/AQ5/v1__ai-clickapps-all-on__2026-05-01.png', mp4: null },
+  AQ6: { png: 'images/evidence/AQ6/v1__autofill-silent-automation__2026-05-01.png', mp4: 'images/evidence/AQ6/v1__autofill-silent-automation__2026-05-01.mp4' },
+  AQ7: { png: 'images/evidence/AQ7/v1__variable-picker-friction__2026-05-01.png', mp4: null },
+  AQ8: { png: 'images/evidence/AQ8/v1__brain-rate-limit-first-interaction__2026-05-01.png', mp4: 'images/evidence/AQ8/v1__brain-rate-limit-first-interaction__2026-05-01.mp4' },
+  AQ9: { png: 'images/evidence/AQ9/v1__no-cost-warning__2026-05-01.png', mp4: null },
+  CC1: { png: 'images/evidence/CC1/v1__form-controls-dont-talk__2026-05-01.png', mp4: 'images/evidence/CC1/v1__form-controls-dont-talk__2026-05-01.mp4' },
+  CC2: { png: 'images/evidence/CC2/v1__field-name-stale-on-template-change__2026-05-01.png', mp4: null },
+  CC3: { png: 'images/evidence/CC3/v1__format-control-locks-up__2026-05-01.png', mp4: 'images/evidence/CC3/v1__format-control-locks-up__2026-05-01.mp4' },
+  CC4: { png: 'images/evidence/CC4/v1__translation-picker-stuck__2026-05-01.png', mp4: null },
+  CC5: { png: 'images/evidence/CC5/v1__options-stranded-on-template-change__2026-05-01.png', mp4: null },
+  CS1: { png: 'images/evidence/CS1/v1__three-entry-points-diverge__2026-05-01.png', mp4: null },
+  CS10: { png: 'images/evidence/CS10/v1__add-existing-pre-step__2026-05-01.png', mp4: 'images/evidence/CS10/v1__add-existing-pre-step__2026-05-01.mp4' },
+  CS11: { png: 'images/evidence/CS11/v1__dropdown-options-position-inconsistent__2026-05-01.png', mp4: null },
+  CS12: { png: 'images/evidence/CS12/v1__field-type-naming-drift__2026-05-01.png', mp4: null },
+  CS13: { png: 'images/evidence/CS13/v1__trigger-copy-mismatch__2026-05-01.png', mp4: null },
+  CS14: { png: 'images/evidence/CS14/v1__fill-method-toggle-hidden-on-ai-direct__2026-05-01.png', mp4: null },
+  CS15: { png: 'images/evidence/CS15/v1__permissions-view-only__2026-05-01.png', mp4: null },
+  CS16: { png: 'images/evidence/CS16/v1__progress-updates-default-differs__2026-05-01.png', mp4: null },
+  CS2: { png: 'images/evidence/CS2/v1__description-placement-inconsistent__2026-05-01.png', mp4: null },
+  CS3: { png: 'images/evidence/CS3/v1__prompt-textarea-size-differs__2026-05-01.png', mp4: null },
+  CS4: { png: 'images/evidence/CS4/v1__settings-micro-inconsistencies__2026-05-01.png', mp4: null },
+  CS5: { png: 'images/evidence/CS5/v1__cfm-two-col-vs-view-one-col__2026-05-01.png', mp4: null },
+  CS6: { png: 'images/evidence/CS6/v1__task-entry-degraded-variant__2026-05-01.png', mp4: null },
+  CS8: { png: 'images/evidence/CS8/v1__suggested-absent-from-task__2026-05-01.png', mp4: null },
+  CS9: { png: 'images/evidence/CS9/v1__type-picker-flat-list__2026-05-01.png', mp4: null },
+  FG1: { png: 'images/evidence/FG1/v1__no-prompt-output-preview__2026-05-01.png', mp4: null },
+  FG2: { png: 'images/evidence/FG2/v1__cfm-hides-ai-nature__2026-05-01.png', mp4: 'images/evidence/FG2/v1__cfm-hides-ai-nature__2026-05-01.mp4' },
+  FG3: { png: 'images/evidence/FG3/v1__ai-fields-not-in-calculations__2026-05-01.png', mp4: null },
+  FG4: { png: 'images/evidence/FG4/v1__no-prompt-library__2026-05-01.png', mp4: null },
+};
+
+function evidenceFor(id) { return EVIDENCE[id] || { png: null, mp4: null }; }
+
+/* ============================================================================
    Exports — exposed on window for vanilla-JS prototypes (no module bundler)
 ============================================================================ */
 
@@ -1304,11 +1368,13 @@ if (typeof window !== 'undefined') {
     UMBRELLAS,
     FINDINGS,
     DESIGN_MOVES,
+    EVIDENCE,
     findingById,
     umbrellaById,
     moveById,
     findingsForScreen,
     findingsByTheme,
     resolveLinks,
+    evidenceFor,
   };
 }

@@ -1309,6 +1309,66 @@ img { max-width: 100%; height: auto; display: block; }
   text-transform: uppercase;
   opacity: 0.7;
 }
+
+/* v18d: When the thumb wraps an actual image, drop the theme-tinted background
+   and let the image fill the frame with a brand border + subtle shadow. */
+.rail-card-evidence-thumb.has-image {
+  background: var(--proto-surface);
+  border: 1px solid var(--proto-rule);
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 8px 22px -8px rgba(15, 23, 42, 0.18);
+}
+.rail-card-evidence-thumb.has-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Play badge — only on findings that have a motion MP4 */
+.rail-card-evidence-thumb .ev-play-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px 3px 6px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.78);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.rail-card-evidence-thumb .ev-play-badge svg { width: 8px; height: 8px; }
+
+/* Modal — large image / video container */
+.modal-evidence-frame {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: #0f172a;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.30);
+}
+.modal-evidence-frame img,
+.modal-evidence-frame video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.modal-evidence-fallback {
+  aspect-ratio: 16/9;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
 .rail-card-links {
   margin-top: 16px;
   font-size: 12px;
@@ -2531,11 +2591,24 @@ function renderRailCard(railEl, finding, contextScreen) {
       <p>${escapeHtml(finding.variantsAffected)}</p>
     </div>` : ''}
     <div class="rail-card-evidence">
-      <div class="rail-card-evidence-thumb" data-theme="${finding.theme}" data-evidence-id="${finding.id}">
-        <span class="ev-id">${finding.id}</span>
-        <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.04em;text-align:center;line-height:1.4;">${escapeHtml(finding.evidenceHeadline || finding.title)}</span>
-        <span class="ev-pending">Visual proof — pending sign-off</span>
-      </div>
+      ${(() => {
+        const ev = (CAT.evidenceFor ? CAT.evidenceFor(finding.id) : (CAT.EVIDENCE && CAT.EVIDENCE[finding.id])) || { png: null, mp4: null };
+        if (ev && ev.png) {
+          const playBadge = ev.mp4 ? `<span class="ev-play-badge"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3l9 5-9 5V3z"/></svg>Play</span>` : '';
+          return `
+            <div class="rail-card-evidence-thumb has-image" data-theme="${finding.theme}" data-evidence-id="${finding.id}">
+              <img src="${ev.png}" alt="${escapeHtml(finding.evidenceHeadline || finding.title)}" loading="lazy" />
+              ${playBadge}
+            </div>`;
+        }
+        // Fallback — colored placeholder when no image yet (AQ11, CS7-removed)
+        return `
+            <div class="rail-card-evidence-thumb" data-theme="${finding.theme}" data-evidence-id="${finding.id}">
+              <span class="ev-id">${finding.id}</span>
+              <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.04em;text-align:center;line-height:1.4;">${escapeHtml(finding.evidenceHeadline || finding.title)}</span>
+              <span class="ev-pending">Visual proof — pending capture</span>
+            </div>`;
+      })()}
     </div>
     ${linkedHtml ? `
     <div class="rail-card-section">
@@ -2754,6 +2827,30 @@ function goToStage(idx) {
 ============================================================================ */
 function openModal(finding) {
   const body = document.getElementById('modal-body');
+  const ev = (CAT.evidenceFor ? CAT.evidenceFor(finding.id) : (CAT.EVIDENCE && CAT.EVIDENCE[finding.id])) || { png: null, mp4: null };
+
+  // v18d: MP4 takes precedence in the lightbox (motion-bug findings auto-play looped + muted).
+  // PNG fills in for static-bug findings. Theme placeholder only when neither asset exists.
+  let evidenceHtml;
+  if (ev.mp4) {
+    evidenceHtml = `
+      <div class="modal-evidence-frame">
+        <video src="${ev.mp4}" poster="${ev.png || ''}" autoplay muted loop playsinline controls preload="metadata"></video>
+      </div>`;
+  } else if (ev.png) {
+    evidenceHtml = `
+      <div class="modal-evidence-frame">
+        <img src="${ev.png}" alt="${escapeHtml(finding.evidenceHeadline || finding.title)}" />
+      </div>`;
+  } else {
+    evidenceHtml = `
+      <div class="rail-card-evidence-thumb modal-evidence-fallback" data-theme="${finding.theme}">
+        <span class="ev-id" style="font-size:48px;">${finding.id}</span>
+        <span style="font-family:var(--font-mono);font-size:13px;letter-spacing:0.04em;text-align:center;line-height:1.5;margin-top:8px;">${escapeHtml(finding.evidenceHeadline || finding.title)}</span>
+        <span class="ev-pending" style="margin-top:12px;">Visual proof — pending capture</span>
+      </div>`;
+  }
+
   body.innerHTML = `
     <div class="rail-card-head">
       <span class="rail-card-pin" data-theme="${finding.theme}">${finding.id}</span>
@@ -2761,11 +2858,7 @@ function openModal(finding) {
       <div class="rail-card-meta" style="margin-left:auto;"><strong>${CAT.THEMES[finding.theme].name}</strong></div>
     </div>
     <h3 class="rail-card-title" style="font-size:24px;">${escapeHtml(finding.title)}</h3>
-    <div class="rail-card-evidence-thumb" data-theme="${finding.theme}" style="aspect-ratio:16/9;max-width:100%;">
-      <span class="ev-id" style="font-size:48px;">${finding.id}</span>
-      <span style="font-family:var(--font-mono);font-size:13px;letter-spacing:0.04em;text-align:center;line-height:1.5;margin-top:8px;">${escapeHtml(finding.evidenceHeadline || finding.title)}</span>
-      <span class="ev-pending" style="margin-top:12px;">Visual proof — pending sign-off · placeholder</span>
-    </div>
+    ${evidenceHtml}
     <p style="margin-top:20px;color:var(--proto-ink-soft);">${escapeHtml(finding.problem)}</p>
   `;
   document.getElementById('modal-backdrop').classList.add('is-open');
@@ -2776,6 +2869,8 @@ function openModalForFinding(finding) {
 }
 
 function closeModal() {
+  // v18d: pause + release any playing video so audio doesn't keep going behind the curtain.
+  document.querySelectorAll('#modal-body video').forEach(v => { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) {} });
   document.getElementById('modal-backdrop').classList.remove('is-open');
 }
 
