@@ -4313,12 +4313,14 @@ body { min-height: 100vh; }
 <nav class="proto-nav" aria-label="Prototype navigation">
   <div class="proto-nav-inner">
     <span class="proto-nav-brand"><span class="dot"></span>AI Custom Fields</span>
-    <a href="index.html">Overview</a>
-    <a href="l0.html">L0 — Audit</a>
-    <a href="l1.html">L1 — Integration</a>
-    <a href="l2.html" class="is-current" aria-current="page">L2 — Direction</a>
-    <a href="https://link.consultsdw.com/ai-custom-fields-doc" target="_blank" rel="noopener">Doc ↗</a>
-    <a href="https://link.consultsdw.com/ai-custom-fields-figma2" target="_blank" rel="noopener">Figma ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-prototype">Overview</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-audit">L0 — Audit</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-L1">L1 — Integration</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-L2" class="is-current" aria-current="page">L2 — Direction</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields" target="_blank" rel="noopener">Doc ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-figma-design" target="_blank" rel="noopener">Figma ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-canny" target="_blank" rel="noopener">Canny ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-public" target="_blank" rel="noopener">Public Sentiment ↗</a>
   </div>
 </nav>
 
@@ -6367,7 +6369,7 @@ body { min-height: 100vh; }
     <div class="chapter-eyebrow"><span class="chapter-num">5</span>Act Five · The future, further</div>
     <h2 class="chapter-title">Three bets, one horizon.</h2>
     <p class="chapter-lede">
-      Phase 5 and beyond. What Brain-native AI Custom Fields become when the foundation — Acts 1–4 — is in place. None of these are speculative — each rides on capability that ships today or in phases above.
+      Phases 5 and 6. What Brain-native AI Custom Fields become when the foundation — Acts 1–4 — is in place. None of these are speculative — each rides on capability that ships today or in phases above.
     </p>
 
     <div class="future-stack">
@@ -6379,11 +6381,11 @@ body { min-height: 100vh; }
             <span class="future-card-slug">Card 1</span>
             <span class="future-card-phase">Phase 5</span>
           </div>
-          <div class="future-card-title">Describe the field. Brain drafts the field.</div>
+          <div class="future-card-title">Describe what you need. Brain builds it.</div>
           <div class="future-card-body">
-            A pre-Settings entry point. Describe what you want in one sentence. Brain proposes a fully configured AI field — name, template, prompt, output format, automations — then opens the Settings Screen pre-populated so you review, tweak, and ship.
+            Brain and Super Agents already build fields, lists, views, Docs, and reminders from natural language today. The bet: this becomes the front door for every workspace element — fields, lists, folders, spaces, dashboards, automations. One sentence in. A configured element out — name, settings, references, automations all proposed. The Settings Screen becomes the tweak pane, not the creation pane.
             <br><br>
-            <strong>Reuses:</strong> Brain's natural-language interface + Super Agents' builder pattern. The Settings Screen becomes the tweak pane, not the creation pane.
+            <strong>Reuses:</strong> Brain's natural-language interface + Super Agents' builder pattern, extended across the workspace hierarchy. ClickUp builds across the system; competitors build inside one base, page, or board.
           </div>
         </div>
 
@@ -6471,13 +6473,13 @@ body { min-height: 100vh; }
         <div class="future-card-text">
           <div class="future-card-head">
             <span class="future-card-slug">Card 2</span>
-            <span class="future-card-phase">Phase 5</span>
+            <span class="future-card-phase">Phase 6</span>
           </div>
-          <div class="future-card-title">Fields that reference each other.</div>
+          <div class="future-card-title">Fields that reason about each other.</div>
           <div class="future-card-body">
-            A project's Weekly Update references its Risk Score. The Risk Score references its Blocker Summary. Native fields like Due date feed the system. Fields become composable building blocks — each reads the outputs of others, and the workspace's state flows through the graph.
+            Today an AI field can pull another field's value by typing <code>{{Field Name}}</code> into the prompt — manual, static, only useful if you know which field to pull. The bet is three deltas: <strong>no manual wiring</strong> (Brain infers which fields are relevant); <strong>reasoning across the graph</strong> (Brain combines values, not just inserts them — <code>Status=Blocked AND Blocker=Customer → cluster pattern in reports</code>); <strong>refresh dependency</strong> (when upstream updates, downstream re-runs automatically; today they read stale data, audit finding AQ11). Fields become a connected, self-updating system.
             <br><br>
-            <strong>Reuses:</strong> Brain's cross-field reasoning (already powering chat-style queries today). A dependency check prevents runaway cost.
+            <strong>Reuses:</strong> Brain's cross-field reasoning, already powering chat-style queries today (<em>"show me blocked tasks waiting on customers"</em>). A dependency check prevents runaway cost.
           </div>
         </div>
 
@@ -6561,11 +6563,13 @@ body { min-height: 100vh; }
         <div class="future-card-text">
           <div class="future-card-head">
             <span class="future-card-slug">Card 3</span>
-            <span class="future-card-phase">Phase 5+</span>
+            <span class="future-card-phase">Phase 6</span>
           </div>
-          <div class="future-card-title">When a Super Agent owns the field.</div>
+          <div class="future-card-title">When a Custom Field becomes an Agent.</div>
           <div class="future-card-body">
-            This card makes concrete the argument the Strategic Reframe already makes: <strong>AI Custom Fields and Super Agents are two points on a spectrum, not two separate products.</strong> A dropdown starts as a Sentiment classifier. It accumulates reasoning, then approval flows, then cross-field logic. At some point it's indistinguishable from an agent whose output happens to be a field value — and that's the point. Teams start simple and grow into sophistication without picking a product.
+            Bet 1 said Brain and Super Agents will build any workspace element. Bet 2 said fields reason across each other. Bet 3 closes the loop: at some point, the line between <em>"a field that reasons"</em> and <em>"an agent whose output is a field value"</em> disappears. <strong>AI Custom Fields and Super Agents are two points on a spectrum, not two separate products.</strong>
+            <br><br>
+            <strong>Example.</strong> A Sentiment dropdown starts as a 5-level classifier. It adds confidence + reasoning trace (Bet 2). It adds cross-field logic — references Customer Account and Severity (Bet 2). It adds workspace actions — escalate negative sentiment, post to Chat, suggest new options. By step four, it <em>is</em> a Customer Sentiment Agent. Same dropdown; same canonical value the workspace treats as truth; richer capability behind it. Teams grow into sophistication without picking a product at creation.
             <br><br>
             <strong>Reuses:</strong> Super Agent instructions, skills, and memory — extended so one of the agent's outputs is a field value the workspace treats as canonical.
           </div>
@@ -6628,7 +6632,7 @@ body { min-height: 100vh; }
       <span class="sep">·</span>
       <span>Future State</span>
       <span class="sep">·</span>
-      <span>Phases 2-5+</span>
+      <span>Phases 2-6</span>
       <span class="sep">·</span>
       <span>AI Custom Fields</span>
       <span class="sep">·</span>

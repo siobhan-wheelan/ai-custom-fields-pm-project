@@ -722,10 +722,11 @@ img { max-width: 100%; height: auto; display: block; }
   border-bottom: 1px solid var(--proto-rule);
 }
 .cfm-screenshot {
-  width: 100%;
-  max-width: 100%;
+  width: 60%;
+  max-width: 60%;
   height: auto;
   display: block;
+  margin: 0 auto;
   border-radius: var(--r-md);
   border: 1px solid var(--proto-rule);
   background: #fff;
@@ -1480,6 +1481,38 @@ img { max-width: 100%; height: auto; display: block; }
   transition: width 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
+.chapter-narrative {
+  margin-top: 24px;
+  margin-bottom: 20px;
+  padding: 20px 24px;
+  background: var(--proto-surface-soft);
+  border-left: 3px solid var(--theme-ad);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+.chapter-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--proto-ink-mute);
+  margin-bottom: 6px;
+}
+.chapter-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  line-height: 1.25;
+  color: var(--proto-ink);
+  margin: 0 0 8px;
+}
+.chapter-caption {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--proto-ink-soft);
+  margin: 0;
+}
+
 .carousel-frame-wrap {
   display: grid;
   grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
@@ -1742,12 +1775,14 @@ img { max-width: 100%; height: auto; display: block; }
 <nav class="proto-nav" aria-label="Prototype navigation">
   <div class="proto-nav-inner">
     <span class="proto-nav-brand"><span class="dot"></span>AI Custom Fields</span>
-    <a href="index.html">Overview</a>
-    <a href="l0.html" class="is-current" aria-current="page">L0 — Audit</a>
-    <a href="l1.html">L1 — Integration</a>
-    <a href="l2.html">L2 — Direction</a>
-    <a href="https://link.consultsdw.com/ai-custom-fields-doc" target="_blank" rel="noopener">Doc ↗</a>
-    <a href="https://link.consultsdw.com/ai-custom-fields-figma2" target="_blank" rel="noopener">Figma ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-prototype">Overview</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-audit" class="is-current" aria-current="page">L0 — Audit</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-L1">L1 — Integration</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-L2">L2 — Direction</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields" target="_blank" rel="noopener">Doc ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-figma-design" target="_blank" rel="noopener">Figma ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-canny" target="_blank" rel="noopener">Canny ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-public" target="_blank" rel="noopener">Public Sentiment ↗</a>
   </div>
 </nav>
 
@@ -2141,18 +2176,23 @@ img { max-width: 100%; height: auto; display: block; }
         <div class="milestone-progress-fill" id="milestone-progress-fill"></div>
       </div>
     </div>
+    <div class="chapter-narrative" id="chapter-narrative">
+      <div class="chapter-eyebrow" id="chapter-eyebrow">Chapter 1 of 5</div>
+      <h3 class="chapter-title" id="chapter-title">AI is everywhere in onboarding.</h3>
+      <p class="chapter-caption" id="chapter-caption"></p>
+    </div>
     <div class="carousel-frame-wrap" id="carousel-frame-wrap">
       <div class="carousel-screenshot" id="carousel-screenshot">
-        <strong>Stage screenshot</strong>
-        Carousel populated by Task #6 — frame screenshots will land here per stage.
+        <strong>Chapter graphic</strong>
+        Chapter graphics rendered by Design Agent 2026-05-05.
       </div>
       <div class="carousel-cards" id="carousel-cards">
-        <div class="carousel-empty">Findings on this stage stack here.</div>
+        <div class="carousel-empty">Findings on this chapter stack here.</div>
       </div>
     </div>
     <div class="carousel-controls">
       <button class="carousel-btn" id="carousel-prev" type="button">← Previous</button>
-      <span class="carousel-counter" id="carousel-counter">Stage 1 of 10</span>
+      <span class="carousel-counter" id="carousel-counter">Chapter 1 of 5</span>
       <button class="carousel-btn" id="carousel-next" type="button">Next →</button>
     </div>
   </div>
@@ -2316,7 +2356,7 @@ const STATE = {
   filter: 'all',           // 'all' | 'CC' | 'CS' | 'AQ' | 'AD' | 'FG'
   activeFinding: null,     // currently-pinned finding ID
   activeRailScreen: null,  // which screen's rail is showing the active finding
-  carouselIndex: 0,        // 0..9
+  carouselIndex: 0,        // 0..4 (5 onboarding chapters)
 };
 
 const CAT = window.CATALOG;
@@ -2595,11 +2635,11 @@ function renderRailCard(railEl, finding, contextScreen) {
       ${screensList.length ? screensList.join(' · ') : ''}
     </div>
     <div class="rail-card-section">
-      <h4>The bug</h4>
+      <h4>The Finding</h4>
       <p>${escapeHtml(finding.problem)}</p>
     </div>
     <div class="rail-card-section">
-      <h4>Suggested fix</h4>
+      <h4>Recommendation</h4>
       <p>${escapeHtml(finding.fix)}</p>
     </div>
     ${finding.variantsAffected ? `
@@ -2750,19 +2790,22 @@ function getThemeName(theme) {
 /* ============================================================================
    Section 5 — Carousel
 ============================================================================ */
+/* 2026-05-05: Section 5 carousel is now a 5-chapter narrative (was 10 stages).
+   Chapter spine = audit-story beats; right rail = findings tagged to that chapter.
+   See findings.js → ONBOARDING_CHAPTERS. */
 function buildMilestoneBar() {
   const bar = document.getElementById('milestone-bar');
   bar.innerHTML = '';
-  CAT.ONBOARDING_STAGES.forEach((stage, idx) => {
+  CAT.ONBOARDING_CHAPTERS.forEach((chapter, idx) => {
     const step = document.createElement('button');
     step.type = 'button';
     step.className = 'milestone-step' + (idx === STATE.carouselIndex ? ' is-current' : '');
     const num = String(idx + 1).padStart(2, '0');
     step.innerHTML = `
       <span class="milestone-num">${num}</span>
-      <span class="milestone-label">${escapeHtml(stage.label)}</span>
+      <span class="milestone-label">${escapeHtml(chapter.title)}</span>
     `;
-    step.addEventListener('click', () => goToStage(idx));
+    step.addEventListener('click', () => goToChapter(idx));
     bar.appendChild(step);
   });
   updateMilestoneProgress();
@@ -2771,14 +2814,14 @@ function buildMilestoneBar() {
 function updateMilestoneProgress() {
   const fill = document.getElementById('milestone-progress-fill');
   if (!fill) return;
-  const total = CAT.ONBOARDING_STAGES.length;
+  const total = CAT.ONBOARDING_CHAPTERS.length;
   const pct = ((STATE.carouselIndex + 1) / total) * 100;
   fill.style.width = pct + '%';
 }
 
 function renderCarousel() {
-  const stage = CAT.ONBOARDING_STAGES[STATE.carouselIndex];
-  if (!stage) return;
+  const chapter = CAT.ONBOARDING_CHAPTERS[STATE.carouselIndex];
+  if (!chapter) return;
 
   // Update milestone bar active state
   document.querySelectorAll('.milestone-step').forEach((step, idx) => {
@@ -2786,36 +2829,40 @@ function renderCarousel() {
   });
   updateMilestoneProgress();
 
-  // v18d: Stage screenshot pulled from CAT.ONBOARDING_STAGE_IMAGES (sourced from
-  // onboarding-audit/_assets/ + evidence/annotated/AD15). Falls back to the
-  // labeled placeholder if a stage doesn't have an image yet.
+  // Chapter narrative (eyebrow + title + caption)
+  document.getElementById('chapter-eyebrow').textContent = chapter.eyebrow;
+  document.getElementById('chapter-title').textContent = chapter.title;
+  document.getElementById('chapter-caption').textContent = chapter.caption;
+
+  // Chapter graphic (PNG produced by Design Agent)
   const sc = document.getElementById('carousel-screenshot');
-  const stageImg = (CAT.onboardingStageImage ? CAT.onboardingStageImage(stage.id) : null);
-  if (stageImg) {
+  if (chapter.graphic) {
     sc.classList.add('has-image');
-    sc.innerHTML = `<img src="${stageImg}" alt="${escapeHtml(stage.label)}" loading="lazy" />`;
+    sc.innerHTML = `<img src="${chapter.graphic}" alt="${escapeHtml(chapter.title)}" loading="lazy" />`;
   } else {
     sc.classList.remove('has-image');
-    sc.innerHTML = `<strong>${stage.label}</strong><span class="carousel-screenshot-meta">Stage screenshot — pending capture</span>`;
+    sc.innerHTML = `<strong>${escapeHtml(chapter.title)}</strong><span class="carousel-screenshot-meta">Chapter graphic — pending render</span>`;
   }
 
-  // Filter findings for this stage + apply filter
-  const allForStage = CAT.findingsForScreen(stage.id);
-  const findingsForStage = STATE.filter === 'all'
-    ? allForStage
-    : allForStage.filter(f => f.theme === STATE.filter);
+  // Findings on the right rail — filtered by current theme filter
+  const allForChapter = CAT.findingsForChapter(chapter.id);
+  const findingsForChapter = STATE.filter === 'all'
+    ? allForChapter
+    : allForChapter.filter(f => f.theme === STATE.filter);
 
   const cardsContainer = document.getElementById('carousel-cards');
   cardsContainer.innerHTML = '';
-  if (findingsForStage.length === 0) {
+  if (findingsForChapter.length === 0) {
     const empty = document.createElement('div');
     empty.className = 'carousel-empty';
-    empty.textContent = STATE.filter === 'all'
-      ? 'No findings on this stage.'
-      : `No ${getThemeName(STATE.filter)} findings on this stage.`;
+    if (allForChapter.length === 0) {
+      empty.textContent = 'Scene-setting chapter — no findings on this beat.';
+    } else {
+      empty.textContent = `No ${getThemeName(STATE.filter)} findings on this chapter.`;
+    }
     cardsContainer.appendChild(empty);
   } else {
-    findingsForStage.forEach(finding => {
+    findingsForChapter.forEach(finding => {
       const card = document.createElement('div');
       card.className = 'carousel-finding-card';
       card.innerHTML = `
@@ -2835,13 +2882,13 @@ function renderCarousel() {
   }
 
   // Update counter + buttons
-  document.getElementById('carousel-counter').textContent = `Stage ${STATE.carouselIndex + 1} of ${CAT.ONBOARDING_STAGES.length}`;
+  document.getElementById('carousel-counter').textContent = `Chapter ${STATE.carouselIndex + 1} of ${CAT.ONBOARDING_CHAPTERS.length}`;
   document.getElementById('carousel-prev').disabled = STATE.carouselIndex === 0;
-  document.getElementById('carousel-next').disabled = STATE.carouselIndex === CAT.ONBOARDING_STAGES.length - 1;
+  document.getElementById('carousel-next').disabled = STATE.carouselIndex === CAT.ONBOARDING_CHAPTERS.length - 1;
 }
 
-function goToStage(idx) {
-  if (idx < 0 || idx >= CAT.ONBOARDING_STAGES.length) return;
+function goToChapter(idx) {
+  if (idx < 0 || idx >= CAT.ONBOARDING_CHAPTERS.length) return;
   STATE.carouselIndex = idx;
   renderCarousel();
 }
@@ -2921,8 +2968,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Carousel buttons
-  document.getElementById('carousel-prev').addEventListener('click', () => goToStage(STATE.carouselIndex - 1));
-  document.getElementById('carousel-next').addEventListener('click', () => goToStage(STATE.carouselIndex + 1));
+  document.getElementById('carousel-prev').addEventListener('click', () => goToChapter(STATE.carouselIndex - 1));
+  document.getElementById('carousel-next').addEventListener('click', () => goToChapter(STATE.carouselIndex + 1));
 
   // Keyboard nav for carousel (only when carousel section is in viewport)
   document.addEventListener('keydown', (e) => {
@@ -2931,8 +2978,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const rect = carouselSection.getBoundingClientRect();
     const inView = rect.top < window.innerHeight && rect.bottom > 0;
     if (!inView) return;
-    if (e.key === 'ArrowLeft') { e.preventDefault(); goToStage(STATE.carouselIndex - 1); }
-    if (e.key === 'ArrowRight') { e.preventDefault(); goToStage(STATE.carouselIndex + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goToChapter(STATE.carouselIndex - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); goToChapter(STATE.carouselIndex + 1); }
   });
 
   // Modal
@@ -2973,9 +3020,18 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('hashchange', handleHashLink);
 
 /* ============================================================================
-   Hash routing — l0.html#finding-CC2 cross-prototype deep-link from L1
+   Hash routing — l0.html#finding-CC2 cross-prototype deep-link from L1.
+   Onboarding findings (post-2026-05-05): route to the FIRST chapter that
+   contains the finding (some findings live in multiple chapters; we land
+   on the earliest narrative beat for a clean read).
 ============================================================================ */
-const ONBOARDING_SCREEN_IDS = new Set(CAT.ONBOARDING_STAGES.map(s => s.id));
+const ONBOARDING_FINDING_IDS = new Set(
+  CAT.ONBOARDING_CHAPTERS.flatMap(ch => ch.findingIds)
+);
+// Legacy stage-id set kept for any non-chapter onboarding screen routing
+const ONBOARDING_STAGE_SCREEN_IDS = new Set(
+  (CAT.ONBOARDING_STAGES || []).map(s => s.id)
+);
 
 function handleHashLink() {
   const hash = (window.location.hash || '').trim();
@@ -2988,20 +3044,29 @@ function handleHashLink() {
   const finding = CAT.findingById(findingId);
   if (!finding) return;
 
-  // Anchor[0] is the canonical primary surface for the finding
+  // Two onboarding routing paths:
+  //   1. Finding is tagged on a chapter rail → route to that chapter
+  //   2. Finding's anchor.screen is a legacy stage ID → route to onboarding section
+  const isChapterFinding = ONBOARDING_FINDING_IDS.has(findingId);
   const anchorScreen = (finding.anchors && finding.anchors[0] && finding.anchors[0].screen) || null;
-  if (!anchorScreen) return;
+  const isLegacyStage = anchorScreen && ONBOARDING_STAGE_SCREEN_IDS.has(anchorScreen);
+  const isOnboarding = isChapterFinding || isLegacyStage;
 
-  const isOnboarding = ONBOARDING_SCREEN_IDS.has(anchorScreen);
-  const sectionId = isOnboarding ? 'section-onboarding' : 'section-' + anchorScreen;
+  const sectionId = isOnboarding
+    ? 'section-onboarding'
+    : (anchorScreen ? 'section-' + anchorScreen : null);
+  if (!sectionId) return;
   const section = document.getElementById(sectionId);
   if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // After scroll completes: activate the pin OR drive the carousel to the right stage
+  // After scroll completes: drive the carousel to the right chapter OR open finding pin
   setTimeout(() => {
-    if (isOnboarding) {
-      const idx = CAT.ONBOARDING_STAGES.findIndex(s => s.id === anchorScreen);
-      if (idx >= 0) goToStage(idx);
+    if (isChapterFinding) {
+      const idx = CAT.chapterIndexForFinding(findingId);
+      if (idx >= 0) goToChapter(idx);
+    } else if (isLegacyStage) {
+      // Finding has a stage-screen anchor but isn't on a chapter rail — leave at chapter 1
+      goToChapter(0);
     } else {
       openFinding(findingId, anchorScreen);
     }

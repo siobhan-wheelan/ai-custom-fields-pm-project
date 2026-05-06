@@ -45,6 +45,8 @@
     font-family: var(--font-body);
     font-size: 15px;
     line-height: 1.6;
+  }
+  .research-page-content {
     max-width: 920px;
     margin: 0 auto;
     padding: 56px 32px 96px;
@@ -206,9 +208,81 @@
     color: var(--accent);
     font-weight: 600;
   }
+  .proto-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(248, 246, 242, 0.92);
+    -webkit-backdrop-filter: saturate(180%) blur(8px);
+    backdrop-filter: saturate(180%) blur(8px);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  }
+  .proto-nav-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 12px 56px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-family: 'Sometype Mono', ui-monospace, SFMono-Regular, monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  .proto-nav-brand {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #0f172a;
+    margin-right: auto;
+    display: inline-flex;
+    align-items: center;
+  }
+  .proto-nav-brand .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6647F0 0%, #0091FF 100%);
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  .proto-nav a {
+    color: #475569;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 140ms ease, color 140ms ease;
+  }
+  .proto-nav a:hover { background: rgba(15, 23, 42, 0.05); color: #0f172a; }
+  .proto-nav a.is-current {
+    background: #0f172a;
+    color: #fff;
+    font-weight: 600;
+  }
+  @media (max-width: 720px) {
+    .proto-nav-inner { padding: 10px 24px; gap: 16px; font-size: 10.5px; }
+    .proto-nav-brand { font-size: 13px; }
+  }
 </style>
 </head>
 <body>
+
+<nav class="proto-nav" aria-label="Prototype navigation">
+  <div class="proto-nav-inner">
+    <span class="proto-nav-brand"><span class="dot"></span>AI Custom Fields</span>
+    <a href="https://link.consultsdw.com/ai-custom-fields-prototype">Overview</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-audit">L0 — Audit</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-L1">L1 — Integration</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-L2">L2 — Direction</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields" target="_blank" rel="noopener">Doc ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-figma-design" target="_blank" rel="noopener">Figma ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-canny" target="_blank" rel="noopener">Canny ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-public" class="is-current" aria-current="page">Public Sentiment</a>
+  </div>
+</nav>
+
+<div class="research-page-content">
 
 <h1>Public Sentiment — ClickUp AI Custom Fields <span>— v2</span></h1>
 <div class="subtitle">Research scan of public internet sources outside the ClickUp Canny board. Companion to the Canny feedback report.</div>
@@ -567,6 +641,7 @@
   <li><a href="https://www.taskrhino.ca/blog/clickup-review/">TaskRhino — ClickUp Review 2026</a></li>
   <li><a href="https://www.smartsuite.com/blog/airtable-vs-clickup-vs-smartsuite">SmartSuite — Airtable vs ClickUp comparison (competitor — discounted)</a></li>
 </ul>
+</div>
 
 </body>
 </html>

@@ -246,6 +246,51 @@
     transition: border-color 0.15s;
   }
   .research a:hover { border-bottom-color: var(--accent); }
+  .research-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 6px;
+  }
+  .card-research {
+    background: var(--proto-bg);
+    border: 1px solid var(--proto-rule);
+    border-radius: 10px;
+    padding: 20px 22px 18px;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+  }
+  .card-research:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+  }
+  .card-research .card-eyebrow {
+    margin-bottom: 10px;
+    font-size: 10.5px;
+  }
+  .card-research .card-title {
+    font-size: 16px;
+    line-height: 1.3;
+    margin: 0 0 10px;
+  }
+  .card-research .card-desc {
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin: 0 0 14px;
+  }
+  .card-research .card-meta {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    font-size: 10.5px;
+  }
+  .card-research .card-cta { font-size: 13.5px; }
+  @media (max-width: 720px) {
+    .research-grid { grid-template-columns: 1fr; }
+  }
   footer {
     margin-top: 72px;
     padding-top: 28px;
@@ -337,12 +382,14 @@
 <nav class="proto-nav" aria-label="Prototype navigation">
   <div class="proto-nav-inner">
     <span class="proto-nav-brand"><span class="dot"></span>AI Custom Fields</span>
-    <a href="index.html" class="is-current" aria-current="page">Overview</a>
-    <a href="l0.html">L0 — Audit</a>
-    <a href="l1.html">L1 — Integration</a>
-    <a href="l2.html">L2 — Direction</a>
-    <a href="https://link.consultsdw.com/ai-custom-fields-doc" target="_blank" rel="noopener">Doc ↗</a>
-    <a href="https://link.consultsdw.com/ai-custom-fields-figma2" target="_blank" rel="noopener">Figma ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-prototype" class="is-current" aria-current="page">Overview</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-audit">L0 — Audit</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-L1">L1 — Integration</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-L2">L2 — Direction</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields" target="_blank" rel="noopener">Doc ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-figma-design" target="_blank" rel="noopener">Figma ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-canny" target="_blank" rel="noopener">Canny ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-public" target="_blank" rel="noopener">Public Sentiment ↗</a>
   </div>
 </nav>
 
@@ -353,7 +400,7 @@
   <h1>AI Custom Fields,<br>audited and <em>reimagined</em>.</h1>
 
   <p class="lede">
-    Two working prototypes that walk the present and the future of ClickUp's least-developed AI area. <strong>Level 1</strong> shows the present-state, unified — every Settings Screen, every entry point, every finding pinned to where it shows up. <strong>Level 2</strong> shows the future-state — AI Custom Fields as a Brain-native product system, not a bolt-on form.
+    Three working prototypes built around the audit. <strong>L0</strong> pins every finding to the live ClickUp UI — click any pin to open the finding card with severity, surface, and reproduction. <strong>L1</strong> shows the proposed unified redesign side by side with the current state. <strong>L2</strong> shows the future-state, Brain-native vision.
   </p>
 
   <div class="meta">
@@ -365,16 +412,16 @@
   <div class="how">
     <h2>How to read this</h2>
     <p>
-      The <a href="https://doc.clickup.com/2238432/p/h/249z0-163071/b5736a25b9115ab?utm_campaign=cu-pm-interview&utm_source=interactive-prototype&utm_medium=back-to-doc&utm_content=cover-page" target="_blank" rel="noopener">ClickUp Doc</a> is the primary deliverable — it carries the audit findings, the strategic reframe, and the six-phase roadmap. The two prototypes below are the visual companions: Level 1 makes the audit findings tangible, Level 2 makes the roadmap concrete. The <a href="https://www.figma.com/design/ZmmxOkz28JN7WgtDbkfNt2/PM-Interview-Project---Siobhan-Wheelan?node-id=224-2&utm_campaign=cu-pm-interview&utm_source=interactive-prototype&utm_medium=figma-link&utm_content=cover-page" target="_blank" rel="noopener">Figma file</a> carries the design system — color and type tokens, components, and the Settings Screen progression from current to proposed to future state.
+      The <a href="https://link.consultsdw.com/ai-custom-fields" target="_blank" rel="noopener">ClickUp Doc</a> is the primary deliverable — it carries the audit findings, the strategic reframe, and the six-phase roadmap. The three prototypes below are the visual companions: <strong>L0</strong> makes the audit pinned-to-UI tangible, <strong>L1</strong> shows the proposed unified redesign, <strong>L2</strong> walks the future-state, Brain-native vision. The <a href="https://link.consultsdw.com/ai-custom-fields-figma-design" target="_blank" rel="noopener">Figma file</a> carries the design system — color and type tokens, components, and the Settings Screen progression from current to proposed to future state.
     </p>
     <p>
-      Suggested order: Doc first, then Level 1, then Level 2. Each prototype takes about five to seven minutes to scroll through; the Figma file is a quick three-minute skim.
+      Suggested order: Doc first, then L0, L1, L2. Each prototype takes about five to seven minutes to scroll through; the Figma file is a quick three-minute skim.
     </p>
   </div>
 
   <div class="cards">
 
-    <a class="card" href="l0.html">
+    <a class="card" href="https://link.consultsdw.com/ai-custom-fields-audit">
       <div class="card-eyebrow"><span class="num">L0</span> Audit, mapped</div>
       <h3 class="card-title">54 findings across <em>5 themes</em>, on the screens they live on.</h3>
       <p class="card-desc">
@@ -391,7 +438,7 @@
       </span>
     </a>
 
-    <a class="card" href="l1.html">
+    <a class="card" href="https://link.consultsdw.com/ai-custom-fields-L1">
       <div class="card-eyebrow"><span class="num">L1</span> Integration</div>
       <h3 class="card-title">Phase 1 moves to <em>resolve</em> the audit.</h3>
       <p class="card-desc">
@@ -408,7 +455,7 @@
       </span>
     </a>
 
-    <a class="card" href="l2.html">
+    <a class="card" href="https://link.consultsdw.com/ai-custom-fields-L2">
       <div class="card-eyebrow"><span class="num">L2</span> Future, Brain-native</div>
       <h3 class="card-title">From form to <em>workflow.</em> One product.</h3>
       <p class="card-desc">
@@ -416,7 +463,7 @@
       </p>
       <div class="card-meta">
         <span><strong>Acts</strong> 5</span>
-        <span><strong>Phases</strong> 2-5+</span>
+        <span><strong>Phases</strong> 2-6</span>
         <span><strong>Read time</strong> ~7 min</span>
       </div>
       <span class="card-cta">
@@ -430,10 +477,43 @@
   <div class="research">
     <h2>Source research</h2>
     <p>The audit findings, strategic reframe, and roadmap above are triangulated against direct evidence from ClickUp's own customer voice — Canny feature requests and public sentiment across G2, Capterra, Reddit, and Medium.</p>
-    <ul>
-      <li><a href="https://link.consultsdw.com/ai-custom-fields-research-canny" target="_blank" rel="noopener">Canny signal extraction →</a> &nbsp;121 posts about Custom Fields from ClickUp's own feedback board, 20 AI-tagged. Validates every audit finding with vote-count evidence.</li>
-      <li><a href="https://link.consultsdw.com/ai-custom-fields-research-public" target="_blank" rel="noopener">Public sentiment analysis →</a> &nbsp;G2, Capterra, Reddit, Medium, blogs. Maps the new user vs. power user friction split and the silent billing-anxiety theme.</li>
-    </ul>
+    <div class="research-grid">
+
+      <a class="card-research" href="https://link.consultsdw.com/ai-custom-fields-canny" target="_blank" rel="noopener">
+        <div class="card-eyebrow"><span class="num">Research</span> Canny signal</div>
+        <h3 class="card-title">121 Custom Field Canny posts. <em>20 AI-tagged.</em></h3>
+        <p class="card-desc">
+          ClickUp's own feedback board, vote-weighted. Validates audit findings with vote-count evidence.
+        </p>
+        <div class="card-meta">
+          <span><strong>Posts</strong> 121</span>
+          <span><strong>AI-tagged</strong> 20</span>
+          <span><strong>Read time</strong> ~3 min</span>
+        </div>
+        <span class="card-cta">
+          Open Canny report ↗
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+      <a class="card-research" href="https://link.consultsdw.com/ai-custom-fields-public" target="_blank" rel="noopener">
+        <div class="card-eyebrow"><span class="num">Research</span> Public sentiment</div>
+        <h3 class="card-title">G2 / Capterra / Reddit / <em>Medium / Substack.</em></h3>
+        <p class="card-desc">
+          Public sentiment scan. Maps the new user vs. power user friction split and the silent billing-anxiety theme.
+        </p>
+        <div class="card-meta">
+          <span><strong>Items</strong> 38</span>
+          <span><strong>Sources</strong> 7</span>
+          <span><strong>Read time</strong> ~3 min</span>
+        </div>
+        <span class="card-cta">
+          Open public sentiment report ↗
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </a>
+
+    </div>
   </div>
 
   <footer>

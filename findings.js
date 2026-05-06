@@ -14,7 +14,7 @@
        theme: 'CC',                       // CC | CS | AQ | AD | FG
        severity: 'p0',                    // p0 | p1 | p2
        originalId: 'G3',                  // legacy ID for traceability
-       phase: 1,                          // 1 | 1.5 | 2 | 3 | 5
+       phase: 1,                          // 1 | 1.5 | 2 | 3 | 4 | 5 | 6
        fieldTypes: ['longText','dropdown'],
        title: '…',                        // full title
        oneliner: '…',                     // one-sentence hook
@@ -325,8 +325,9 @@ const FINDINGS = [
     anchors: [
       { screen: 'settings-longText', el: 'more', anchor: 'top-left', offsetX: 6, offsetY: 4 },
       { screen: 'settings-dropdown', el: 'more', anchor: 'top-left', offsetX: 6, offsetY: 4 },
-      { screen: 'typeSelection', el: 'header', anchor: 'top-right', offsetX: -6, offsetY: 10 },     // T4 — copy inconsistency
-      { screen: 'typeSelection', el: 'header', anchor: 'top-left',  offsetX: 10, offsetY: 94 },    // T8 — + icon inconsistency
+      // CS4 is a cluster of 8 micro-inconsistencies; only one pin per panel.
+      // Keep T4 (top-right) on typeSelection; T8 (top-left + icon) folded into the cluster.
+      { screen: 'typeSelection', el: 'header', anchor: 'top-right', offsetX: -6, offsetY: 10 },
     ],
   },
   {
@@ -441,10 +442,10 @@ const FINDINGS = [
   {
     id: 'CS12', theme: 'CS', severity: 'p1', originalId: 'G11', phase: 1,
     fieldTypes: ['longText', 'dropdown'],
-    title: "Field-type names don't match across picker rows, preview cards, and config panels",
+    title: "Field-type names don't match across picker rows, preview cards, and Settings screens",
     oneliner: 'Same field type, three different names. Each surface uses its own.',
-    problem: "Naming inconsistencies across surfaces: 'Custom Text' (picker) vs 'Custom Instructions' (config panel) vs 'Text area (Long Text)' (panel header). 'Money' (picker) vs 'Currency' (preview card). 'Tasks' and 'Relationship' for the same data type. Each field type is named differently in different places.",
-    fix: 'Standardize field-type names across picker, preview, and config panel.',
+    problem: "Naming inconsistencies across surfaces: 'Custom Text' (picker) vs 'Custom Instructions' (Settings screen) vs 'Text area (Long Text)' (panel header). 'Money' (picker) vs 'Currency' (preview card). 'Tasks' and 'Relationship' for the same data type. Each field type is named differently in different places.",
+    fix: 'Standardize field-type names across picker, preview, and Settings screen.',
     variantsAffected: 'Long Text · Money · Relationship · Tasks · Custom variants · Categorize · Custom Dropdown',
     linkedFindings: ['AD2'],
     evidenceTemplate: 'C',
@@ -647,15 +648,15 @@ const FINDINGS = [
   {
     id: 'AQ7', theme: 'AQ', severity: 'p0', originalId: 'G7', phase: 1,
     fieldTypes: ['longText', 'dropdown'],
-    title: 'The prompt variable picker has UX issues that cause friction and make the AI output unreliable',
-    oneliner: 'Cursor drops after insertion. Accepts invalid fields. Output doesn\'t match the prompt — labels altered, fields reordered.',
-    problem: 'The prompt variable picker (used to insert task properties like Title, Description, Comments into the prompt) has multiple UX issues: variables fail to insert as proper variables and instead get inserted as plain text, the picker doesn\'t clearly indicate what each variable returns, and inserted variables don\'t visually differentiate from surrounding prompt text. Result: users build prompts that don\'t substitute correctly at runtime — AI output is unreliable.',
-    fix: 'Fix variable insertion reliability; render variables as visually distinct tokens.',
+    title: 'Cursor jumps to the bottom of the prompt textarea after a variable is inserted',
+    oneliner: 'Cursor jumps to the bottom after variable insert.',
+    problem: "When a user inserts a variable into the prompt textarea, the cursor jumps to the bottom of the textarea instead of returning to the position immediately after the inserted variable. The user loses their place in the prompt and has to scroll back to where they were typing. This happens on every variable insertion, breaking the user's typing flow.",
+    fix: 'After variable insertion, restore cursor position to immediately after the inserted variable token. This is a small fix with a large UX payoff.',
     variantsAffected: 'All AI templates · prompt variable picker · all entry points',
     linkedFindings: [],
     umbrella: 'CC1',
     evidenceTemplate: 'E',
-    evidenceHeadline: 'Variable picker / causes friction, / unreliable output.',
+    evidenceHeadline: 'Cursor jumps to bottom / after variable / insert.',
     userLens: ['Power user'],
     goalAlignment: ['CSAT'],
     behavioral: true,
@@ -719,7 +720,7 @@ const FINDINGS = [
     ],
   },
   {
-    id: 'AQ11', theme: 'AQ', severity: 'p0', originalId: 'G25', phase: 3,
+    id: 'AQ11', theme: 'AQ', severity: 'p0', originalId: 'G25', phase: 6,
     fieldTypes: ['longText', 'dropdown'],
     title: 'AI field chains read stale upstream data — no refresh trigger',
     oneliner: 'AI fields can reference other AI fields. When upstream changes, downstream doesn\'t re-run. No manual refresh either.',
@@ -1087,7 +1088,7 @@ const FINDINGS = [
     ],
   },
   {
-    id: 'FG3', theme: 'FG', severity: 'p1', originalId: 'G26', phase: 5,
+    id: 'FG3', theme: 'FG', severity: 'p1', originalId: 'G26', phase: 6,
     fieldTypes: ['longText', 'dropdown'],
     title: 'AI field output is text-only',
     oneliner: 'AI fields can only return text. No image, file, link, rich-text, or structured-data output.',
@@ -1105,7 +1106,7 @@ const FINDINGS = [
     ],
   },
   {
-    id: 'FG4', theme: 'FG', severity: 'p1', originalId: 'G27', phase: 2,
+    id: 'FG4', theme: 'FG', severity: 'p1', originalId: 'G27', phase: 4,
     fieldTypes: ['longText', 'dropdown'],
     title: 'No prompt or template library — every AI field reconfigures from scratch',
     oneliner: 'Power users rewrite the same prompts repeatedly. Admins can\'t standardize prompts across teams.',
@@ -1174,7 +1175,7 @@ const DESIGN_MOVES = [
     id: 'TS-5',
     surface: 'typeSelection',
     title: 'Field deduplication + canonical naming',
-    what: 'One entry per field type (no duplicates). Canonical names match catalog, picker rows, preview cards, and config panels.',
+    what: 'One entry per field type (no duplicates). Canonical names match catalog, picker rows, preview cards, and Settings screens.',
     why: 'Duplicates make the list look broken on first scan; cross-surface naming mismatches break trust.',
     resolves: ['AD2', 'CS12'],
     anchorProposed: { el: 'all-fields', anchor: 'top-right', offsetX: -6, offsetY: 6 },
@@ -1298,86 +1299,134 @@ function resolveLinks(linksArr) {
    Generated 2026-05-01 from evidence/annotated/<id>/v1__*.png + .mp4 inventory.
 ============================================================================ */
 const EVIDENCE = {
-  AD1: { png: 'images/evidence/AD1/v1__template-selector-no-descriptions__2026-05-01.png', mp4: null },
-  AD10: { png: 'images/evidence/AD10/v1__planner-says-clickup-ai__2026-05-01.png', mp4: null },
+  AD1: { png: 'images/evidence/AD1/v1__template-selector-no-descriptions__2026-05-05.png', mp4: null },
+  AD2: { png: 'images/evidence/AD2/v1__picker-duplicates__2026-05-05.png', mp4: null },
+  AD3: { png: 'images/evidence/AD3/v1__brain-branding-drift__2026-05-05.png', mp4: null },
+  AD4: { png: 'images/evidence/AD4/v1__field-type-tooltips-copy-pass__2026-05-05.png', mp4: null },
+  AD5: { png: 'images/evidence/AD5/v1__step5-no-personalization__2026-05-05.png', mp4: null },
+  AD6: { png: 'images/evidence/AD6/v1__step3-vs-step5-ai-tools__2026-05-05.png', mp4: null },
+  AD7: { png: 'images/evidence/AD7/v1__brain-pmo-no-aicf-mention__2026-05-05.png', mp4: 'images/evidence/AD7/v1__brain-pmo-no-aicf-mention__2026-05-05.mp4' },
+  AD8: { png: 'images/evidence/AD8/v1__sidebar-vs-right-panel__2026-05-05.png', mp4: null },
+  AD9: { png: 'images/evidence/AD9/v1__sidebar-pages-no-ai-intro__2026-05-05.png', mp4: null },
+  AD10: { png: 'images/evidence/AD10/v1__planner-says-clickup-ai__2026-05-05.png', mp4: null },
   AD11: { png: 'images/evidence/AD11/v1__brain-answers-in-chat-not-cards__2026-05-01.png', mp4: 'images/evidence/AD11/v1__brain-answers-in-chat-not-cards__2026-05-01.mp4' },
-  AD12: { png: 'images/evidence/AD12/v1__brain-quick-prompts-no-intro__2026-05-01.png', mp4: null },
-  AD13: { png: 'images/evidence/AD13/v1__get-started-ai-task-last__2026-05-01.png', mp4: null },
-  AD14: { png: 'images/evidence/AD14/v1__ai-task-4-usecases-no-cfs__2026-05-01.png', mp4: null },
-  AD15: { png: 'images/evidence/AD15/v1__cf-checklist-no-ai-variant__2026-05-01.png', mp4: 'images/evidence/AD15/v1__cf-checklist-no-ai-variant__2026-05-01.mp4' },
-  AD16: { png: 'images/evidence/AD16/v1__5-hop-discovery-path__2026-05-01.png', mp4: null },
-  AD17: { png: 'images/evidence/AD17/v1__global-search-no-help-docs__2026-05-01.png', mp4: 'images/evidence/AD17/v1__global-search-no-help-docs__2026-05-01.mp4' },
-  AD18: { png: 'images/evidence/AD18/v1__workspace-setup-opaque__2026-05-01.png', mp4: 'images/evidence/AD18/v1__workspace-setup-opaque__2026-05-01.mp4' },
-  AD2: { png: 'images/evidence/AD2/v1__picker-duplicates__2026-05-01.png', mp4: null },
-  AD3: { png: 'images/evidence/AD3/v1__brain-branding-drift__2026-05-01.png', mp4: null },
-  AD4: { png: 'images/evidence/AD4/v1__field-type-tooltips-copy-pass__2026-05-01.png', mp4: null },
-  AD5: { png: 'images/evidence/AD5/v1__step5-no-personalization__2026-05-01.png', mp4: 'images/evidence/AD5/v1__step5-no-personalization__2026-05-01.mp4' },
-  AD6: { png: 'images/evidence/AD6/v1__step3-vs-step5-ai-tools__2026-05-01.png', mp4: null },
-  AD7: { png: 'images/evidence/AD7/v1__brain-pmo-no-aicf-mention__2026-05-01.png', mp4: 'images/evidence/AD7/v1__brain-pmo-no-aicf-mention__2026-05-01.mp4' },
-  AD8: { png: 'images/evidence/AD8/v1__sidebar-vs-right-panel__2026-05-01.png', mp4: null },
-  AD9: { png: 'images/evidence/AD9/v1__sidebar-pages-no-ai-intro__2026-05-01.png', mp4: null },
-  AQ1: { png: 'images/evidence/AQ1/v1__tellai-tooltip-redundant__2026-05-01.png', mp4: null },
-  AQ10: { png: 'images/evidence/AQ10/v1__default-prompts-format-conflict__2026-05-01.png', mp4: null },
-  AQ12: { png: 'images/evidence/AQ12/v1__categorize-vs-custom-same-template__2026-05-01.png', mp4: null },
-  AQ2: { png: 'images/evidence/AQ2/v1__default-prompts-copy-issues__2026-05-01.png', mp4: null },
-  AQ3: { png: 'images/evidence/AQ3/v1__format-tooltips-wrong__2026-05-01.png', mp4: null },
+  AD12: { png: 'images/evidence/AD12/v1__brain-quick-prompts-no-intro__2026-05-05.png', mp4: null },
+  AD13: { png: 'images/evidence/AD13/v1__get-started-ai-task-last__2026-05-05.png', mp4: null },
+  AD14: { png: 'images/evidence/AD14/v1__ai-task-4-usecases-no-cfs__2026-05-05.png', mp4: null },
+  AD15: { png: 'images/evidence/AD15/v1__cf-checklist-no-ai-variant__2026-05-05.png', mp4: 'images/evidence/AD15/v1__cf-checklist-no-ai-variant__2026-05-01.mp4' },
+  AD16: { png: 'images/evidence/AD16/v1__5-click-discovery-path__2026-05-05.png', mp4: null },
+  AD17: { png: 'images/evidence/AD17/v1__global-search-no-help-docs__2026-05-05.png', mp4: 'images/evidence/AD17/v1__global-search-no-help-docs__2026-05-05.mp4' },
+  AD18: { png: 'images/evidence/AD18/v1__workspace-setup-opaque__2026-05-05.png', mp4: 'images/evidence/AD18/v1__workspace-setup-opaque__2026-05-01.mp4' },
+  AQ1: { png: 'images/evidence/AQ1/v1__tellai-tooltip-redundant__2026-05-05.png', mp4: null },
+  AQ2: { png: 'images/evidence/AQ2/v1__default-prompts-copy-issues__2026-05-05.png', mp4: null },
+  AQ3: { png: 'images/evidence/AQ3/v1__format-tooltips-wrong__2026-05-05.png', mp4: null },
   AQ4: { png: 'images/evidence/AQ4/v1__manual-sort-collision__2026-05-01.png', mp4: null },
-  AQ5: { png: 'images/evidence/AQ5/v1__ai-clickapps-all-on__2026-05-01.png', mp4: null },
-  AQ6: { png: 'images/evidence/AQ6/v1__autofill-silent-automation__2026-05-01.png', mp4: 'images/evidence/AQ6/v1__autofill-silent-automation__2026-05-01.mp4' },
-  AQ7: { png: 'images/evidence/AQ7/v1__variable-picker-friction__2026-05-01.png', mp4: null },
-  AQ8: { png: 'images/evidence/AQ8/v1__brain-rate-limit-first-interaction__2026-05-01.png', mp4: 'images/evidence/AQ8/v1__brain-rate-limit-first-interaction__2026-05-01.mp4' },
-  AQ9: { png: 'images/evidence/AQ9/v1__no-cost-warning__2026-05-01.png', mp4: null },
-  CC1: { png: 'images/evidence/CC1/v1__form-controls-dont-talk__2026-05-01.png', mp4: 'images/evidence/CC1/v1__form-controls-dont-talk__2026-05-01.mp4' },
+  AQ5: { png: 'images/evidence/AQ5/v1__ai-clickapps-all-on__2026-05-05.png', mp4: null },
+  AQ6: { png: 'images/evidence/AQ6/v1__autofill-silent-automation__2026-05-05.png', mp4: null },
+  AQ7: { png: 'images/evidence/AQ7/v1__variable-cursor-jumps-to-bottom__2026-05-05.png', mp4: null },
+  AQ8: { png: 'images/evidence/AQ8/v1__brain-rate-limit-first-interaction__2026-05-05.png', mp4: 'images/evidence/AQ8/v1__brain-rate-limit-first-interaction__2026-05-01.mp4' },
+  AQ9: { png: 'images/evidence/AQ9/v1__no-cost-warning__2026-05-05.png', mp4: null },
+  AQ10: { png: 'images/evidence/AQ10/v1__default-prompts-format-conflict__2026-05-05.png', mp4: null },
+  AQ12: { png: 'images/evidence/AQ12/v1__categorize-vs-custom-same-template__2026-05-05.png', mp4: null },
+  CC1: { png: 'images/evidence/CC1/v1__form-controls-dont-talk__2026-05-05.png', mp4: 'images/evidence/CC1/v1__form-controls-dont-talk__2026-05-01.mp4' },
   CC2: { png: 'images/evidence/CC2/v1__field-name-stale-on-template-change__2026-05-01.png', mp4: null },
-  CC3: { png: 'images/evidence/CC3/v1__format-control-locks-up__2026-05-01.png', mp4: 'images/evidence/CC3/v1__format-control-locks-up__2026-05-01.mp4' },
-  CC4: { png: 'images/evidence/CC4/v1__translation-picker-stuck__2026-05-01.png', mp4: null },
-  CC5: { png: 'images/evidence/CC5/v1__options-stranded-on-template-change__2026-05-01.png', mp4: null },
-  CS1: { png: 'images/evidence/CS1/v1__three-entry-points-diverge__2026-05-01.png', mp4: null },
-  CS10: { png: 'images/evidence/CS10/v1__add-existing-pre-step__2026-05-01.png', mp4: 'images/evidence/CS10/v1__add-existing-pre-step__2026-05-01.mp4' },
-  CS11: { png: 'images/evidence/CS11/v1__dropdown-options-position-inconsistent__2026-05-01.png', mp4: null },
-  CS12: { png: 'images/evidence/CS12/v1__field-type-naming-drift__2026-05-01.png', mp4: null },
-  CS13: { png: 'images/evidence/CS13/v1__trigger-copy-mismatch__2026-05-01.png', mp4: null },
+  CC3: { png: 'images/evidence/CC3/v1__format-control-locks-up__2026-05-05.png', mp4: 'images/evidence/CC3/v1__format-control-locks-up__2026-05-01.mp4' },
+  CC4: { png: 'images/evidence/CC4/v1__translation-picker-stuck__2026-05-05.png', mp4: null },
+  CC5: { png: 'images/evidence/CC5/v1__options-stranded-on-template-change__2026-05-05.png', mp4: null },
+  CS1: { png: 'images/evidence/CS1/v1__three-entry-points-diverge__2026-05-05.png', mp4: null },
+  CS2: { png: 'images/evidence/CS2/v1__description-placement-inconsistent__2026-05-05.png', mp4: null },
+  CS3: { png: 'images/evidence/CS3/v1__prompt-textarea-size-differs__2026-05-05.png', mp4: null },
+  CS4: { png: 'images/evidence/CS4/v1__settings-micro-inconsistencies__2026-05-05.png', mp4: null },
+  CS5: { png: 'images/evidence/CS5/v1__cfm-two-col-vs-view-one-col__2026-05-05.png', mp4: null },
+  CS6: { png: 'images/evidence/CS6/v1__task-entry-degraded-variant__2026-05-05.png', mp4: null },
+  CS8: { png: 'images/evidence/CS8/v1__suggested-absent-from-task__2026-05-05.png', mp4: null },
+  CS9: { png: 'images/evidence/CS9/v1__type-picker-flat-list__2026-05-05.png', mp4: null },
+  CS10: { png: 'images/evidence/CS10/v1__add-existing-pre-step__2026-05-05.png', mp4: 'images/evidence/CS10/v1__add-existing-pre-step__2026-05-01.mp4' },
+  CS11: { png: 'images/evidence/CS11/v1__dropdown-options-position-inconsistent__2026-05-05.png', mp4: null },
+  CS12: { png: 'images/evidence/CS12/v1__field-type-naming-drift__2026-05-05.png', mp4: null },
+  CS13: { png: 'images/evidence/CS13/v1__trigger-copy-mismatch__2026-05-05.png', mp4: null },
   CS14: { png: 'images/evidence/CS14/v1__fill-method-toggle-hidden-on-ai-direct__2026-05-01.png', mp4: null },
   CS15: { png: 'images/evidence/CS15/v1__permissions-view-only__2026-05-01.png', mp4: null },
-  CS16: { png: 'images/evidence/CS16/v1__progress-updates-default-differs__2026-05-01.png', mp4: null },
-  CS2: { png: 'images/evidence/CS2/v1__description-placement-inconsistent__2026-05-01.png', mp4: null },
-  CS3: { png: 'images/evidence/CS3/v1__prompt-textarea-size-differs__2026-05-01.png', mp4: null },
-  CS4: { png: 'images/evidence/CS4/v1__settings-micro-inconsistencies__2026-05-01.png', mp4: null },
-  CS5: { png: 'images/evidence/CS5/v1__cfm-two-col-vs-view-one-col__2026-05-01.png', mp4: null },
-  CS6: { png: 'images/evidence/CS6/v1__task-entry-degraded-variant__2026-05-01.png', mp4: null },
-  CS8: { png: 'images/evidence/CS8/v1__suggested-absent-from-task__2026-05-01.png', mp4: null },
-  CS9: { png: 'images/evidence/CS9/v1__type-picker-flat-list__2026-05-01.png', mp4: null },
-  FG1: { png: 'images/evidence/FG1/v1__no-prompt-output-preview__2026-05-01.png', mp4: null },
-  FG2: { png: 'images/evidence/FG2/v1__cfm-hides-ai-nature__2026-05-01.png', mp4: 'images/evidence/FG2/v1__cfm-hides-ai-nature__2026-05-01.mp4' },
-  FG3: { png: 'images/evidence/FG3/v1__ai-fields-not-in-calculations__2026-05-01.png', mp4: null },
+  CS16: { png: 'images/evidence/CS16/v1__progress-updates-default-differs__2026-05-05.png', mp4: null },
+  FG1: { png: 'images/evidence/FG1/v1__no-prompt-output-preview__2026-05-05.png', mp4: null },
+  FG2: { png: 'images/evidence/FG2/v1__cfm-hides-ai-nature__2026-05-05.png', mp4: 'images/evidence/FG2/v1__cfm-hides-ai-nature__2026-05-05.mp4' },
+  FG3: { png: 'images/evidence/FG3/v1__ai-fields-not-in-calculations__2026-05-05.png', mp4: null },
   FG4: { png: 'images/evidence/FG4/v1__no-prompt-library__2026-05-01.png', mp4: null },
 };
 
 function evidenceFor(id) { return EVIDENCE[id] || { png: null, mp4: null }; }
 
 /* ============================================================================
-   ONBOARDING_STAGE_IMAGES — top-of-carousel screenshot per stage.
-   Sourced from onboarding-audit/_assets/ + evidence/annotated/AD15 (workflow task).
-   File names normalized to {stageId}.png; both drafts/ and hosting/ mirror.
-============================================================================ */
-const ONBOARDING_STAGE_IMAGES = {
-  wizardStep5:            'images/onboarding-stages/wizardStep5.png',
-  workspaceLanding:       'images/onboarding-stages/workspaceLanding.png',
-  sidebarNav:             'images/onboarding-stages/sidebarNav.png',
-  brainHub:               'images/onboarding-stages/brainHub.png',
-  plannerPage:            'images/onboarding-stages/plannerPage.png',
-  getStartedList:         'images/onboarding-stages/getStartedList.png',
-  getStartedAITask:       'images/onboarding-stages/getStartedAITask.png',
-  getStartedWorkflowTask: 'images/onboarding-stages/getStartedWorkflowTask.png',
-  helpDocs:               'images/onboarding-stages/helpDocs.png',
-  globalSearch:           'images/onboarding-stages/globalSearch.png',
-};
-
-function onboardingStageImage(stageId) { return ONBOARDING_STAGE_IMAGES[stageId] || null; }
-
-/* ============================================================================
    Exports — exposed on window for vanilla-JS prototypes (no module bundler)
 ============================================================================ */
+
+/* ============================================================================
+   ONBOARDING_CHAPTERS — 5-chapter narrative spine for Section 5 carousel.
+   Replaces the prior 10-stage drill-in. Each chapter has:
+     - title         — chapter narrative beat
+     - eyebrow       — "Chapter N of 5"
+     - graphic       — chapter PNG path (rendered by Design Agent 2026-05-05)
+     - caption       — supporting narrative text shown under graphic
+     - findingIds[]  — explicit findings shown on the right rail (some IDs
+                       appear in multiple chapters; AD12 tags Ch2, Ch4, Ch5)
+   Locked 2026-05-05 (Siobhan): narrative-beat framing (Q-EG4c-1=A); pin map
+   per Q-EG4c-2 + AD12 Ch5 add-on.
+============================================================================ */
+const ONBOARDING_CHAPTERS = [
+  {
+    id: 'ch1',
+    title: 'AI is everywhere in onboarding.',
+    eyebrow: 'Chapter 1 of 5',
+    graphic: 'images/onboarding-narrative/01_ai-everywhere.png',
+    caption: "Brand new ClickUp account. AI is mentioned in 9 in-product touchpoints during the first 30 minutes. The user has told the system they care about AI.",
+    findingIds: [],
+  },
+  {
+    id: 'ch2',
+    title: 'Except for AI Custom Fields.',
+    eyebrow: 'Chapter 2 of 5',
+    graphic: 'images/onboarding-narrative/02_zero-cf-mentions.png',
+    caption: "Brain's PMO-personalized prompts don't mention AI fields. The Get Started AI task lists 4 use cases — none are AI fields. The Custom Fields checklist item teaches manual fields only.",
+    findingIds: ['AD7', 'AD12', 'AD13', 'AD14', 'AD15'],
+  },
+  {
+    id: 'ch3',
+    title: '5 clicks deep. 3 of them outside ClickUp.',
+    eyebrow: 'Chapter 3 of 5',
+    graphic: 'images/onboarding-narrative/03_five-click-path.png',
+    caption: "AI Custom Fields documentation is 5 clicks deep. The journey leaves the product partway through. New users with AI intent in Step 6 never arrive.",
+    findingIds: ['AD16'],
+  },
+  {
+    id: 'ch4',
+    title: "Brain isn't trained as an onboarding trainer.",
+    eyebrow: 'Chapter 4 of 5',
+    graphic: 'images/onboarding-narrative/04_brain-as-trainer.png',
+    caption: "Brain is ClickUp's most powerful surface for AI feature discovery. Today it answers in chat. Phase 5 makes it return structured cards — and AI Custom Fields land in the top 3 for new users.",
+    findingIds: ['AD11', 'AD12', 'AD17'],
+  },
+  {
+    id: 'ch5',
+    title: 'Phase 1.5 closes the discovery gap.',
+    eyebrow: 'Chapter 5 of 5',
+    graphic: 'images/onboarding-narrative/05_phase15-integrations.png',
+    caption: "Four integrations into the existing new user journey. Each is a copy or component change inside an existing screen — no new tooling required.",
+    findingIds: ['AD7', 'AD12', 'AD13', 'AD14', 'AD15', 'AD16'],
+  },
+];
+
+function findingsForChapter(chapterId) {
+  const ch = ONBOARDING_CHAPTERS.find(c => c.id === chapterId);
+  if (!ch) return [];
+  return ch.findingIds.map(id => FINDINGS.find(f => f.id === id)).filter(Boolean);
+}
+
+function chapterIndexForFinding(findingId) {
+  for (let i = 0; i < ONBOARDING_CHAPTERS.length; i++) {
+    if (ONBOARDING_CHAPTERS[i].findingIds.includes(findingId)) return i;
+  }
+  return -1;
+}
 
 if (typeof window !== 'undefined') {
   window.CATALOG = {
@@ -1385,18 +1434,19 @@ if (typeof window !== 'undefined') {
     SEVERITY,
     SCREENS,
     ONBOARDING_STAGES,
+    ONBOARDING_CHAPTERS,
     UMBRELLAS,
     FINDINGS,
     DESIGN_MOVES,
     EVIDENCE,
-    ONBOARDING_STAGE_IMAGES,
     findingById,
     umbrellaById,
     moveById,
     findingsForScreen,
+    findingsForChapter,
+    chapterIndexForFinding,
     findingsByTheme,
     resolveLinks,
     evidenceFor,
-    onboardingStageImage,
   };
 }

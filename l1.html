@@ -2874,12 +2874,14 @@ body {
 <nav class="proto-nav" aria-label="Prototype navigation">
   <div class="proto-nav-inner">
     <span class="proto-nav-brand"><span class="dot"></span>AI Custom Fields</span>
-    <a href="index.html">Overview</a>
-    <a href="l0.html">L0 — Audit</a>
-    <a href="l1.html" class="is-current" aria-current="page">L1 — Integration</a>
-    <a href="l2.html">L2 — Direction</a>
-    <a href="https://link.consultsdw.com/ai-custom-fields-doc" target="_blank" rel="noopener">Doc ↗</a>
-    <a href="https://link.consultsdw.com/ai-custom-fields-figma2" target="_blank" rel="noopener">Figma ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-prototype">Overview</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-audit">L0 — Audit</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-L1" class="is-current" aria-current="page">L1 — Integration</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-L2">L2 — Direction</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields" target="_blank" rel="noopener">Doc ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-figma-design" target="_blank" rel="noopener">Figma ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-canny" target="_blank" rel="noopener">Canny ↗</a>
+    <a href="https://link.consultsdw.com/ai-custom-fields-public" target="_blank" rel="noopener">Public Sentiment ↗</a>
   </div>
 </nav>
 
@@ -3631,7 +3633,7 @@ body {
     </h2>
 
     <p class="close-body">
-      L1 unifies what already exists: <strong>three variants of one component, one screen with fifty renderings — collapsed into a single coordinated form.</strong> Most findings are code-level and a copy pass. Success metrics, the six-phase roadmap, and the competitor audit (Notion&nbsp;AI · Airtable · Monday) all live in the <strong>ClickUp Doc</strong> that accompanies this prototype.
+      L1 unifies what already exists: <strong>three variants of one component, one screen with fifty renderings — collapsed into a single coordinated form.</strong> Success metrics, the six-phase roadmap, and the competitor audit (Notion&nbsp;AI · Airtable · Monday) all live in the <strong>ClickUp Doc</strong> that accompanies this prototype.
     </p>
 
     <div class="close-footer">
@@ -3794,7 +3796,7 @@ const FINDINGS = [
     oneliner: 'Users commit a prompt blind. Bad prompt = bad fills before they realize. Compounds with the "Autofill existing tasks" risk.',
     finding: 'No feedback loop until after the field is saved and tasks start getting filled.',
     suggestion: '"Preview output" button next to the prompt. One click, one sample against a chosen task. Show cost on the button. Cap per session.',
-    phase: 4,
+    phase: 2,
     anchorCurrent: { el: 'prompt', anchor: 'bottom-right', offsetX: -6, offsetY: -8 },
     highlightCurrent: { el: 'prompt' },
     highlightProposed: { el: 'prompt' },
@@ -3925,7 +3927,7 @@ const FINDINGS = [
     oneliner: '4 dropdown templates, only 2 genuinely pre-configured. Categorize ships with Option 1/Option 2 just like Custom.',
     finding: 'Sentiment and T-shirt Size have real presets. Categorize doesn\'t. Dropdown has half the curated catalog of Long Text — the biggest strategic miss in the audit.',
     suggestion: 'Near-term: ship Categorize with example options (Bug / Feature / Chore / Question). Strategic: expand the library with Priority, Status category, Request type, Effort. One-click AI workflows, not generic prompts.',
-    phase: 4,
+    phase: 1,
     anchorCurrent: { el: 'template', anchor: 'top-right', offsetX: -6, offsetY: 52 },
     highlightCurrent: { el: 'template' },
     highlightProposed: { el: 'template' },
@@ -4087,8 +4089,8 @@ const FINDINGS = [
     id: 'TS-5', tier: 'move', surfaces: ['typeSelection'], fieldTypes: ['longText', 'dropdown'], pinLabel: 'TS-5',
     title: 'Field deduplication + canonical naming',
     catalogRef: 'Resolves AD2 · CS12',
-    oneliner: "One entry per field type. Canonical names match catalog, picker rows, preview cards, and config panels.",
-    finding: "Duplicates make the list look broken on first scan; cross-surface naming mismatches break trust.",
+    oneliner: "One entry per field type. Canonical names match catalog, picker rows, preview cards, and Settings screens.",
+    finding: "Duplicates make the list look broken on first scan; cross-screen naming mismatches break trust.",
     suggestion: "One name per field type, used everywhere. AI capability indicated inline (Brain icon on AI-capable rows), not via a separate 'AI fields' section.",
     resolves: ['AD2', 'CS12'],
     /* TS-5 anchored to header so it sits in line with TS-1 at the top of the right margin track. */
